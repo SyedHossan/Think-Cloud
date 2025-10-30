@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Think Cloud – Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="map"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    // 1. Initialize map (use your campus coords)
+    const map = L.map('map').setView([32.985, -96.75], 16);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 2. When user clicks, ask for a thought
+    map.on('click', e => {
+      const thought = prompt("What's on your mind?");
+      if (!thought) return;
+
+      const marker = L.marker(e.latlng).addTo(map);
+      marker.bindPopup(`<b>${thought}</b>`).openPopup();
+    });
+  </script>
+</body>
+</html>
