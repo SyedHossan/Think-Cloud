@@ -1,2 +1,3 @@
-# Think-Cloud
-Human Computer Interactions App Repo 
+# Think-Cloud Social Media App
+"Think Cloud" is a social platform designed to help students especially international students connect, share and feel supported in every stage of their academic journey. ​
+Users can post their thoughts on a live map, explore thoughts from around the world and choose to connect with people from their own university, other schools or even colleges they are considering. By sharing real stories and experiences, Think Cloud creates a bridge between current and prospective students helping the newcomers make more informed choices while also giving current students a space to express themselves and build meaningful connections.​
