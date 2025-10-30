@@ -1,0 +1,51 @@
+Test User:
+  First: Anya 
+  Last: Patel
+  Tags
+    School: The University Of Texas at Dallas
+    Major: Computer Science
+    Status: Incoming
+    Home Country: India
+
+Sample Profile One:
+  First: 
+  Last:
+  Tags
+    School:
+    Major: Computer Science
+    Status:
+    Home Country: India
+
+Sample Profile Two:
+  First:
+  Last:
+  Tags
+    School:
+    Major: 
+    Status:
+    Home Country: India
+
+Sample Profile Three:
+  First:
+  Last:
+  Tags
+    School:
+    Major: Computer Science
+    Status:
+    Home Country:
+
+Sample Profile Four:
+  First:
+  Last:
+  Tags
+    School:
+    Major:
+    Status:
+    Home Country:
+
+Types:
+//For our test case we will limit possibilities of tags.
+Schools: The Univeristy of Texas at Dallas (UTD), The University of North Texas (UNT), The University of Texas at Austin (UT)
+Majors: Computer Science, Mechanical Engineering, Biology, Child Development
+Status: Prospective, Incoming, Current, Alumni
+Home Country: India, Australia, Spain, Canada, Columbia
