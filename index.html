@@ -2,23 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Think Cloud – Login</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <div class="login-container">
-    <h1>Think Cloud</h1>
-    <p>Share your thoughts with those around you.</p>
+<body class="bg">
+  <main class="login-wrap">
+    <div class="brand">
+      <!-- Cloud logo (SVG) -->
+      <svg aria-hidden="true" viewBox="0 0 64 64" class="logo">
+        <path d="M22 48h22a10 10 0 0 0 1-20 14 14 0 0 0-27-3A9 9 0 0 0 22 48Z"/>
+      </svg>
+      <h1>Think Cloud</h1>
+      <p class="tag">Share your thoughts with those around you.</p>
+    </div>
 
-    <input type="text" placeholder="Email or username" />
-    <input type="password" placeholder="Password" />
-    <button id="loginBtn">Log In</button>
-  </div>
+    <form class="card" onsubmit="event.preventDefault(); window.location.href='map.html';">
+      <label class="sr-only" for="email">Email or username</label>
+      <input id="email" type="text" placeholder="Email or username" autocomplete="username" />
 
-  <script>
-    document.getElementById('loginBtn').onclick = () => {
-      window.location.href = "map.html";
-    };
-  </script>
+      <label class="sr-only" for="password">Password</label>
+      <input id="password" type="password" placeholder="Password" autocomplete="current-password" />
+
+      <button id="loginBtn" type="submit">Log In</button>
+    </form>
+
+    <footer class="ft">© 2025 Think Cloud</footer>
+  </main>
 </body>
 </html>
