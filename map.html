@@ -3,36 +3,46 @@
 <head>
   <meta charset="utf-8" />
   <title>Think Cloud – Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <style>
+    /* keep map visible even if styles.css isn’t loaded */
+    html,body{height:100%;margin:0}
+    #map{height:100vh;width:100%}
+  </style>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <div id="map"></div>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js"></script>
   <script>
-    // 1. Initialize map (use your campus coords)
-    const map = L.map('map').setView([32.985, -96.75], 20);
+    // Init map (UTD area)
+    const map = L.map('map').setView([32.985, -96.75], 15);
+
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    // 2. When user clicks, ask for a thought
-    map.on('click', e => {
-      const thought = prompt("What's on your mind?");
-      if (!thought) return;
-
-      const marker = L.marker(e.latlng).addTo(map);
-      marker.bindPopup(`<b>${thought}</b>`).openPopup();
+    // Click to add a thought
+    map.on('click', (e) => {
+      const t = prompt("What's on your mind?");
+      if (!t) return;
+      L.marker(e.latlng).addTo(map).bindPopup(`<b>${t}</b>`).openPopup();
     });
 
-    //Hardcoded marker example
-    L.marker([32.984746, -96.752568]).addTo(map) //coordinates to university village phase 3
-    .bindPopup("<b>Anyone want a coffee?</b><button onClick=\"onClick()\">Likes</button><button>Comments</button> <p>Likes: <a id=\"clicks\">7</a></p>") 
-    .openPopup();
-
-    
+    // 6 sample pins near UTD
+    const pins = [
+      { c:[32.9850,-96.7500], text:"ECSS: study group at 6?" },
+      { c:[32.9865,-96.7515], text:"ECSW CS4352 study session 2nd floor" },
+      { c:[32.9828,-96.7519], text:"Rec Center hoops later?" },
+      { c:[32.9842,-96.7478], text:"Coffee at Starbucks?" },
+      { c:[32.9880,-96.7485], text:"Library quiet zone tip" },
+      { c:[32.9815,-96.7480], text:"Parking A is packed!" }
+    ];
+    pins.forEach(p =>
+      L.marker(p.c).addTo(map).bindPopup(`<b>${p.text}</b>`)
+    );
   </script>
 </body>
 </html>
-
