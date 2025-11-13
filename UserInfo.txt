@@ -8,7 +8,7 @@ Test User:
     Home Country: India
 
 Sample Profile One:
-  First: 
+  First: Mary
   Last:
   Tags
     School:
@@ -35,12 +35,12 @@ Sample Profile Three:
     Home Country:
 
 Sample Profile Four:
-  First:
+  First: Sam
   Last:
   Tags
     School:
     Major:
-    Status:
+    Status: Incoming
     Home Country:
 
 Types:
