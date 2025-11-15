@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Think Cloud – Sign up</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="logo">
+      <svg width="70" height="70" viewBox="0 0 24 24" fill="#5d8dfd">
+        <path d="M19 18H6a4 4 0 0 1-.4-7.99A5.5 5.5 0 0 1 16.5 7a5.48 5.48 0 0 1 4.39 2.21A4.5 4.5 0 0 1 19 18Z"/>
+      </svg>
+    </div>
+
+    <h1>Create your account</h1>
+    <p class="subtitle">
+      Set up your profile so others can see who’s behind each cloud.
+    </p>
+
+    <form id="signupForm">
+      <input id="suUsername" type="text" placeholder="Username" required />
+      <input id="suEmail" type="email" placeholder="Email" required />
+      <input id="suPassword" type="password" placeholder="Password" required />
+      <input id="suConfirm" type="password" placeholder="Confirm password" required />
+
+      <textarea id="suBio" rows="3" placeholder="Short bio (optional)"></textarea>
+
+      <label class="file-label">
+        Profile picture (optional)
+        <input id="suAvatar" type="file" accept="image/*" />
+      </label>
+
+      <button type="submit">Create Account</button>
+    </form>
+
+    <p class="signup-text">
+      Already have an account? <a href="index.html">Back to login</a>
+    </p>
+  </div>
+
+  <script>
+    // shared helpers
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("tc_users") || "[]");
+    }
+    function saveUsers(users) {
+      localStorage.setItem("tc_users", JSON.stringify(users));
+    }
+    function setCurrentUserId(id) {
+      localStorage.setItem("tc_currentUserId", String(id));
+    }
+
+    const form = document.getElementById("signupForm");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById("suUsername").value.trim();
+      const email    = document.getElementById("suEmail").value.trim();
+      const pass     = document.getElementById("suPassword").value.trim();
+      const confirm  = document.getElementById("suConfirm").value.trim();
+      const bio      = document.getElementById("suBio").value.trim();
+      const fileEl   = document.getElementById("suAvatar");
+
+      if (pass !== confirm) {
+        alert("Passwords do not match.");
+        return;
+      }
+
+      const users = getUsers();
+      if (users.some(u => u.username === username)) {
+        alert("That username is already taken.");
+        return;
+      }
+
+      // Simple avatar handling: store data URL (small images only – fine for class demo)
+      let avatarDataUrl = null;
+      if (fileEl.files && fileEl.files[0]) {
+        const file = fileEl.files[0];
+        avatarDataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const newUser = {
+        id: Date.now(),
+        username,
+        email,
+        password: pass,
+        bio,
+        avatar: avatarDataUrl  // can be null
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUserId(newUser.id);
+
+      // go straight to map
+      window.location.href = "map.html";
+    });
+  </script>
+
+</body>
+</html>

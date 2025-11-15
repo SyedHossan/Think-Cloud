@@ -1,0 +1,289 @@
+html, body {
+    margin: 0;
+    height: 100%;
+  }
+  
+  #map {
+    height: 100vh;
+    width: 100%;
+  }
+  
+  /* Overlay backdrop */
+  .overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
+  
+  .overlay-backdrop.show {
+    display: flex;
+  }
+  
+  /* Comments modal */
+  .comments-modal {
+    background: #ffffff;
+    border-radius: 16px;
+    width: 420px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.35);
+    border: 1px solid #e5e7eb;
+    position: relative;
+  }
+  
+  .comments-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: linear-gradient(135deg, #1d4ed8, #0b2a5b);
+    color: #eff6ff;
+    border-radius: 16px 16px 0 0;
+  }
+  
+  .comments-header-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  
+  .comments-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  
+  .comments-meta {
+    font-size: 0.8rem;
+    opacity: 0.9;
+  }
+  
+  .comments-close {
+    border: none;
+    background: transparent;
+    color: #eff6ff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .comments-body {
+    padding: 10px 16px 12px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  
+  .comment-card {
+    display: flex;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .comment-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #e5edff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  
+  .comment-main {
+    flex: 1;
+    font-size: 0.85rem;
+  }
+  
+  .comment-header-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2px;
+  }
+  
+  .comment-user {
+    font-weight: 600;
+    color: #0b1220;
+    font-size: 0.86rem;
+    cursor: pointer;
+  }
+  
+  .comment-time {
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .comment-text {
+    margin: 2px 0 4px;
+    color: #111827;
+  }
+  
+  .comment-actions-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+  
+  .reactions-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  
+  .reaction-pill {
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #4b5563;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    border: 1px solid transparent;
+  }
+  
+  .reaction-pill.active {
+    background: #1d4ed8;
+    color: #eff6ff;
+    border-color: #1d4ed8;
+  }
+  
+  .reply-button {
+    border: none;
+    background: transparent;
+    color: #4b6fff;
+    font-size: 0.75rem;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  .comments-footer {
+    border-top: 1px solid #e5e7eb;
+    padding: 8px 12px 12px;
+    display: flex;
+    gap: 8px;
+  }
+  
+  .comments-footer input {
+    flex: 1;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    outline: none;
+  }
+  
+  .comments-footer input:focus {
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 2px #bfdbfe;
+  }
+  
+  .comments-footer button {
+    border-radius: 999px;
+    border: none;
+    background: #1d4ed8;
+    color: #ffffff;
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  
+  /* Simple profile mini-card */
+  .profile-card {
+    position: absolute;
+    left: 12px;
+    top: 56px;
+    background: #eff6ff;
+    border-radius: 12px;
+    padding: 8px 10px;
+    border: 1px solid #bfdbfe;
+    display: none;
+    max-width: 280px;
+    font-size: 0.8rem;
+    box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
+  }
+  
+  .profile-card.show {
+    display: flex;
+    gap: 8px;
+  }
+  
+  .profile-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 999px;
+    background: #1d4ed8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    color: #eff6ff;
+  }
+  
+  .profile-main {
+    flex: 1;
+  }
+  
+  .profile-name {
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #0b1220;
+  }
+  
+  .profile-bio {
+    color: #4b5563;
+    line-height: 1.4;
+  }
+  
+  .profile-close {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.8rem;
+    color: #4b5563;
+    align-self: flex-start;
+  }
+  
+  /* Leaflet popup text tweaks */
+  .pin-title {
+    font-weight: 600;
+    color: #111827;
+    font-size: 0.9rem;
+  }
+  
+  .pin-meta-line {
+    font-size: 0.78rem;
+    color: #6b7280;
+    margin: 2px 0 4px;
+  }
+  
+  .pin-actions {
+    display: flex;
+    gap: 6px;
+  }
+  
+  .pin-actions button {
+    border: none;
+    padding: 4px 8px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    cursor: pointer;
+    background: #e5edff;
+    color: #1d4ed8;
+  }

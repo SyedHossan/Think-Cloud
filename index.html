@@ -6,19 +6,55 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="login-container">
-    <h1>Think Cloud</h1>
-    <p>Share your thoughts with those around you.</p>
 
-    <input type="text" placeholder="Email or username" />
-    <input type="password" placeholder="Password" />
+  <div class="login-container">
+    <!-- Cloud Logo -->
+    <div class="logo">
+      <svg width="70" height="70" viewBox="0 0 24 24" fill="#5d8dfd">
+        <path d="M19 18H6a4 4 0 0 1-.4-7.99A5.5 5.5 0 0 1 16.5 7a5.48 5.48 0 0 1 4.39 2.21A4.5 4.5 0 0 1 19 18Z"/>
+      </svg>
+    </div>
+
+    <h1>Think Cloud</h1>
+    <p class="subtitle">Share your thoughts with those around you.</p>
+
+    <input id="loginIdentifier" type="text" placeholder="Email or username" />
+    <input id="loginPassword" type="password" placeholder="Password" />
+
     <button id="loginBtn">Log In</button>
+
+    <p class="signup-text">
+      New here? <a href="signup.html" class="signup-link">Create an account</a>
+    </p>
   </div>
 
   <script>
-    document.getElementById('loginBtn').onclick = () => {
+    // --- user helpers shared with signup/map ---
+    function getUsers() {
+      return JSON.parse(localStorage.getItem("tc_users") || "[]");
+    }
+    function setCurrentUserId(id) {
+      localStorage.setItem("tc_currentUserId", String(id));
+    }
+
+    document.getElementById("loginBtn").onclick = () => {
+      const idVal = document.getElementById("loginIdentifier").value.trim();
+      const pass = document.getElementById("loginPassword").value.trim();
+      const users = getUsers();
+
+      const user = users.find(
+        u => (u.username === idVal || u.email === idVal) && u.password === pass
+      );
+
+      if (!user) {
+        alert("Invalid login. Try again or create an account.");
+        return;
+      }
+
+      setCurrentUserId(user.id);
       window.location.href = "map.html";
     };
   </script>
+
 </body>
 </html>

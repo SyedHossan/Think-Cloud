@@ -4,48 +4,107 @@ body {
   background: #f2f6ff;
 }
 
-/* ---- Login ---- */
-.login-container {
-  max-width: 360px;
-  margin: 120px auto;
+/* ------------------- COMMON CARD STYLE ------------------- */
+.login-container,
+.signup-container {
+  width: 420px;
+  margin: 60px auto;
   padding: 40px;
-  text-align: center;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  text-align: center;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
 }
 
-.login-container input {
-  display: block;
+/* Center internal fields */
+.login-container input,
+.signup-container input,
+.signup-container textarea {
   width: 100%;
+  display: block;
   margin: 12px 0;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #ccd4e0;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
+textarea {
+  resize: none;
+  height: 100px;
+}
+
+/* Cloud Logo */
+.logo {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Headings */
+h1 {
+  margin: 10px 0 5px;
+  font-size: 1.9rem;
+  color: #0b2a5b;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+/* Buttons */
+.primary-btn,
 .login-container button {
   width: 100%;
-  padding: 10px;
+  padding: 12px;
+  margin-top: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 12px;
   background: #5d8dfd;
   color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
   cursor: pointer;
+  transition: 0.15s;
 }
 
+.primary-btn:hover,
 .login-container button:hover {
   background: #4b7dfa;
 }
 
-#map {
-  height: 100vh;
+/* File input label */
+.file-label {
+  margin-top: 15px;
+  font-size: 0.9rem;
+  color: #555;
+  text-align: left;
+  display: block;
   width: 100%;
 }
 
-/* ---- Explore Page ---- */
+/* Login & Signup links */
+.signup-text,
+.login-text {
+  margin-top: 15px;
+  color: #6b7280;
+}
+
+.signup-text a,
+.login-text a {
+  color: #5d8dfd;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.signup-text a:hover,
+.login-text a:hover {
+  text-decoration: underline;
+}
+
+/* Explore Page (unchanged) */
 .filterSelection{
   float: left;
   background-color: #2196F3;
@@ -56,13 +115,8 @@ body {
   margin: 2px;
   display: none; 
 }
-.exploreShow{
-  display: block;
-}
-.exploreContainer {
-  margin-top: 20px;
-  overflow: hidden;
-}
+.exploreShow{ display: block; }
+.exploreContainer { margin-top: 20px; overflow: hidden; }
 .exploreBtn {
   border: none;
   outline: none;
@@ -70,10 +124,11 @@ body {
   background-color: #f1f1f1;
   cursor: pointer;
 }
-.exploreBtn:hover {
-  background-color: #ddd;
-}
-.exploreBtn.active {
-  background-color: #666;
-  color: white;
+.exploreBtn:hover { background-color: #ddd; }
+.exploreBtn.active { background-color: #666; color: white; }
+
+/* Map full-screen */
+#map {
+  height: 100vh;
+  width: 100%;
 }
