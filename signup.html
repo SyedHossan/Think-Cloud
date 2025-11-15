@@ -8,6 +8,7 @@
 <body>
 
   <div class="login-container">
+    <!-- Cloud logo -->
     <div class="logo">
       <svg width="70" height="70" viewBox="0 0 24 24" fill="#5d8dfd">
         <path d="M19 18H6a4 4 0 0 1-.4-7.99A5.5 5.5 0 0 1 16.5 7a5.48 5.48 0 0 1 4.39 2.21A4.5 4.5 0 0 1 19 18Z"/>
@@ -20,86 +21,148 @@
     </p>
 
     <form id="signupForm">
-      <input id="suUsername" type="text" placeholder="Username" required />
-      <input id="suEmail" type="email" placeholder="Email" required />
-      <input id="suPassword" type="password" placeholder="Password" required />
-      <input id="suConfirm" type="password" placeholder="Confirm password" required />
+      <!-- First / Last name -->
+      <div class="field-group">
+        <label for="firstName">First name</label>
+        <input id="firstName" class="text-input" type="text" required />
+      </div>
 
-      <textarea id="suBio" rows="3" placeholder="Short bio (optional)"></textarea>
+      <div class="field-group">
+        <label for="lastName">Last name</label>
+        <input id="lastName" class="text-input" type="text" required />
+      </div>
 
-      <label class="file-label">
-        Profile picture (optional)
-        <input id="suAvatar" type="file" accept="image/*" />
-      </label>
+      <!-- School with autocomplete -->
+      <div class="field-group">
+        <label for="school">School</label>
+        <input id="school" class="text-input" list="schoolList"
+               placeholder="Start typing your school..." />
+        <datalist id="schoolList">
+          <option value="UTD – The University of Texas at Dallas">
+          <option value="UNT – University of North Texas">
+          <option value="UT Austin – The University of Texas at Austin">
+          <option value="SMU – Southern Methodist University">
+          <option value="TAMU – Texas A&amp;M University">
+          <option value="UH – University of Houston">
+          <option value="UCLA – University of California, Los Angeles">
+          <option value="UCSD – University of California, San Diego">
+          <option value="MIT – Massachusetts Institute of Technology">
+          <option value="Harvard University">
+          <option value="Stanford University">
+          <option value="NYU – New York University">
+          <option value="CMU – Carnegie Mellon University">
+          <option value="Georgia Tech – Georgia Institute of Technology">
+          <option value="UIUC – University of Illinois Urbana-Champaign">
+        </datalist>
+      </div>
 
-      <button type="submit">Create Account</button>
+      <!-- Major with autocomplete -->
+      <div class="field-group">
+        <label for="major">Major</label>
+        <input id="major" class="text-input" list="majorList"
+               placeholder="Start typing your major..." />
+        <datalist id="majorList">
+          <option value="Computer Science">
+          <option value="Software Engineering">
+          <option value="Data Science">
+          <option value="Information Technology">
+          <option value="Mechanical Engineering">
+          <option value="Electrical Engineering">
+          <option value="Civil Engineering">
+          <option value="Biology">
+          <option value="Neuroscience">
+          <option value="Psychology">
+          <option value="Child Development">
+          <option value="Business Administration">
+          <option value="Finance">
+          <option value="Marketing">
+          <option value="Design &amp; UX">
+          <option value="Other / Undecided">
+        </datalist>
+      </div>
+
+      <!-- Student status -->
+      <div class="field-group">
+        <label for="status">Student status</label>
+        <select id="status" class="text-input">
+          <option value="">Select your status</option>
+          <option>Prospective</option>
+          <option>Incoming</option>
+          <option>Current</option>
+          <option>Alumni</option>
+        </select>
+      </div>
+
+      <!-- Country with autocomplete -->
+      <div class="field-group">
+        <label for="country">Home country</label>
+        <input id="country" class="text-input" list="countryList"
+               placeholder="Start typing your country..." />
+        <datalist id="countryList">
+          <option value="Australia">
+          <option value="Brazil">
+          <option value="Canada">
+          <option value="China">
+          <option value="Colombia">
+          <option value="France">
+          <option value="Germany">
+          <option value="India">
+          <option value="Ireland">
+          <option value="Italy">
+          <option value="Japan">
+          <option value="Mexico">
+          <option value="Netherlands">
+          <option value="Nigeria">
+          <option value="Pakistan">
+          <option value="Singapore">
+          <option value="South Korea">
+          <option value="Spain">
+          <option value="United Arab Emirates">
+          <option value="United Kingdom">
+          <option value="United States">
+          <option value="Vietnam">
+        </datalist>
+      </div>
+
+      <!-- Bio -->
+      <div class="field-group">
+        <label for="bio">Short bio (optional)</label>
+        <textarea id="bio" class="text-input textarea"
+                  placeholder="Tell others a bit about you (e.g., CS student who loves coffee walks)."></textarea>
+      </div>
+
+      <!-- Profile picture -->
+      <div class="field-group">
+        <label for="avatar">Profile picture (optional)</label>
+        <input id="avatar" type="file" accept="image/*" />
+      </div>
+
+      <button type="submit" class="primary-btn">Create account</button>
     </form>
 
     <p class="signup-text">
-      Already have an account? <a href="index.html">Back to login</a>
+      Already have an account?
+      <a href="index.html">Back to login</a>
     </p>
   </div>
 
   <script>
-    // shared helpers
-    function getUsers() {
-      return JSON.parse(localStorage.getItem("tc_users") || "[]");
-    }
-    function saveUsers(users) {
-      localStorage.setItem("tc_users", JSON.stringify(users));
-    }
-    function setCurrentUserId(id) {
-      localStorage.setItem("tc_currentUserId", String(id));
-    }
-
-    const form = document.getElementById("signupForm");
-
-    form.addEventListener("submit", async (e) => {
+    // Save basic profile to localStorage and go to map
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
       e.preventDefault();
 
-      const username = document.getElementById("suUsername").value.trim();
-      const email    = document.getElementById("suEmail").value.trim();
-      const pass     = document.getElementById("suPassword").value.trim();
-      const confirm  = document.getElementById("suConfirm").value.trim();
-      const bio      = document.getElementById("suBio").value.trim();
-      const fileEl   = document.getElementById("suAvatar");
-
-      if (pass !== confirm) {
-        alert("Passwords do not match.");
-        return;
-      }
-
-      const users = getUsers();
-      if (users.some(u => u.username === username)) {
-        alert("That username is already taken.");
-        return;
-      }
-
-      // Simple avatar handling: store data URL (small images only – fine for class demo)
-      let avatarDataUrl = null;
-      if (fileEl.files && fileEl.files[0]) {
-        const file = fileEl.files[0];
-        avatarDataUrl = await new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = () => resolve(reader.result);
-          reader.readAsDataURL(file);
-        });
-      }
-
-      const newUser = {
-        id: Date.now(),
-        username,
-        email,
-        password: pass,
-        bio,
-        avatar: avatarDataUrl  // can be null
+      const profile = {
+        firstName: document.getElementById("firstName").value.trim(),
+        lastName:  document.getElementById("lastName").value.trim(),
+        school:    document.getElementById("school").value.trim(),
+        major:     document.getElementById("major").value.trim(),
+        status:    document.getElementById("status").value,
+        country:   document.getElementById("country").value.trim(),
+        bio:       document.getElementById("bio").value.trim()
+        // avatar file could be handled later if you want
       };
 
-      users.push(newUser);
-      saveUsers(users);
-      setCurrentUserId(newUser.id);
-
-      // go straight to map
+      localStorage.setItem("tc_currentUser", JSON.stringify(profile));
       window.location.href = "map.html";
     });
   </script>

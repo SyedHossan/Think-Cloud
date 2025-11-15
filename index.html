@@ -8,6 +8,7 @@
 <body>
 
   <div class="login-container">
+
     <!-- Cloud Logo -->
     <div class="logo">
       <svg width="70" height="70" viewBox="0 0 24 24" fill="#5d8dfd">
@@ -18,40 +19,21 @@
     <h1>Think Cloud</h1>
     <p class="subtitle">Share your thoughts with those around you.</p>
 
-    <input id="loginIdentifier" type="text" placeholder="Email or username" />
+    <input id="loginEmail" type="text" placeholder="Email or username" />
     <input id="loginPassword" type="password" placeholder="Password" />
 
     <button id="loginBtn">Log In</button>
 
     <p class="signup-text">
-      New here? <a href="signup.html" class="signup-link">Create an account</a>
+      New here?
+      <a href="signup.html" class="signup-link">Create an account</a>
     </p>
+
   </div>
 
   <script>
-    // --- user helpers shared with signup/map ---
-    function getUsers() {
-      return JSON.parse(localStorage.getItem("tc_users") || "[]");
-    }
-    function setCurrentUserId(id) {
-      localStorage.setItem("tc_currentUserId", String(id));
-    }
-
     document.getElementById("loginBtn").onclick = () => {
-      const idVal = document.getElementById("loginIdentifier").value.trim();
-      const pass = document.getElementById("loginPassword").value.trim();
-      const users = getUsers();
-
-      const user = users.find(
-        u => (u.username === idVal || u.email === idVal) && u.password === pass
-      );
-
-      if (!user) {
-        alert("Invalid login. Try again or create an account.");
-        return;
-      }
-
-      setCurrentUserId(user.id);
+      // simple demo login: just go to map
       window.location.href = "map.html";
     };
   </script>
