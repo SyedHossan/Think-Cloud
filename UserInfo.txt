@@ -7,90 +7,90 @@ Test User:
     Status: Incoming
     Home Country: India
 
-Sample Profile One:
-  First: Mary
-  Last:
+Sample Profile One: Manya Prakash
+  First: Manya
+  Last: Prakash
   Tags
-    School:
+    School: The Univeristy of Texas at Dallas (UTD)
     Major: Computer Science
-    Status:
+    Status: Current
     Home Country: India
 
-Sample Profile Two:
-  First:
-  Last:
+Sample Profile Two: Arya Jonnadula
+  First: Arya
+  Last: Jonnadula
   Tags
-    School:
+    School: The University of Texas at Austin (UT)
     Major: Child Development
-    Status:
+    Status: Alumni
     Home Country: India
 
-Sample Profile Three:
-  First:
-  Last:
+Sample Profile Three: Robert Ly 
+  First: Robert
+  Last: Ly
   Tags
-    School:
+    School: The University of North Texas (UNT)
     Major: Computer Science
-    Status:
-    Home Country: Columbia
+    Status: Prospective
+    Home Country: Austrailia
 
 Sample Profile Four:
   First: Sam
-  Last:
+  Last: Foster
   Tags
-    School:
-    Major:
+    School: The Univeristy of Texas (UT)
+    Major: Child Development
     Status: Incoming
     Home Country: Columbia
 
-Sample Profile Five:
-  First: 
-  Last:
+Sample Profile Five: Molly Mcguire
+  First: Molly
+  Last: Mcguire
   Tags
-    School:
+    School: The Univeristy of Texas at Dallas (UTD)
     Major: Child Development
-    Status: Current
-    Home Country:
+    Status: Alumni
+    Home Country: Canada
 
-Sample Profile Six:
-  First: 
-  Last:
+Sample Profile Six: Maria Morales
+  First: Maria
+  Last: Morales
   Tags
-    School:
+    School: The Univeristy of Texas at Dallas (UTD)
     Major: Mechanical Engineering
     Status: Current
-    Home Country:
+    Home Country: Columbia
 
-Sample Profile Seven:
-  First: 
-  Last:
+Sample Profile Seven: Rich Lesky
+  First: Rich
+  Last: Lesky
   Tags
-    School:
-    Major:
+    School: The Univeristy of Texas at Dallas (UTD)
+    Major: Biology
     Status: Current
-    Home Country:
+    Home Country: Canada
 
-Sample Profile Eight:
-  First: 
-  Last:
+Sample Profile Eight: Juan Ortega
+  First: Juan
+  Last: Ortega
   Tags
-    School:
+    School: The Univeristy of Texas at Dallas (UTD)
     Major: Mechanical Engineering
     Status: Prospective
-    Home Country:
+    Home Country: Spain
 
-Sample Profile Nine:
-  First: 
-  Last:
+Sample Profile Nine: Angela 
+  First: Angela
+  Last: Noack
   Tags
-    School:
+    School: The University of North Texas (UNT)
     Major: Child Development
-    Status: Prospective
-    Home Country:
+    Status: Incoming 
+    Home Country: Austrailia
 
-Sample Profile Ten:
-  First: 
-  Last:
+Sample Profile Ten: Aarav Abilash
+  First: Aarav
+  Last: Abilash
   Tags
     School: The University of Texas at Austin (UT)
     Major: Mechanical Engineering
