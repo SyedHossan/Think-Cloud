@@ -21,7 +21,7 @@ Sample Profile Two:
   Last:
   Tags
     School:
-    Major: 
+    Major: Child Development
     Status:
     Home Country: India
 
@@ -32,7 +32,7 @@ Sample Profile Three:
     School:
     Major: Computer Science
     Status:
-    Home Country:
+    Home Country: Columbia
 
 Sample Profile Four:
   First: Sam
@@ -41,7 +41,62 @@ Sample Profile Four:
     School:
     Major:
     Status: Incoming
+    Home Country: Columbia
+
+Sample Profile Five:
+  First: 
+  Last:
+  Tags
+    School:
+    Major: Child Development
+    Status: Current
     Home Country:
+
+Sample Profile Six:
+  First: 
+  Last:
+  Tags
+    School:
+    Major: Mechanical Engineering
+    Status: Current
+    Home Country:
+
+Sample Profile Seven:
+  First: 
+  Last:
+  Tags
+    School:
+    Major:
+    Status: Current
+    Home Country:
+
+Sample Profile Eight:
+  First: 
+  Last:
+  Tags
+    School:
+    Major: Mechanical Engineering
+    Status: Prospective
+    Home Country:
+
+Sample Profile Nine:
+  First: 
+  Last:
+  Tags
+    School:
+    Major: Child Development
+    Status: Prospective
+    Home Country:
+
+Sample Profile Ten:
+  First: 
+  Last:
+  Tags
+    School: The University of Texas at Austin (UT)
+    Major: Mechanical Engineering
+    Status: Alumni
+    Home Country: India
+
 
 Types:
 //For our test case we will limit possibilities of tags.
