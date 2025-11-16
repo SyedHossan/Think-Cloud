@@ -468,6 +468,7 @@ function renderChatList() {
     avatar: thread.avatar || base.avatar,
     bio: thread.bio || base.bio
     };
+  
 
     const card = document.createElement("div");
     card.className = "chat-card";
@@ -512,10 +513,15 @@ activeThreadUserId = userId;
 
 const thread = chatThreads.find(t => t.userId === userId);
 
-conversationAvatar.textContent = thread.avatar || "👤";
-conversationName.textContent = thread.name || "Unknown";
-conversationMeta.textContent = thread.bio || "";
+const user = users[userId] || { 
+  name: "Unknown", 
+  avatar: "👤", 
+  bio: "" 
+};
 
+conversationAvatar.textContent = user.avatar;
+conversationName.textContent = user.name;
+conversationMeta.textContent = user.bio;
   
 
   conversationInput.value = "";
