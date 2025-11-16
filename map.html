@@ -22,8 +22,11 @@
     }
 
     #map {
-      height: 100vh;
+      height: calc(100vh - 76px);
       width: 100%;
+      position: relative;
+      z-index: 1;
+
     }
   </style>
 </head>
@@ -46,10 +49,6 @@
   <button id="closeFilterBtn" class="close-filter-btn">Done</button>
 </div>
 
-
-
-  <!-- Add Cloud (+) Button – opens create.html -->
-  <button class="addCloudButton" onclick="window.location.href='create.html'">+</button>
 
   <!-- Comments popup overlay -->
   <div id="overlay" class="overlay-backdrop">
@@ -114,8 +113,10 @@
 
 </div>
 
+
   <!-- Add Pin Button (floating + button) -->
-<button id="addPinBtn" class="add-pin-btn">+</button>
+<button id="addPinBtn" class="add-pin-btn">Drop a Thought</button>
+
 
   <!-- Bottom nav bar -->
   <nav class="bottom-nav">
@@ -145,8 +146,38 @@
     </a>
   </nav>
 
+  <!-- UNIVERSAL MESSAGE MODAL (SMALL MAP VERSION) -->
+<div id="globalMessageModal" class="mini-chat-modal">
+
+  <!-- Header -->
+  <div class="mini-chat-header">
+    <div id="msgAvatar" class="mini-chat-avatar">💬</div>
+
+    <div class="mini-chat-header-text">
+      <div id="msgRecipient" class="mini-chat-name">User</div>
+      <div id="msgMeta" class="mini-chat-meta">Last active recently</div>
+    </div>
+
+    <button id="msgCloseBtn" class="mini-chat-close">✕</button>
+  </div>
+
+  <!-- Scrollable Thread -->
+  <div id="msgThread" class="mini-chat-thread"></div>
+
+  <!-- Input -->
+  <div class="mini-chat-input-row">
+    <input id="msgInput" class="mini-chat-input" placeholder="Send a message…" />
+    <button id="msgSendBtn" class="mini-chat-send-btn" disabled>Send</button>
+  </div>
+
+</div>
+
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Global messag -->
+  <script src="globalMessage.js"></script>
 
   <!-- Map logic -->
   <script src="map.js"></script>

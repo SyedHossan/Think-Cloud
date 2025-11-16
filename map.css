@@ -215,7 +215,7 @@ html, body {
   max-width: 280px;
   font-size: 0.8rem;
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
-  z-index: 1001;            /* ABOVE overlay (1000) & map */
+  z-index: 1001;            
 }
 
   
@@ -297,21 +297,26 @@ html, body {
   }
 
   /* ============================================
-   Beautiful Floating + Button (Centered)
+  Floating + Button (Centered)
 ============================================ */
 .add-pin-btn {
   position: fixed;
-  bottom: 90px;               /* above bottom nav */
-  left: 50%;                  /* center horizontally */
+  bottom: 90px;
+  left: 50%;
   transform: translateX(-50%);
-  width: 62px;
-  height: 62px;
-  border-radius: 50%;
+
+  padding: 14px 28px;
+  width: auto;
+  height: auto;
+
   background: #5d8dfd;
   color: white;
   border: none;
-  font-size: 32px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
+
   box-shadow: 0 4px 14px rgba(0,0,0,0.25);
   z-index: 9999;
   display: flex;
@@ -320,45 +325,55 @@ html, body {
   transition: 0.25s ease;
 }
 
+
 .add-pin-btn:hover {
   background: #4a7cf0;
   transform: translateX(-50%) scale(1.05);
 }
+
 
 .add-pin-btn.active {
   background: #3a6ae8;
 }
 
 
+
 /* ============================================
    Slide-up Thought Cloud Panel
 ============================================ */
+/* ============================================
+   FIXED & CLEAN ADD THOUGHT PANEL
+============================================ */
+
 .add-pin-panel {
   position: fixed;
-  bottom: -360px;
   left: 0;
   right: 0;
+  bottom: -100%;    
   background: #ffffff;
   padding: 20px;
   border-radius: 20px 20px 0 0;
   box-shadow: 0 -6px 30px rgba(0,0,0,0.15);
   transition: bottom 0.35s ease;
   z-index: 9998;
-  font-family: system-ui, -apple-system, "Segoe UI";
+  display: flex;
+  flex-direction: column;
+         
+  max-height: calc(100vh - 120px);
 }
 
 .add-pin-panel.show {
-  bottom: 0;
+  bottom: 70px;   
 }
 
-/* Title */
+
+/* Title and description */
 .add-pin-title {
   font-size: 20px;
   font-weight: 600;
   margin-bottom: 8px;
 }
 
-/* Instruction text */
 .add-pin-hint {
   font-size: 13px;
   color: #666;
@@ -371,25 +386,30 @@ html, body {
   margin: 6px 0 12px;
 }
 
-/* Textarea */
+
+/* Textarea (clean, single definition) */
 #addPinText {
+  flex: 1;
   width: 100%;
-  height: 90px;
   padding: 12px;
   border-radius: 12px;
   border: 1px solid #ddd;
   background: #fafafa;
   font-size: 15px;
   resize: none;
-  margin-bottom: 12px;
+  overflow-y: auto;
 }
+
 
 /* Button row */
 .add-pin-buttons {
   display: flex;
   justify-content: space-between;
   gap: 14px;
+  flex-shrink: 0;
+  margin-top: 12px;
 }
+
 
 /* Cancel button */
 .cancel-btn {
@@ -401,6 +421,7 @@ html, body {
   font-size: 16px;
   cursor: pointer;
 }
+
 
 /* Post button */
 .save-btn,
@@ -494,3 +515,53 @@ html, body {
   background: #1742b5;
 }
 
+/* -----------------------------
+   FIXED BOTTOM NAV BAR 
+----------------------------- */
+
+.bottom-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 70px;
+  background: #ffffff;
+  border-top: 1px solid rgba(148,163,184,0.5);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -10px 25px rgba(15,23,42,0.16);
+  z-index: 9999;
+}
+
+.bottom-nav a {
+  flex: 1;
+  text-align: center;
+  text-decoration: none;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 500;
+  padding-top: 4px;
+  position: relative;
+}
+
+.bottom-nav a .icon {
+  display: block;
+  font-size: 20px;
+  margin-bottom: 2px;
+}
+
+/* Active item */
+.bottom-nav a.active {
+  color: #4f46e5;
+}
+
+.bottom-nav a.active::after {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 3px;
+  border-radius: 999px;
+  background: #4f46e5;
+  margin: 4px auto 0;
+}

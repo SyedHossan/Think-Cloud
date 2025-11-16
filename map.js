@@ -90,7 +90,8 @@ function loadChatThreads() {
   }
 }
 
-let chatThreads = loadChatThreads();
+
+
 
 function persistChatThreads() {
   try {
@@ -515,13 +516,18 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 function getStatusColor(userId) {
+
+  if (userId === "you") {
+    return "#406fddff";  
+  }
+
   const status = (users[userId] && users[userId].status) || "current";
 
   const darkColors = {
-    current: "#3b8fe3ff",      // Strong Blue
-  incoming: "#f9f65eff",     // Vivid Yellow
-  alumni: "#18c373ff",       // Sharp Golden Orange
-  prospective: "#ee7811ff", 
+  current: "#5acd2dff",      // Strong Blue
+  incoming: "#b861dbff",     // Vivid Yellow
+  alumni: "#db571eff",       // Sharp Golden Orange
+  prospective: "#f0de39ff", 
   };
 
   return darkColors[status] || "#374151"; // dark gray fallback
@@ -650,7 +656,7 @@ if (
   addPinMode = true;
   addPinBtn.classList.add("active");
   addPinPanel.classList.add("show");
-  addPinHintEl.textContent = "Tap anywhere on the map to drop your pin.";
+  addPinHintEl.textContent = "Select location: Tap anywhere on the map to drop your thought.";
   resetAddPinForm();
   map.getContainer().classList.add("add-pin-cursor");
   addPinTextInput.focus();
@@ -904,14 +910,41 @@ const profileBio = document.getElementById("profileBio");
 const profileYear = document.getElementById("profileYear"); 
 const profileConnectBtn = document.getElementById("profileConnectBtn");
 const profileMessageBtn = document.getElementById("profileMessageBtn");
-const messageCard = document.getElementById("messageCard");
-const messageAvatar = document.getElementById("messageAvatar");
-const messageRecipient = document.getElementById("messageRecipient");
-const messageMeta = document.getElementById("messageMeta");
-const messageInput = document.getElementById("messageInput");
-const sendMessageBtn = document.getElementById("sendMessageBtn");
-const closeMessageBtn = document.getElementById("closeMessageBtn");
-const messageStatusEl = document.getElementById("messageStatus");
+
+// -----------------------------
+// Profile open / close
+// -----------------------------
+function showProfile(userId) {
+  activeProfileUserId = userId;
+  const u = users[userId];
+  if (!u) return;
+
+  // Fill in content
+  profileAvatar.textContent = u.avatar;
+  profileName.textContent = u.name;
+  profileBio.textContent = u.bio;
+  profileYear.textContent = u.year;
+
+  // Connect button state
+  if (connectedUsers.has(userId)) {
+    profileConnectBtn.textContent = "Connected";
+    profileConnectBtn.disabled = true;
+  } else {
+    profileConnectBtn.textContent = "Connect";
+    profileConnectBtn.disabled = false;
+  }
+
+  // Show card
+  profileCard.classList.add("show");
+
+  // Optional: close comments if open
+  overlay.classList.remove("show");
+}
+
+function hideProfile() {
+  profileCard.classList.remove("show");
+}
+
 
 
 function openCommentsOverlay(pinId) {
@@ -1090,122 +1123,19 @@ function updateOverlayCounts() {
   updateMarkerPopup(activePinId);
 }
 
-
-
-/* -----------------------------
-   Message composer
------------------------------ */
-
+// When clicking "Message" inside profile card
 if (profileMessageBtn) {
-  profileMessageBtn.addEventListener("click", () => {
-    if (activeProfileUserId) {
-      openMessageComposer(activeProfileUserId);
-    }
-  });
+  profileMessageBtn.onclick = () => {
+    openMiniMessage(activeProfileUserId);   // use the small modal on map
+  };
 }
 
-if (closeMessageBtn) {
-  closeMessageBtn.addEventListener("click", closeMessageComposer);
-}
+// Making functions available to inline HTML + Leaflet popups
+window.showProfile = showProfile;
+window.hideProfile = hideProfile;
+window.openCommentsOverlay = openCommentsOverlay;
+window.closeCommentsOverlay = closeCommentsOverlay;
 
-if (messageInput) {
-  messageInput.addEventListener("input", () => {
-    if (sendMessageBtn) {
-      sendMessageBtn.disabled = messageInput.value.trim().length === 0;
-    }
-  });
-}
 
-if (sendMessageBtn) {
-  sendMessageBtn.addEventListener("click", () => {
-    if (!activeMessageUserId || !messageInput) return;
-    const text = messageInput.value.trim();
-    if (!text) return;
-    const threadUser = users[activeMessageUserId] || {
-      name: "New Comet",
-      avatar: "💬"
-    };
-    upsertChatThread({
-      userId: activeMessageUserId,
-      name: threadUser.name,
-      avatar: threadUser.avatar,
-      message: text
-    });
-    if (messageStatusEl) {
-      messageStatusEl.textContent = "Message sent!";
-    }
-    sendMessageBtn.disabled = true;
-    messageInput.value = "";
-    setTimeout(() => {
-      if (messageStatusEl) messageStatusEl.textContent = "";
-      closeMessageComposer();
-    }, 1200);
-  });
-}
 
-function openMessageComposer(userId) {
-  if (!messageCard) return;
-  const user = users[userId] || users["you"];
-  activeMessageUserId = userId;
-  if (messageAvatar) messageAvatar.textContent = user.avatar || user.name[0];
-  if (messageRecipient) messageRecipient.textContent = user.name;
-  if (messageMeta) messageMeta.textContent = user.bio;
-  if (messageStatusEl) messageStatusEl.textContent = "";
-  if (messageInput) {
-    messageInput.value = "";
-    messageInput.focus();
-  }
-  if (sendMessageBtn) sendMessageBtn.disabled = true;
-  messageCard.classList.add("show");
-}
-
-function closeMessageComposer() {
-  if (messageCard) messageCard.classList.remove("show");
-  activeMessageUserId = null;
-}
-
-if (profileConnectBtn) {
-  profileConnectBtn.addEventListener("click", () => {
-    if (!activeProfileUserId || connectedUsers.has(activeProfileUserId)) return;
-    connectedUsers.add(activeProfileUserId);
-    persistConnections();
-    updateProfileActionStates(activeProfileUserId);
-    if (profileMessageBtn) profileMessageBtn.focus();
-  });
-}
-
-function updateProfileActionStates(userId) {
-  if (!userId) return;
-  const connected = connectedUsers.has(userId);
-  if (profileConnectBtn) {
-    profileConnectBtn.textContent = connected ? "Connected ✓" : "Connect";
-    profileConnectBtn.classList.toggle("connected", connected);
-    profileConnectBtn.disabled = connected;
-  }
-  if (profileMessageBtn) {
-    profileMessageBtn.classList.toggle("highlight", connected);
-  }
-}
-
-/* -----------------------------
-   Profile mini-card
------------------------------ */
-
-function showProfile(userId) {
-  if (!profileCard) return;
-  const user = users[userId] || users["you"];
-  activeProfileUserId = userId;
-  if (profileAvatar) profileAvatar.textContent = user.avatar || user.name[0];
-  if (profileName) profileName.textContent = user.name;
-  if (profileBio) profileBio.textContent = user.bio;
-  if (profileYear) profileYear.textContent = user.year || "";
-
-  updateProfileActionStates(userId);
-  profileCard.classList.add("show");
-}
-
-function hideProfile() {
-  if (profileCard) profileCard.classList.remove("show");
-  activeProfileUserId = null;
-}
 

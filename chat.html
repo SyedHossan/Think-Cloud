@@ -4,25 +4,26 @@
   <meta charset="utf-8" />
   <title>Think Cloud – Chat</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="styles.css" />
+   <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       margin: 0;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       background: #f3f4ff;
-      padding: 24px 16px 76px;
+      padding: 0 0 76px; /* Only bottom padding */
     }
 
+    /* Give the content spacing instead of body */
     .chat-shell {
       max-width: 600px;
       margin: 0 auto;
+      padding: 24px 16px; /* moved here */
     }
 
     h1 {
       margin: 0 0 8px;
       font-size: 24px;
     }
-
     .subtitle {
       margin: 0 0 18px;
       font-size: 14px;
@@ -245,6 +246,32 @@
     <div id="chatEmpty" class="empty">No conversations yet.</div>
   </div>
 
+
+  <!-- CHAT PROFILE CARD (Needed for Message button) -->
+<div id="profileCard" class="profile-card" style="display:none">
+
+  <div id="profileAvatar" class="profile-avatar">💬</div>
+
+  <div class="profile-main">
+    <div id="profileName" class="profile-name">Name</div>
+    <div id="profileBio" class="profile-bio">Bio...</div>
+    <div id="profileYear" class="profile-year"></div>
+
+    <div class="profile-actions">
+      <button id="profileConnectBtn" class="connect-btn">Connect</button>
+      <button id="profileMessageBtn" class="message-btn"
+        onclick="openMessageFromProfile(profileUserId)">
+  Message
+</button>
+
+    </div>
+  </div>
+
+  <button class="profile-close" onclick="hideProfile()">Close</button>
+</div>
+
+
+  <!-- Bottom nav bar -->
   <nav class="bottom-nav">
     <a href="explore.html">
       <span class="icon">🧭</span>
@@ -256,12 +283,12 @@
       Notifications
     </a>
 
-    <a href="map.html" class="center-icon">
+    <a href="map.html" class="center-icon active">
       <span class="icon">🗺️</span>
       Map
     </a>
 
-    <a href="chat.html" class="active">
+    <a href="chat.html">
       <span class="icon">💬</span>
       Chat
     </a>
@@ -296,6 +323,7 @@
     const CHAT_THREADS_KEY = "tc_conversations";
     const CURRENT_USER_ID = "you";
     const chatListEl = document.getElementById("chatList");
+    let activeProfileUserId = null;
     const chatEmptyEl = document.getElementById("chatEmpty");
     const drawer = document.getElementById("conversationDrawer");
     const conversationAvatar = document.getElementById("conversationAvatar");
@@ -359,6 +387,11 @@
         avatar.className = "chat-avatar";
         avatar.textContent =
           thread.avatar || (thread.name ? thread.name.charAt(0) : "💬");
+          avatar.addEventListener("click", (e) => {
+              e.stopPropagation(); 
+              openChatProfile(thread.userId);
+          });
+
 
         const main = document.createElement("div");
         main.className = "chat-main";
@@ -478,7 +511,39 @@
       }
     });
 
+    
+
     renderChatList();
   </script>
+
+<script>
+function openChatProfile(userId) {
+    const user = users[userId];
+    if (!user) return;
+
+    activeProfileUserId = userId;
+
+    document.getElementById("profileAvatar").textContent = user.avatar;
+    document.getElementById("profileName").textContent = user.name;
+    document.getElementById("profileBio").textContent = user.bio || "";
+    document.getElementById("profileYear").textContent = user.year || "";
+
+    document.getElementById("profileCard").style.display = "block";
+}
+
+function hideProfile() {
+    document.getElementById("profileCard").style.display = "none";
+}
+</script>
+
+<script>
+  function openMessageFromProfile(userId) {
+    openConversation(userId);
+  }
+
+
+</script>
+
+
 </body>
 </html>
