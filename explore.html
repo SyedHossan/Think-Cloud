@@ -5,7 +5,7 @@
   <title>Explore users</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css" />
 
   <style>
     :root {
@@ -24,8 +24,7 @@
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
-                   "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text","Segoe UI", sans-serif;
       background: radial-gradient(circle at top left, #eef2ff 0, #f9fafb 40%, #eef2ff 100%);
       color: var(--text-main);
       padding-bottom: 76px;
@@ -237,7 +236,6 @@
     .user-name {
       font-weight: 700;
       font-size: 16px;
-      letter-spacing: -0.01em;
     }
 
     .user-row {
@@ -258,7 +256,6 @@
       letter-spacing: 0.04em;
     }
 
-    /* Friend request button */
     .user-actions {
       margin-top: 8px;
       display: flex;
@@ -314,113 +311,170 @@
       cursor: default;
     }
 
-.message-card {
-  position: fixed;
-  top: 120px;
-  right: 30px;
-  width: 320px;
-  border-radius: 16px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
-  padding: 16px;
-  display: none;
-  z-index: 900;
-}
+    /* MESSAGE CARD POPUP */
 
-.message-card.show {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
+    .message-card {
+      position: fixed;
+      top: 120px;
+      right: 30px;
+      width: 320px;
+      border-radius: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
+      padding: 16px;
+      display: none;
+      z-index: 900;
+    }
 
-.message-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10px;
-}
+    .message-card.show {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
-.message-target {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
+    .message-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
 
-.message-avatar {
-  width: 38px;
-  height: 38px;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-}
+    .message-target {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
 
-.message-recipient {
-  font-weight: 600;
-  font-size: 15px;
-}
+    .message-avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
 
-.message-meta {
-  font-size: 13px;
-  color: var(--text-muted);
-}
+    .message-recipient {
+      font-weight: 600;
+      font-size: 15px;
+    }
 
-.message-close {
-  border: none;
-  background: transparent;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--text-muted);
-}
+    .message-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
 
-.message-input {
-  border-radius: 12px;
-  border: 1px solid #cbd5f5;
-  padding: 10px;
-  font-size: 14px;
-  font-family: inherit;
-  resize: none;
-  min-height: 110px;
-}
+    .message-close {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
 
-.message-input:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
-}
+    .message-input {
+      border-radius: 12px;
+      border: 1px solid #cbd5f5;
+      padding: 10px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      min-height: 110px;
+    }
 
-.message-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
+    .message-input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+    }
 
-.message-status {
-  font-size: 13px;
-  color: #059669;
-  min-height: 18px;
-}
+    .message-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
 
-.message-send-btn {
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-weight: 600;
-  cursor: pointer;
-  font-size: 14px;
-}
+    .message-status {
+      font-size: 13px;
+      color: #059669;
+      min-height: 18px;
+    }
 
-.message-send-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+    .message-send-btn {
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .message-send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Disconnect confirmation popup */
+
+    .confirm-popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20000;
+    }
+
+    .confirm-popup.hidden {
+      display: none;
+    }
+
+    .confirm-box {
+      background: white;
+      padding: 18px 22px;
+      border-radius: 16px;
+      width: 280px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    .confirm-text {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 16px;
+      font-weight: 500;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .cancel-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+
+    .confirm-btn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: none;
+      background: #dc2626;
+      color: white;
+      cursor: pointer;
+    }
 
     @media (max-width: 880px) {
       .layout {
@@ -434,6 +488,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="page-shell">
     <div class="page-header">
@@ -450,7 +505,8 @@
     </div>
 
     <div class="layout">
-      <!-- LEFT: FILTERS -->
+
+      <!-- FILTER PANEL -->
       <aside class="filter-panel">
         <div class="filter-header">
           <div class="filter-title">Filters</div>
@@ -460,85 +516,43 @@
         <div class="filter-group">
           <span class="filter-label">School</span>
           <div class="filter-options" data-filter-group="school">
-            <label class="filter-option">
-              <input type="checkbox" value="UTD">
-              <span>UT Dallas</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="UT Austin">
-              <span>UT Austin</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="UNT">
-              <span>UNT</span>
-            </label>
+            <label class="filter-option"><input type="checkbox" value="UTD"><span>UT Dallas</span></label>
+            <label class="filter-option"><input type="checkbox" value="UT Austin"><span>UT Austin</span></label>
+            <label class="filter-option"><input type="checkbox" value="UNT"><span>UNT</span></label>
           </div>
         </div>
 
         <div class="filter-group">
           <span class="filter-label">Major</span>
           <div class="filter-options" data-filter-group="major">
-            <label class="filter-option">
-              <input type="checkbox" value="Computer Science">
-              <span>Computer Science</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Biology">
-              <span>Biology</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Mechanical Engineering">
-              <span>Mechanical Engineering</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Child Development">
-              <span>Child Development</span>
-            </label>
+            <label class="filter-option"><input type="checkbox" value="Computer Science"><span>Computer Science</span></label>
+            <label class="filter-option"><input type="checkbox" value="Biology"><span>Biology</span></label>
+            <label class="filter-option"><input type="checkbox" value="Mechanical Engineering"><span>Mechanical Engineering</span></label>
+            <label class="filter-option"><input type="checkbox" value="Child Development"><span>Child Development</span></label>
           </div>
         </div>
 
         <div class="filter-group">
           <span class="filter-label">Status</span>
           <div class="filter-options" data-filter-group="status">
-            <label class="filter-option">
-              <input type="checkbox" value="Current">
-              <span>Current student</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Incoming">
-              <span>Incoming</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Alumni">
-              <span>Alumni</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Prospective">
-              <span>Prospective</span>
-            </label>
+            <label class="filter-option"><input type="checkbox" value="Current"><span>Current student</span></label>
+            <label class="filter-option"><input type="checkbox" value="Incoming"><span>Incoming</span></label>
+            <label class="filter-option"><input type="checkbox" value="Alumni"><span>Alumni</span></label>
+            <label class="filter-option"><input type="checkbox" value="Prospective"><span>Prospective</span></label>
           </div>
         </div>
 
         <div class="filter-group">
           <span class="filter-label">Home country</span>
           <div class="filter-options" data-filter-group="country">
-            <label class="filter-option">
-              <input type="checkbox" value="USA">
-              <span>USA</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="Canada">
-              <span>Canada</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" value="India">
-              <span>India</span>
-            </label>
+            <label class="filter-option"><input type="checkbox" value="USA"><span>USA</span></label>
+            <label class="filter-option"><input type="checkbox" value="Canada"><span>Canada</span></label>
+            <label class="filter-option"><input type="checkbox" value="India"><span>India</span></label>
           </div>
         </div>
       </aside>
 
-      <!-- RIGHT: RESULTS -->
+      <!-- USER RESULTS -->
       <main class="results-shell">
         <div class="results-toolbar">
           <div class="search-input-wrap">
@@ -551,161 +565,136 @@
           </div>
         </div>
 
+        <!-- USERS GRID -->
         <section class="user-grid" id="userGrid">
-          <!-- Users -->
+
+          <!-- USER 1 -->
           <article class="user-card"
-  data-user-id="manya-prakash"
-  data-name="Manya Prakash"
-  data-school="UTD"
-  data-major="Computer Science"
-  data-status="Current"
-  data-country="USA"
-  data-avatar="MP"
-  data-bio="CS junior organizing hackathon coffee chats.">
+            data-user-id="manya-prakash"
+            data-name="Manya Prakash"
+            data-school="UTD"
+            data-major="Computer Science"
+            data-status="Current"
+            data-country="USA"
+            data-avatar="MP"
+            data-bio="CS junior organizing hackathon coffee chats.">
 
-  <div class="user-name">Manya Prakash</div>
+            <div class="user-name">Manya Prakash</div>
+            <div class="user-row"><span class="tag">UTD</span></div>
+            <div class="user-row"><span>Computer Science</span></div>
+            <div class="user-row"><span>Current student · USA</span></div>
 
-  <div class="user-row">
-    <span class="tag">UTD</span>
-  </div>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="manya-prakash">Send message</button>
+              <button class="connect-btn" data-user-id="manya-prakash">Connect</button>
+            </div>
+          </article>
 
-  <div class="user-row">
-    <span>Computer Science</span>
-  </div>
-
-  <div class="user-row">
-    <span>Current student · USA</span>
-  </div>
-
-  <div class="user-actions">
-    <button class="message-btn" data-user-id="manya-prakash">Send message</button>
-    <button class="connect-btn" data-user-id="manya-prakash">Connect</button>
-  </div>
-
-</article>
-
-
+          <!-- USER 2 -->
           <article class="user-card"
-  data-user-id="arya-jonnadula"
-  data-name="Arya Jonnadula"
-  data-school="UT Austin"
-  data-major="Biology"
-  data-status="Incoming"
-  data-country="USA"
-  data-avatar="AJ"
-  data-bio="Incoming biology major searching for study buddies.">
+            data-user-id="arya-jonnadula"
+            data-name="Arya Jonnadula"
+            data-school="UT Austin"
+            data-major="Biology"
+            data-status="Incoming"
+            data-country="USA"
+            data-avatar="AJ"
+            data-bio="Incoming biology major searching for study buddies.">
 
-  <div class="user-name">Arya Jonnadula</div>
+            <div class="user-name">Arya Jonnadula</div>
+            <div class="user-row"><span class="tag">UT AUSTIN</span></div>
+            <div class="user-row"><span>Biology</span></div>
+            <div class="user-row"><span>Incoming student · USA</span></div>
 
-  <div class="user-row">
-    <span class="tag">UT AUSTIN</span>
-  </div>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="arya-jonnadula">Send message</button>
+              <button class="connect-btn" data-user-id="arya-jonnadula">Connect</button>
+            </div>
+          </article>
 
-  <div class="user-row">
-    <span>Biology</span>
-  </div>
-
-  <div class="user-row">
-    <span>Incoming student · USA</span>
-  </div>
-
-  <div class="user-actions">
-    <button class="message-btn" data-user-id="arya-jonnadula">Send message</button>
-    <button class="connect-btn" data-user-id="arya-jonnadula">Connect</button>
-  </div>
-
-</article>
-
-
+          <!-- USER 3 -->
           <article class="user-card"
-  data-user-id="robert-ly"
-  data-name="Robert Ly"
-  data-school="UNT"
-  data-major="Mechanical Engineering"
-  data-status="Current"
-  data-country="USA"
-  data-avatar="RL"
-  data-bio="Mechanical engineer prototyping DIY electric boards.">
+            data-user-id="robert-ly"
+            data-name="Robert Ly"
+            data-school="UNT"
+            data-major="Mechanical Engineering"
+            data-status="Current"
+            data-country="USA"
+            data-avatar="RL"
+            data-bio="Mechanical engineer prototyping DIY electric boards.">
 
-  <div class="user-name">Robert Ly</div>
+            <div class="user-name">Robert Ly</div>
+            <div class="user-row"><span class="tag">UNT</span></div>
+            <div class="user-row"><span>Mechanical Engineering</span></div>
+            <div class="user-row"><span>Current student · USA</span></div>
 
-  <div class="user-row">
-    <span class="tag">UNT</span>
-  </div>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="robert-ly">Send message</button>
+              <button class="connect-btn" data-user-id="robert-ly">Connect</button>
+            </div>
+          </article>
 
-  <div class="user-row">
-    <span>Mechanical Engineering</span>
-  </div>
-
-  <div class="user-row">
-    <span>Current student · USA</span>
-  </div>
-
-  <div class="user-actions">
-    <button class="message-btn" data-user-id="robert-ly">Send message</button>
-    <button class="connect-btn" data-user-id="robert-ly">Connect</button>
-  </div>
-
-</article>
-
+          <!-- USER 4 -->
           <article class="user-card"
-  data-user-id="sam-foster"
-  data-name="Sam Foster"
-  data-school="UTD"
-  data-major="Child Development"
-  data-status="Alumni"
-  data-country="USA"
-  data-avatar="SF"
-  data-bio="Child development alum mentoring new Comets.">
+            data-user-id="sam-foster"
+            data-name="Sam Foster"
+            data-school="UTD"
+            data-major="Child Development"
+            data-status="Alumni"
+            data-country="USA"
+            data-avatar="SF"
+            data-bio="Child development alum mentoring new Comets.">
 
-  <div class="user-name">Sam Foster</div>
+            <div class="user-name">Sam Foster</div>
+            <div class="user-row"><span class="tag">UTD</span></div>
+            <div class="user-row"><span>Child Development</span></div>
+            <div class="user-row"><span>Alumni · USA</span></div>
 
-  <div class="user-row">
-    <span class="tag">UTD</span>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="sam-foster">Send message</button>
+              <button class="connect-btn" data-user-id="sam-foster">Connect</button>
+            </div>
+          </article>
+
+        </section>
+
+      </main>
+    </div>
   </div>
 
-  <div class="user-row">
-    <span>Child Development</span>
-  </div>
-
-  <div class="user-row">
-    <span>Alumni · USA</span>
-  </div>
-
-  <div class="user-actions">
-    <button class="message-btn" data-user-id="sam-foster">Send message</button>
-    <button class="connect-btn" data-user-id="sam-foster">Connect</button>
-  </div>
-
-</article>
-
-  <!-- Message composer -->
+  <!-- MESSAGE POPUP -->
   <div id="messageCard" class="message-card">
     <div class="message-card-header">
       <div class="message-target">
-        <div id="messageAvatar" class="message-avatar">MP</div>
+        <div id="messageAvatar" class="message-avatar">A</div>
         <div>
           <div id="messageRecipient" class="message-recipient">User</div>
-          <div id="messageMeta" class="message-meta">Major - School</div>
+          <div id="messageMeta" class="message-meta">Major · School</div>
         </div>
       </div>
-      <button id="closeMessageBtn" class="message-close" type="button">&times;</button>
+      <button id="closeMessageBtn" class="message-close">&times;</button>
     </div>
-    <textarea
-      id="messageInput"
-      class="message-input"
-      rows="4"
-      placeholder="Type your message..."
-    ></textarea>
+
+    <textarea id="messageInput" class="message-input" placeholder="Type your message…"></textarea>
+
     <div class="message-card-footer">
       <div id="messageStatus" class="message-status"></div>
-      <button id="sendMessageBtn" class="message-send-btn" type="button" disabled>
-        Send message
-      </button>
+      <button id="sendMessageBtn" class="message-send-btn" disabled>Send message</button>
     </div>
   </div>
 
-  <!-- Bottom nav bar -->
+  <!-- DISCONNECT CONFIRMATION POPUP -->
+  <div id="disconnectConfirm" class="confirm-popup hidden">
+    <div class="confirm-box">
+      <p class="confirm-text">Are you sure you want to disconnect?</p>
+      <div class="confirm-buttons">
+        <button id="cancelDisconnect" class="cancel-btn">Cancel</button>
+        <button id="confirmDisconnect" class="confirm-btn">Disconnect</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
     <a href="explore.html">
       <span class="icon">🧭</span>
@@ -734,6 +723,7 @@
   </nav>
 
 
+  <!-- JS SCRIPT -->
   <script>
     const userCards = Array.from(document.querySelectorAll(".user-card"));
     const filterGroups = document.querySelectorAll(".filter-options");
@@ -741,6 +731,7 @@
     const resultsCount = document.getElementById("resultsCount");
     const activeFilterPill = document.getElementById("activeFilterPill");
     const clearBtn = document.getElementById("clearFiltersBtn");
+
     const messageCard = document.getElementById("messageCard");
     const messageAvatar = document.getElementById("messageAvatar");
     const messageRecipient = document.getElementById("messageRecipient");
@@ -749,57 +740,50 @@
     const sendMessageBtn = document.getElementById("sendMessageBtn");
     const closeMessageBtn = document.getElementById("closeMessageBtn");
     const messageStatusEl = document.getElementById("messageStatus");
-    const CURRENT_USER_ID = "you";
-    let activeMessageTarget = null;
-    let activeMessageData = null;
+
     const CONNECTION_KEY = "tc_connections";
     const CHAT_THREADS_KEY = "tc_conversations";
+    const CURRENT_USER_ID = "you";
+
+    let activeMessageTarget = null;
+    let activeMessageData = null;
+
+    /* CONNECTION STORAGE */
 
     function loadConnections() {
       try {
         const raw = localStorage.getItem(CONNECTION_KEY);
-        if (!raw) return new Set();
-        return new Set(JSON.parse(raw));
+        return raw ? new Set(JSON.parse(raw)) : new Set();
       } catch {
         return new Set();
       }
     }
+    const connections = loadConnections();
 
     function saveConnections(set) {
-      try {
-        localStorage.setItem(CONNECTION_KEY, JSON.stringify(Array.from(set)));
-      } catch {
-        // ignore storage errors
-      }
+      localStorage.setItem(CONNECTION_KEY, JSON.stringify(Array.from(set)));
     }
 
-    const connections = loadConnections();
+    /* CHAT STORAGE */
 
     function loadChatThreads() {
       try {
         const raw = localStorage.getItem(CHAT_THREADS_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
+        return raw ? JSON.parse(raw) : [];
       } catch {
         return [];
       }
     }
-
     let chatThreads = loadChatThreads();
 
     function persistChatThreads() {
-      try {
-        localStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(chatThreads));
-      } catch {
-        // ignore storage errors
-      }
+      localStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(chatThreads));
     }
 
     function upsertChatThread(record) {
-      if (!record || !record.userId || !record.message) return;
       const now = Date.now();
       let thread = chatThreads.find(t => t.userId === record.userId);
+
       if (!thread) {
         thread = {
           userId: record.userId,
@@ -810,49 +794,53 @@
           messages: []
         };
         chatThreads.push(thread);
-      } else {
-        if (!thread.name && record.name) thread.name = record.name;
-        if (!thread.avatar && record.avatar) thread.avatar = record.avatar;
-        thread.messages = thread.messages || [];
       }
+
       thread.messages.push({
         id: `m${now}`,
         text: record.message,
         senderId: CURRENT_USER_ID,
         ts: now
       });
-      thread.lastMessage = record.message.slice(0, 160);
+
+      thread.lastMessage = record.message;
       thread.updatedAt = now;
+
       chatThreads.sort((a, b) => b.updatedAt - a.updatedAt);
       persistChatThreads();
     }
 
+    /* FILTERING */
+
     function getActiveFilters() {
       const filters = { school: [], major: [], status: [], country: [] };
+
       filterGroups.forEach(group => {
         const groupName = group.dataset.filterGroup;
         group.querySelectorAll("input:checked").forEach(cb => {
           filters[groupName].push(cb.value);
         });
       });
+
       return filters;
     }
 
     function cardMatchesFilters(card, filters, searchTerm) {
-      const text = (card.dataset.name + " " +
-                    card.dataset.school + " " +
-                    card.dataset.major + " " +
-                    card.dataset.status + " " +
-                    card.dataset.country).toLowerCase();
+      const text = (
+        card.dataset.name + " " +
+        card.dataset.school + " " +
+        card.dataset.major + " " +
+        card.dataset.status + " " +
+        card.dataset.country
+      ).toLowerCase();
+
       if (searchTerm && !text.includes(searchTerm)) return false;
 
-      const groups = Object.keys(filters);
-      for (const group of groups) {
-        const selected = filters[group];
-        if (selected.length === 0) continue;
-        const value = card.dataset[group];
-        if (!selected.includes(value)) return false;
+      for (const group of Object.keys(filters)) {
+        if (filters[group].length && !filters[group].includes(card.dataset[group]))
+          return false;
       }
+
       return true;
     }
 
@@ -860,110 +848,170 @@
       const filters = getActiveFilters();
       const searchTerm = searchInput.value.trim().toLowerCase();
 
-      let visibleCount = 0;
+      let visible = 0;
+
       userCards.forEach(card => {
-        const show = cardMatchesFilters(card, filters, searchTerm);
-        card.style.display = show ? "" : "none";
-        if (show) visibleCount++;
+        const matches = cardMatchesFilters(card, filters, searchTerm);
+        card.style.display = matches ? "" : "none";
+        if (matches) visible++;
       });
 
-      resultsCount.textContent =
-        visibleCount === 1 ? "1 user" : `${visibleCount} users`;
+      resultsCount.textContent = visible === 1 ? "1 user" : `${visible} users`;
 
-      const activeFilterNames = [];
+      const activeParts = [];
+
       for (const [group, values] of Object.entries(filters)) {
-        if (values.length) activeFilterNames.push(`${values.length} ${group}`);
+        if (values.length) activeParts.push(`${values.length} ${group}`);
       }
-      if (searchTerm) activeFilterNames.push("search");
-      activeFilterPill.textContent = activeFilterNames.length
-        ? `Filters: ${activeFilterNames.join(", ")}`
-        : "All users";
+
+      if (searchTerm) activeParts.push("search");
+
+      activeFilterPill.textContent =
+        activeParts.length ? `Filters: ${activeParts.join(", ")}` : "All users";
     }
 
-    filterGroups.forEach(group => {
-      group.addEventListener("change", updateResults);
-    });
-
+    filterGroups.forEach(g => g.addEventListener("change", updateResults));
     searchInput.addEventListener("input", updateResults);
-
     clearBtn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".filter-options input:checked")
-        .forEach(cb => (cb.checked = false));
+      document.querySelectorAll(".filter-options input:checked").forEach(cb => {
+        cb.checked = false;
+      });
       searchInput.value = "";
       updateResults();
     });
 
+    /* MESSAGE COMPOSER */
+
     function openMessageComposer(card) {
-      if (!messageCard) return;
       activeMessageTarget = card.dataset.userId;
       activeMessageData = {
         userId: card.dataset.userId,
         name: card.dataset.name,
-        avatar: card.dataset.avatar || card.dataset.name.charAt(0)
+        avatar: card.dataset.avatar,
+        bio: card.dataset.bio
       };
-      if (messageAvatar) {
-        const initials = card.dataset.avatar || card.dataset.name.charAt(0);
-        messageAvatar.textContent = initials;
-      }
-      if (messageRecipient) messageRecipient.textContent = card.dataset.name;
-      if (messageMeta) {
-        const bio =
-          card.dataset.bio ||
-          `${card.dataset.major} - ${card.dataset.school}`;
-        messageMeta.textContent = bio;
-      }
-      if (messageStatusEl) messageStatusEl.textContent = "";
-      if (messageInput) {
-        messageInput.value = "";
-        messageInput.focus();
-      }
-      if (sendMessageBtn) sendMessageBtn.disabled = true;
+
+      messageAvatar.textContent = card.dataset.avatar;
+      messageRecipient.textContent = card.dataset.name;
+
+      messageMeta.textContent =
+        card.dataset.bio || `${card.dataset.major} — ${card.dataset.school}`;
+
+      messageInput.value = "";
+      messageStatusEl.textContent = "";
+
+      sendMessageBtn.disabled = true;
+
       messageCard.classList.add("show");
+      messageInput.focus();
     }
 
-    function closeMessageComposer() {
-      if (messageCard) messageCard.classList.remove("show");
-      activeMessageTarget = null;
-      activeMessageData = null;
-    }
+    closeMessageBtn.addEventListener("click", () => {
+      messageCard.classList.remove("show");
+    });
+
+    messageInput.addEventListener("input", () => {
+      sendMessageBtn.disabled = messageInput.value.trim().length === 0;
+    });
+
+    sendMessageBtn.addEventListener("click", () => {
+      const text = messageInput.value.trim();
+      if (!text) return;
+
+      upsertChatThread({
+        userId: activeMessageData.userId,
+        name: activeMessageData.name,
+        avatar: activeMessageData.avatar,
+        message: text
+      });
+
+      messageStatusEl.textContent = "Message sent!";
+      sendMessageBtn.disabled = true;
+      messageInput.value = "";
+
+      setTimeout(() => {
+        messageCard.classList.remove("show");
+        messageStatusEl.textContent = "";
+      }, 1200);
+    });
+
+    /* CONNECT BUTTONS */
+
+    let pendingUndoUserId = null;
+    const confirmPopup = document.getElementById("disconnectConfirm");
+    const cancelDisconnect = document.getElementById("cancelDisconnect");
+    const confirmDisconnect = document.getElementById("confirmDisconnect");
+
+    cancelDisconnect.addEventListener("click", () => {
+      confirmPopup.classList.add("hidden");
+      pendingUndoUserId = null;
+    });
+
+    confirmDisconnect.addEventListener("click", () => {
+      if (!pendingUndoUserId) return;
+
+      connections.delete(pendingUndoUserId);
+      saveConnections(connections);
+
+      const card = document.querySelector(`[data-user-id="${pendingUndoUserId}"]`);
+      if (card) updateCardActions(card);
+
+      confirmPopup.classList.add("hidden");
+      pendingUndoUserId = null;
+    });
 
     function updateCardActions(card) {
       const userId = card.dataset.userId;
       const connected = connections.has(userId);
+
       const connectBtn = card.querySelector(".connect-btn");
       const messageBtn = card.querySelector(".message-btn");
-      if (connectBtn) {
-        connectBtn.textContent = connected ? "Connected ✓" : "Connect";
-        connectBtn.classList.toggle("connected", connected);
-        connectBtn.disabled = connected;
+
+      // Update connect button
+      if (connected) {
+        connectBtn.textContent = "Connected ✓";
+        connectBtn.classList.add("connected");
+      } else {
+        connectBtn.textContent = "Connect";
+        connectBtn.classList.remove("connected");
       }
+
+      // Highlight message button if connected
       if (messageBtn) {
         messageBtn.classList.toggle("highlight", connected);
       }
     }
 
     function initConnectButtons() {
-      const buttons = document.querySelectorAll(".connect-btn");
-      buttons.forEach(btn => {
+      document.querySelectorAll(".connect-btn").forEach(btn => {
         const card = btn.closest(".user-card");
         if (!card) return;
+
         updateCardActions(card);
+
         btn.addEventListener("click", () => {
           const userId = card.dataset.userId;
-          if (connections.has(userId)) return;
+
+          if (connections.has(userId)) {
+            pendingUndoUserId = userId;
+            confirmPopup.classList.remove("hidden");
+            return;
+          }
+
           connections.add(userId);
           saveConnections(connections);
           updateCardActions(card);
-          const messageBtn = card.querySelector(".message-btn");
-          if (messageBtn) messageBtn.focus();
+
+          const msgBtn = card.querySelector(".message-btn");
+          if (msgBtn) msgBtn.focus();
         });
       });
     }
 
+    /* MESSAGE BUTTONS */
+
     function initMessageButtons() {
-      const buttons = document.querySelectorAll(".message-btn");
-      buttons.forEach(btn => {
+      document.querySelectorAll(".message-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           const card = btn.closest(".user-card");
           if (card) openMessageComposer(card);
@@ -971,58 +1019,19 @@
       });
     }
 
-    if (closeMessageBtn) {
-      closeMessageBtn.addEventListener("click", closeMessageComposer);
-    }
-
-    if (messageInput) {
-      messageInput.addEventListener("input", () => {
-        if (sendMessageBtn) {
-          sendMessageBtn.disabled = messageInput.value.trim().length === 0;
-        }
-      });
-    }
-
-    if (sendMessageBtn) {
-      sendMessageBtn.addEventListener("click", () => {
-        if (!activeMessageTarget || !messageInput) return;
-        const text = messageInput.value.trim();
-        if (!text) return;
-        if (activeMessageData) {
-          upsertChatThread({
-            userId: activeMessageData.userId,
-            name: activeMessageData.name,
-            avatar: activeMessageData.avatar,
-            bio: activeMessageData.bio,
-            message: text
-          });
-        }
-        if (messageStatusEl) {
-          messageStatusEl.textContent = "Message sent!";
-        }
-        sendMessageBtn.disabled = true;
-        messageInput.value = "";
-        setTimeout(() => {
-          if (messageStatusEl) messageStatusEl.textContent = "";
-          closeMessageComposer();
-        }, 1200);
-      });
-    }
-
-    // Save explore user metadata for chat.html
-      (function saveExploreUsers() {
+    // Save explore users for chat page
+    (function saveExploreUsers() {
       const cards = document.querySelectorAll(".user-card");
       const list = Array.from(cards).map(card => ({
-      userId: card.dataset.userId,
-      name: card.dataset.name,
-      avatar: card.dataset.avatar,
-      bio: card.dataset.bio
-    }));
-    localStorage.setItem("tc_exploreUsers", JSON.stringify(list));
-  })();
+        userId: card.dataset.userId,
+        name: card.dataset.name,
+        avatar: card.dataset.avatar,
+        bio: card.dataset.bio
+      }));
+      localStorage.setItem("tc_exploreUsers", JSON.stringify(list));
+    })();
 
-
-    // initial render
+    // INITIALIZE EVERYTHING
     updateResults();
     initConnectButtons();
     initMessageButtons();
