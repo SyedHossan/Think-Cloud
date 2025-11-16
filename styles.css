@@ -412,3 +412,17 @@ h1 {
 .message-menu button:hover {
   background: #e5e5e5;
 }
+
+/* === FIX BUTTON ALIGNMENT FOR EXPLORE CARDS === */
+
+.user-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-actions {
+  margin-top: auto;   /* Pushes buttons to bottom */
+  display: flex;
+  flex-direction: column;
+  gap: 6px;           /* Spacing between Send + Connect */
+}
