@@ -565,3 +565,97 @@ html, body {
   background: #4f46e5;
   margin: 4px auto 0;
 }
+
+/* ============================================
+   SIGNUP + LOGIN PAGE LAYOUT FIX
+============================================ */
+
+.login-container {
+  max-width: 420px;
+  margin: 60px auto;
+  padding: 35px 28px;
+  background: #ffffff;
+  border-radius: 22px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: center;
+}
+
+/* Headings */
+.login-container h1 {
+  margin: 10px 0 6px;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.login-container .subtitle {
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Form fields */
+.field-group {
+  width: 100%;
+  margin: 16px 0;
+  text-align: left;
+}
+
+.field-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* Inputs, selects, textareas all aligned & same size */
+.text-input,
+.field-group input,
+.field-group select,
+.field-group textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #f9fafb;
+  box-sizing: border-box;
+}
+
+/* Textarea height */
+.field-group textarea {
+  height: 90px;
+  resize: vertical;
+}
+
+/* File input spacing fix */
+#avatar {
+  padding: 8px 0;
+}
+
+/* Button */
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 22px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #5d8dfd, #4c6ef5);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.primary-btn:hover {
+  background: #3c5de5;
+}
+
+/* Bottom text */
+.signup-text {
+  margin-top: 16px;
+  font-size: 14px;
+  color: #6b7280;
+}

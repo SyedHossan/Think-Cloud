@@ -980,6 +980,7 @@
             userId: activeMessageData.userId,
             name: activeMessageData.name,
             avatar: activeMessageData.avatar,
+            bio: activeMessageData.bio,
             message: text
           });
         }
@@ -995,10 +996,24 @@
       });
     }
 
+    // Save explore user metadata for chat.html
+      (function saveExploreUsers() {
+      const cards = document.querySelectorAll(".user-card");
+      const list = Array.from(cards).map(card => ({
+      userId: card.dataset.userId,
+      name: card.dataset.name,
+      avatar: card.dataset.avatar,
+      bio: card.dataset.bio
+    }));
+    localStorage.setItem("tc_exploreUsers", JSON.stringify(list));
+  })();
+
+
     // initial render
     updateResults();
     initConnectButtons();
     initMessageButtons();
   </script>
+
 </body>
 </html>

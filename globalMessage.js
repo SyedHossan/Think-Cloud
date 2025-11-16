@@ -88,49 +88,37 @@ function loadExistingMessages() {
 // Render a bubble
 function renderMsgBubble(msg) {
   const row = document.createElement("div");
-  row.className = "msg-row-out";
+  
+  // Check if message is from current user or other user
+  const isFromMe = msg.senderId === "you";
+  
+  if (isFromMe) {
+    // User's own messages - RIGHT SIDE, NO TIME, NO DELETE
+    row.className = "mini-msg-row-out";
 
-  const bubble = document.createElement("div");
-  bubble.className = "msg-bubble-out";
-  bubble.textContent = msg.text;
+    const bubble = document.createElement("div");
+    bubble.className = "mini-msg-bubble-out";
+    bubble.textContent = msg.text;
 
-  // time
-  const time = document.createElement("div");
-  time.className = "msg-time";
-  time.textContent = new Date(msg.ts).toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-  bubble.appendChild(time);
+    row.appendChild(bubble);
+  } else {
+    // Other user's messages - LEFT SIDE, WITH TIME
+    row.className = "mini-msg-row-in";
 
-  // delete button
-  const menuBtn = document.createElement("button");
-  menuBtn.className = "msg-menu-btn";
-  menuBtn.textContent = "⋮";
+    const bubble = document.createElement("div");
+    bubble.className = "mini-msg-bubble-in";
+    bubble.textContent = msg.text;
 
-  const menuBox = document.createElement("div");
-  menuBox.className = "msg-menu hidden";
+    const time = document.createElement("div");
+    time.className = "mini-msg-time";
+    time.textContent = new Date(msg.ts).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
 
-  const delBtn = document.createElement("button");
-  delBtn.className = "msg-menu-delete";
-  delBtn.textContent = "Delete";
-
-  delBtn.addEventListener("click", () => {
-    if (confirm("Delete this message?")) {
-      deleteMessage(msg.id, activeMsgUserId);
-      row.remove();
-    }
-  });
-
-  menuBox.appendChild(delBtn);
-
-  menuBtn.addEventListener("click", () => {
-    menuBox.classList.toggle("hidden");
-  });
-
-  row.appendChild(menuBtn);
-  row.appendChild(menuBox);
-  row.appendChild(bubble);
+    row.appendChild(bubble);
+    row.appendChild(time);
+  }
 
   msgThread.appendChild(row);
 }
@@ -161,7 +149,7 @@ function sendMessage() {
 
   saveChatThreads();
 
-  renderMsgBubble({ id, text, ts: now });
+  renderMsgBubble({ id, text, ts: now, senderId: "you" });
   msgInput.value = "";
   msgSendBtn.disabled = true;
   msgThread.scrollTop = msgThread.scrollHeight;
@@ -181,7 +169,3 @@ function deleteMessage(msgId, userId) {
 
 // MAKE FUNCTION GLOBAL
 window.openMessageComposer = openMessageComposer;
-
-
-
-
