@@ -12,6 +12,20 @@
 
   <!-- Map UI styles -->
   <link rel="stylesheet" href="map.css" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      padding-bottom: 76px;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 
@@ -48,6 +62,34 @@
       </div>
     </div>
   </div>
+
+  <!-- Bottom nav bar -->
+  <nav class="bottom-nav">
+    <a href="explore.html">
+      <span class="icon">🧭</span>
+      Explore
+    </a>
+
+    <a href="notifications.html">
+      <span class="icon">🔔</span>
+      Notifications
+    </a>
+
+    <a href="map.html" class="center-icon active">
+      <span class="icon">🗺️</span>
+      Map
+    </a>
+
+    <a href="chat.html">
+      <span class="icon">💬</span>
+      Chat
+    </a>
+
+    <a href="profile.html">
+      <span class="icon">👤</span>
+      Profile
+    </a>
+  </nav>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Think Cloud – Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #f3f4ff;
+      padding: 24px 16px 76px;
+    }
+
+    .profile-shell {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px 20px 20px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .field {
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .field span {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .empty {
+      color: #9ca3af;
+      font-style: italic;
+    }
+
+    .logout-btn {
+      margin-top: 16px;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: #ef4444;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-shell">
+    <h1>Your profile</h1>
+    <p class="subtitle">This is what others will see when they tap your cloud.</p>
+
+    <div id="profileContent">
+      <!-- JS fills this -->
+    </div>
+
+    <button class="logout-btn" id="logoutBtn">Log out</button>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="explore.html">
+      <span class="icon">🧭</span>
+      Explore
+    </a>
+
+    <a href="notifications.html">
+      <span class="icon">🔔</span>
+      Notifications
+    </a>
+
+    <a href="map.html" class="center-icon">
+      <span class="icon">🗺️</span>
+      Map
+    </a>
+
+    <a href="chat.html">
+      <span class="icon">💬</span>
+      Chat
+    </a>
+
+    <a href="profile.html" class="active">
+      <span class="icon">👤</span>
+      Profile
+    </a>
+  </nav>
+
+  <script>
+    const content = document.getElementById("profileContent");
+    const stored = localStorage.getItem("tc_currentUser");
+
+    if (!stored) {
+      content.innerHTML =
+        "<p>You’re not logged in yet. <span class='empty'>(No profile found)</span></p>";
+    } else {
+      const user = JSON.parse(stored);
+      const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+
+      content.innerHTML = `
+        <div class="field"><span>Name:</span> ${
+          fullName || "<span class='empty'>Not set</span>"
+        }</div>
+        <div class="field"><span>School:</span> ${
+          user.school || "<span class='empty'>Not set</span>"
+        }</div>
+        <div class="field"><span>Major:</span> ${
+          user.major || "<span class='empty'>Not set</span>"
+        }</div>
+        <div class="field"><span>Status:</span> ${
+          user.status || "<span class='empty'>Not set</span>"
+        }</div>
+        <div class="field"><span>Home country:</span> ${
+          user.country || "<span class='empty'>Not set</span>"
+        }</div>
+        <div class="field"><span>Bio:</span> ${
+          user.bio ? user.bio : "<span class='empty'>No bio yet</span>"
+        }</div>
+      `;
+    }
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("tc_currentUser");
+      window.location.href = "index.html"; // your login page
+    });
+  </script>
+</body>
+</html>

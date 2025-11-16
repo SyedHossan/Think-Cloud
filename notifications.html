@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Think Cloud – Notifications</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #f4f5ff;
+      padding: 24px 16px 76px;
+    }
+
+    .notif-shell {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .section-label {
+      margin: 16px 0 8px;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #9ca3af;
+    }
+
+    .notif-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notif-item {
+      display: flex;
+      gap: 12px;
+      padding: 14px 18px;
+      border-radius: 22px;
+      background: #ffffff;
+      box-shadow: 0 14px 32px rgba(15, 23, 42, 0.12);
+      font-size: 14px;
+      align-items: flex-start;
+    }
+
+    .notif-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fee2e2;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .notif-item.friend .notif-icon {
+      background: #dbeafe;
+    }
+
+    .notif-item.reply .notif-icon {
+      background: #e0f2fe;
+    }
+
+    .notif-item.system .notif-icon {
+      background: #fef3c7;
+    }
+
+    .notif-content {
+      flex: 1;
+    }
+
+    .notif-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 2px;
+    }
+
+    .notif-title {
+      font-weight: 700;
+      color: #111827;
+    }
+
+    .notif-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #ecfeff;
+      color: #0891b2;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .notif-text {
+      color: #4b5563;
+      line-height: 1.4;
+    }
+
+    .notif-text strong {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .notif-meta {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body>
+  <div class="notif-shell">
+    <h1>Notifications</h1>
+    <p class="subtitle">Activity on your clouds and friend requests.</p>
+
+    <!-- TODAY (newest at top) -->
+    <div class="section-label">Today</div>
+    <div class="notif-list">
+      <!-- Newest -->
+      <div class="notif-item friend">
+        <div class="notif-icon">👥</div>
+        <div class="notif-content">
+          <div class="notif-title-row">
+            <div class="notif-title">New friend request</div>
+            <span class="notif-pill">Friend</span>
+          </div>
+          <div class="notif-text">
+            <strong>Manya Prakash</strong> sent you a friend request after viewing your profile.
+          </div>
+          <div class="notif-meta">3 min ago · from Explore</div>
+        </div>
+      </div>
+
+      <!-- Second newest -->
+      <div class="notif-item">
+        <div class="notif-icon">❤️</div>
+        <div class="notif-content">
+          <div class="notif-title-row">
+            <div class="notif-title">Someone liked your comment</div>
+            <span class="notif-pill">Cloud</span>
+          </div>
+          <div class="notif-text">
+            <strong>Arya Jonnadula</strong> liked your thought on the “UTD library study spots” pin.
+          </div>
+          <div class="notif-meta">25 min ago · on the map</div>
+        </div>
+      </div>
+
+      <!-- Oldest of today -->
+      <div class="notif-item reply">
+        <div class="notif-icon">💬</div>
+        <div class="notif-content">
+          <div class="notif-title-row">
+            <div class="notif-title">New reply to your cloud</div>
+            <span class="notif-pill">Reply</span>
+          </div>
+          <div class="notif-text">
+            <strong>Robert Ly</strong> replied to your comment: “I also love late-night coffee walks near ECSW.”
+          </div>
+          <div class="notif-meta">1 hour ago · on the map</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EARLIER -->
+    <div class="section-label">Earlier</div>
+    <div class="notif-list">
+      <div class="notif-item system">
+        <div class="notif-icon">✨</div>
+        <div class="notif-content">
+          <div class="notif-title-row">
+            <div class="notif-title">Welcome to Think Cloud</div>
+            <span class="notif-pill">System</span>
+          </div>
+          <div class="notif-text">
+            Your account is all set up. Drop your first cloud on the map and see who else is nearby.
+          </div>
+          <div class="notif-meta">Yesterday</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="explore.html">
+      <span class="icon">🧭</span>
+      Explore
+    </a>
+
+    <a href="notifications.html" class="active">
+      <span class="icon">🔔</span>
+      Notifications
+    </a>
+
+    <a href="map.html" class="center-icon">
+      <span class="icon">🗺️</span>
+      Map
+    </a>
+
+    <a href="chat.html">
+      <span class="icon">💬</span>
+      Chat
+    </a>
+
+    <a href="profile.html">
+      <span class="icon">👤</span>
+      Profile
+    </a>
+  </nav>
+</body>
+</html>

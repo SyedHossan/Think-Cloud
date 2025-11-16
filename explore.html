@@ -1,56 +1,660 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Think Cloud – Explore Page</title>
+  <title>Explore users</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    :root {
+      --bg: #f3f4ff;
+      --card-bg: #ffffff;
+      --accent: #4f46e5;
+      --accent-soft: #e0e7ff;
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border-subtle: #e5e7eb;
+      --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.08);
+      --radius-lg: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                   "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #eef2ff 0, #f9fafb 40%, #eef2ff 100%);
+      color: var(--text-main);
+      padding-bottom: 76px;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    .page-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 40px;
+    }
+
+    .page-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .back-link span {
+      font-size: 18px;
+      translate: 0 1px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 480px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr);
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    /* FILTER PANEL */
+
+    .filter-panel {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 18px 16px;
+      position: sticky;
+      top: 16px;
+    }
+
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .filter-title {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .clear-btn {
+      border: none;
+      background: none;
+      color: var(--accent);
+      font-size: 12px;
+      padding: 4px 0;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover { text-decoration: underline; }
+
+    .filter-group {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #edf2ff;
+    }
+
+    .filter-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      max-height: 140px;
+      overflow: auto;
+      padding-right: 4px;
+    }
+
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .filter-option input {
+      accent-color: var(--accent);
+    }
+
+    /* MAIN / RESULTS */
+
+    .results-shell {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .results-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-input-wrap {
+      flex: 1 1 220px;
+      display: flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 999px;
+      padding: 6px 12px;
+      border: 1px solid var(--border-subtle);
+    }
+
+    .search-input-wrap input {
+      border: none;
+      background: transparent;
+      outline: none;
+      width: 100%;
+      font-size: 14px;
+    }
+
+    .search-input-wrap span {
+      font-size: 16px;
+      margin-right: 4px;
+      color: var(--text-muted);
+    }
+
+    .results-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      background: var(--accent-soft);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .user-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+      gap: 14px;
+    }
+
+    .user-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.07);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      cursor: default;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    }
+
+    .user-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 35px rgba(15, 23, 42, 0.12);
+      border-color: var(--accent-soft);
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: -0.01em;
+    }
+
+    .user-row {
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: #f3f4ff;
+      color: #4338ca;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Friend request button */
+    .friend-btn {
+      margin-top: 6px;
+      align-self: flex-start;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      background: #f9fafb;
+      color: #111827;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .friend-btn:hover {
+      background: #eef2ff;
+      border-color: #c7d2fe;
+    }
+
+    .friend-btn.friend-requested {
+      background: #e0e7ff;
+      border-color: #a5b4fc;
+      color: #4338ca;
+      cursor: default;
+    }
+
+    .friend-btn.friend-requested::before {
+      content: "✓";
+      font-size: 12px;
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-panel {
+        position: static;
+        order: 2;
+      }
+    }
+  </style>
 </head>
-<h2>Explore Page</h2>
-<h5>Filter through users by tags! This will help you find those similar to you.</h5>
-    <script src="script.js"></script>
-    <div id="filterButtons">
-      //Types of filters
-     <button class="exploreBtn active" onclick="filterSelection('all')"> Show all</button>
-     <button class="exploreBtn" onclick="filterSelection('school')"> School</button>
-     <button class="exploreBtn" onclick="filterSelection('major')"> Major</button>
-     <button class="exploreBtn" onclick="filterSelection('status')"> Status</button>
-     <button class="exploreBtn" onclick="filterSelection('homeCountry')"> Home Country</button>
-</div>
+<body>
+  <div class="page-shell">
+    <div class="page-header">
+      <a href="map.html" class="back-link">
+        <span>←</span> Back to map
+      </a>
+      <div>
+        <h1>Explore users</h1>
+        <p class="subtitle">
+          Filter through users to find people with similar schools, majors, status,
+          or home countries.
+        </p>
+      </div>
+    </div>
 
-      //Profiles available -- Needs to be added to
-<div class="exploreContainer">
-    
-    <div class ="filterSelection major homeCountry school">Manya Prakash</div>
-    
+    <div class="layout">
+      <!-- LEFT: FILTERS -->
+      <aside class="filter-panel">
+        <div class="filter-header">
+          <div class="filter-title">Filters</div>
+          <button class="clear-btn" id="clearFiltersBtn">Clear all</button>
+        </div>
 
-    
-    <div class ="filterSelection homeCountry school">Arya Jonnadula</div>
+        <div class="filter-group">
+          <span class="filter-label">School</span>
+          <div class="filter-options" data-filter-group="school">
+            <label class="filter-option">
+              <input type="checkbox" value="UTD">
+              <span>UT Dallas</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="UT Austin">
+              <span>UT Austin</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="UNT">
+              <span>UNT</span>
+            </label>
+          </div>
+        </div>
 
-   
-    <div class ="filterSelection major">Robert Ly</div>
+        <div class="filter-group">
+          <span class="filter-label">Major</span>
+          <div class="filter-options" data-filter-group="major">
+            <label class="filter-option">
+              <input type="checkbox" value="Computer Science">
+              <span>Computer Science</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Biology">
+              <span>Biology</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Mechanical Engineering">
+              <span>Mechanical Engineering</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Child Development">
+              <span>Child Development</span>
+            </label>
+          </div>
+        </div>
 
-   
-    <div class ="filterSelection status">Sam Foster</div>
+        <div class="filter-group">
+          <span class="filter-label">Status</span>
+          <div class="filter-options" data-filter-group="status">
+            <label class="filter-option">
+              <input type="checkbox" value="Current">
+              <span>Current student</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Incoming">
+              <span>Incoming</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Alumni">
+              <span>Alumni</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Prospective">
+              <span>Prospective</span>
+            </label>
+          </div>
+        </div>
 
-    
-    <div class ="filterSelection school">Molly Mcguire</div>
+        <div class="filter-group">
+          <span class="filter-label">Home country</span>
+          <div class="filter-options" data-filter-group="country">
+            <label class="filter-option">
+              <input type="checkbox" value="USA">
+              <span>USA</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="Canada">
+              <span>Canada</span>
+            </label>
+            <label class="filter-option">
+              <input type="checkbox" value="India">
+              <span>India</span>
+            </label>
+          </div>
+        </div>
+      </aside>
 
-    
-    <div class ="filterSelection school">Maria Morales</div>
+      <!-- RIGHT: RESULTS -->
+      <main class="results-shell">
+        <div class="results-toolbar">
+          <div class="search-input-wrap">
+            <span>🔍</span>
+            <input id="searchInput" type="text" placeholder="Search by name or keyword…" />
+          </div>
+          <div class="results-meta">
+            <span id="resultsCount">0 users</span>
+            <span class="pill" id="activeFilterPill">All users</span>
+          </div>
+        </div>
 
-    
-    <div class ="filterSelection school">Rich Lesky</div>
+        <section class="user-grid" id="userGrid">
+          <!-- Users -->
+          <article class="user-card"
+            data-user-id="manya-prakash"
+            data-name="Manya Prakash"
+            data-school="UTD"
+            data-major="Computer Science"
+            data-status="Current"
+            data-country="USA">
+            <div class="user-name">Manya Prakash</div>
+            <div class="user-row">
+              <span class="tag">UTD</span>
+              <span>• Computer Science</span>
+            </div>
+            <div class="user-row">
+              <span>Current · USA</span>
+            </div>
+            <button class="friend-btn" data-user-id="manya-prakash">
+              + Add friend
+            </button>
+          </article>
 
-    
-    <div class ="filterSelection school">Juan Ortega</div>
+          <article class="user-card"
+            data-user-id="arya-jonnadula"
+            data-name="Arya Jonnadula"
+            data-school="UT Austin"
+            data-major="Biology"
+            data-status="Incoming"
+            data-country="USA">
+            <div class="user-name">Arya Jonnadula</div>
+            <div class="user-row">
+              <span class="tag">UT Austin</span>
+              <span>• Biology</span>
+            </div>
+            <div class="user-row">
+              <span>Incoming · USA</span>
+            </div>
+            <button class="friend-btn" data-user-id="arya-jonnadula">
+              + Add friend
+            </button>
+          </article>
 
-   
-    <div class ="filterSelection status">Angela Noak</div>
+          <article class="user-card"
+            data-user-id="robert-ly"
+            data-name="Robert Ly"
+            data-school="UNT"
+            data-major="Mechanical Engineering"
+            data-status="Current"
+            data-country="USA">
+            <div class="user-name">Robert Ly</div>
+            <div class="user-row">
+              <span class="tag">UNT</span>
+              <span>• Mechanical Engineering</span>
+            </div>
+            <div class="user-row">
+              <span>Current · USA</span>
+            </div>
+            <button class="friend-btn" data-user-id="robert-ly">
+              + Add friend
+            </button>
+          </article>
 
-   
-    <div class ="filterSelection homeCountry">Aarav Abilash</div>
+          <article class="user-card"
+            data-user-id="sam-foster"
+            data-name="Sam Foster"
+            data-school="UTD"
+            data-major="Child Development"
+            data-status="Alumni"
+            data-country="USA">
+            <div class="user-name">Sam Foster</div>
+            <div class="user-row">
+              <span class="tag">UTD</span>
+              <span>• Child Development</span>
+            </div>
+            <div class="user-row">
+              <span>Alumni · USA</span>
+            </div>
+            <button class="friend-btn" data-user-id="sam-foster">
+              + Add friend
+            </button>
+          </article>
+        </section>
+      </main>
+    </div>
+  </div>
 
-</div>
+  <!-- Bottom nav bar -->
+  <nav class="bottom-nav">
+    <a href="explore.html" class="active">
+      <span class="icon">🧭</span>
+      Explore
+    </a>
 
-    
-    </html>
+    <a href="notifications.html">
+      <span class="icon">🔔</span>
+      Notifications
+    </a>
+
+    <a href="map.html" class="center-icon">
+      <span class="icon">🗺️</span>
+      Map
+    </a>
+
+    <a href="chat.html">
+      <span class="icon">💬</span>
+      Chat
+    </a>
+
+    <a href="profile.html">
+      <span class="icon">👤</span>
+      Profile
+    </a>
+  </nav>
+
+  <script>
+    const userCards = Array.from(document.querySelectorAll(".user-card"));
+    const filterGroups = document.querySelectorAll(".filter-options");
+    const searchInput = document.getElementById("searchInput");
+    const resultsCount = document.getElementById("resultsCount");
+    const activeFilterPill = document.getElementById("activeFilterPill");
+    const clearBtn = document.getElementById("clearFiltersBtn");
+    const FRIEND_KEY = "tc_friendRequests";
+
+    function getActiveFilters() {
+      const filters = { school: [], major: [], status: [], country: [] };
+      filterGroups.forEach(group => {
+        const groupName = group.dataset.filterGroup;
+        group.querySelectorAll("input:checked").forEach(cb => {
+          filters[groupName].push(cb.value);
+        });
+      });
+      return filters;
+    }
+
+    function cardMatchesFilters(card, filters, searchTerm) {
+      const text = (card.dataset.name + " " +
+                    card.dataset.school + " " +
+                    card.dataset.major + " " +
+                    card.dataset.status + " " +
+                    card.dataset.country).toLowerCase();
+      if (searchTerm && !text.includes(searchTerm)) return false;
+
+      const groups = Object.keys(filters);
+      for (const group of groups) {
+        const selected = filters[group];
+        if (selected.length === 0) continue;
+        const value = card.dataset[group];
+        if (!selected.includes(value)) return false;
+      }
+      return true;
+    }
+
+    function updateResults() {
+      const filters = getActiveFilters();
+      const searchTerm = searchInput.value.trim().toLowerCase();
+
+      let visibleCount = 0;
+      userCards.forEach(card => {
+        const show = cardMatchesFilters(card, filters, searchTerm);
+        card.style.display = show ? "" : "none";
+        if (show) visibleCount++;
+      });
+
+      resultsCount.textContent =
+        visibleCount === 1 ? "1 user" : `${visibleCount} users`;
+
+      const activeFilterNames = [];
+      for (const [group, values] of Object.entries(filters)) {
+        if (values.length) activeFilterNames.push(`${values.length} ${group}`);
+      }
+      if (searchTerm) activeFilterNames.push("search");
+      activeFilterPill.textContent = activeFilterNames.length
+        ? `Filters: ${activeFilterNames.join(", ")}`
+        : "All users";
+    }
+
+    filterGroups.forEach(group => {
+      group.addEventListener("change", updateResults);
+    });
+
+    searchInput.addEventListener("input", updateResults);
+
+    clearBtn.addEventListener("click", () => {
+      document
+        .querySelectorAll(".filter-options input:checked")
+        .forEach(cb => (cb.checked = false));
+      searchInput.value = "";
+      updateResults();
+    });
+
+    // Friend request helpers
+    function loadFriendRequests() {
+      try {
+        const raw = localStorage.getItem(FRIEND_KEY);
+        if (!raw) return new Set();
+        return new Set(JSON.parse(raw));
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveFriendRequests(set) {
+      localStorage.setItem(FRIEND_KEY, JSON.stringify(Array.from(set)));
+    }
+
+    function initFriendButtons() {
+      const requests = loadFriendRequests();
+      const buttons = document.querySelectorAll(".friend-btn");
+
+      buttons.forEach(btn => {
+        const userId = btn.dataset.userId;
+
+        function markRequested() {
+          btn.classList.add("friend-requested");
+          btn.textContent = "Requested";
+          btn.disabled = true;
+        }
+
+        if (requests.has(userId)) {
+          markRequested();
+        }
+
+        btn.addEventListener("click", () => {
+          if (requests.has(userId)) return;
+          requests.add(userId);
+          saveFriendRequests(requests);
+          markRequested();
+        });
+      });
+    }
+
+    // initial render
+    updateResults();
+    initFriendButtons();
+  </script>
+</body>
+</html>

@@ -33,13 +33,13 @@ const users = {
   you: {
     name: "You",
     avatar: "⭐️",
-    bio: "The mysterious cloud thinker behind this account."
+    bio: "The cloud thinker behind this account."
   }
 };
 
 const reactionOptions = ["👍", "❤️", "😂", "😮", "👎"];
 
-// 11 hardcoded pins around UTD
+// Hardcoded pins around UTD
 let pins = [
   {
     id: "pin1",

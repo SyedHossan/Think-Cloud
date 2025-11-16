@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Think Cloud – Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #f3f4ff;
+      padding: 24px 16px 76px;
+    }
+
+    .chat-shell {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 24px;
+    }
+
+    .subtitle {
+      margin: 0 0 18px;
+      font-size: 14px;
+      color: #6b7280;
+    }
+
+    .empty {
+      padding: 16px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      font-size: 14px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-shell">
+    <h1>Chat</h1>
+    <p class="subtitle">Start conversations with friends you’ve added.</p>
+
+    <div class="empty">
+      No conversations yet.
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <a href="explore.html">
+      <span class="icon">🧭</span>
+      Explore
+    </a>
+
+    <a href="notifications.html">
+      <span class="icon">🔔</span>
+      Notifications
+    </a>
+
+    <a href="map.html" class="center-icon">
+      <span class="icon">🗺️</span>
+      Map
+    </a>
+
+    <a href="chat.html" class="active">
+      <span class="icon">💬</span>
+      Chat
+    </a>
+
+    <a href="profile.html">
+      <span class="icon">👤</span>
+      Profile
+    </a>
+  </nav>
+</body>
+</html>
