@@ -39,12 +39,97 @@ const users = {
 
 const reactionOptions = ["👍", "❤️", "😂", "😮", "👎"];
 
+
+const CONNECTIONS_STORAGE_KEY = "tc_connections";
+const CHAT_THREADS_STORAGE_KEY = "tc_conversations";
+
+function loadConnectionsFromStorage() {
+  try {
+    const raw = localStorage.getItem(CONNECTIONS_STORAGE_KEY);
+    if (!raw) return new Set();
+    return new Set(JSON.parse(raw));
+  } catch {
+    return new Set();
+  }
+}
+
+const connectedUsers = loadConnectionsFromStorage();
+
+function persistConnections() {
+  try {
+    localStorage.setItem(
+      CONNECTIONS_STORAGE_KEY,
+      JSON.stringify(Array.from(connectedUsers))
+    );
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function loadChatThreads() {
+  try {
+    const raw = localStorage.getItem(CHAT_THREADS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+let chatThreads = loadChatThreads();
+
+function persistChatThreads() {
+  try {
+    localStorage.setItem(
+      CHAT_THREADS_STORAGE_KEY,
+      JSON.stringify(chatThreads)
+    );
+  } catch {
+    // ignore storage errors
+  }
+}
+
+function upsertChatThread({ userId, name, avatar, message }) {
+  if (!userId || !message) return;
+  const now = Date.now();
+  let thread = chatThreads.find((t) => t.userId === userId);
+  if (!thread) {
+    thread = {
+      userId,
+      name,
+      avatar,
+      lastMessage: "",
+      updatedAt: now,
+      messages: []
+    };
+    chatThreads.push(thread);
+  } else {
+    if (!thread.name && name) thread.name = name;
+    if (!thread.avatar && avatar) thread.avatar = avatar;
+    thread.messages = thread.messages || [];
+  }
+
+  thread.messages.push({
+    id: `m${now}`,
+    text: message,
+    senderId: currentUserId,
+    ts: now
+  });
+
+  thread.lastMessage = message.slice(0, 160);
+  thread.updatedAt = now;
+  chatThreads.sort((a, b) => b.updatedAt - a.updatedAt);
+  persistChatThreads();
+}
+
 // Hardcoded pins around UTD
 let pins = [
   {
     id: "pin1",
     lat: 32.984746,
     lng: -96.752568,
+    userId: "u1",
     text: "Anyone want a coffee by UV3?",
     baseLikes: 7,
     liked: false,
@@ -76,6 +161,7 @@ let pins = [
     id: "pin2",
     lat: 32.9852,
     lng: -96.7519,
+    userId: "u4",
     text: "CS 2336 study group tonight?",
     baseLikes: 5,
     liked: false,
@@ -107,6 +193,7 @@ let pins = [
     id: "pin3",
     lat: 32.9856,
     lng: -96.753,
+    userId: "u3",
     text: "Free snacks in ECSW lobby!",
     baseLikes: 9,
     liked: false,
@@ -138,6 +225,7 @@ let pins = [
     id: "pin4",
     lat: 32.9861,
     lng: -96.7521,
+    userId: "u2",
     text: "Lost AirPods near SU stairs :(",
     baseLikes: 3,
     liked: false,
@@ -169,6 +257,7 @@ let pins = [
     id: "pin5",
     lat: 32.9843,
     lng: -96.7534,
+    userId: "u5",
     text: "Anyone going to the gym at 7?",
     baseLikes: 4,
     liked: false,
@@ -200,6 +289,7 @@ let pins = [
     id: "pin6",
     lat: 32.9859,
     lng: -96.7515,
+    userId: "u2",
     text: "Looking for a quiet spot to write essay.",
     baseLikes: 2,
     liked: false,
@@ -231,6 +321,7 @@ let pins = [
     id: "pin7",
     lat: 32.9863,
     lng: -96.7532,
+    userId: "u3",
     text: "Anyone free for a quick walk around campus?",
     baseLikes: 6,
     liked: false,
@@ -262,6 +353,7 @@ let pins = [
     id: "pin8",
     lat: 32.9841,
     lng: -96.7518,
+    userId: "u4",
     text: "Any recs for good vegetarian food nearby?",
     baseLikes: 8,
     liked: false,
@@ -293,6 +385,7 @@ let pins = [
     id: "pin9",
     lat: 32.985,
     lng: -96.754,
+    userId: "u2",
     text: "Anyone working on HCI project today?",
     baseLikes: 3,
     liked: false,
@@ -324,6 +417,7 @@ let pins = [
     id: "pin10",
     lat: 32.9839,
     lng: -96.752,
+    userId: "u1",
     text: "Anyone selling old textbooks this semester?",
     baseLikes: 4,
     liked: false,
@@ -355,6 +449,7 @@ let pins = [
     id: "pin11",
     lat: 32.9864,
     lng: -96.7511,
+    userId: "u3",
     text: "Late-night coding session after 10pm?",
     baseLikes: 6,
     liked: false,
@@ -386,6 +481,11 @@ let pins = [
 
 const markers = {};
 let activePinId = null;
+let addPinMode = false;
+let pendingPinLatLng = null;
+let draftPinMarker = null;
+let activeProfileUserId = null;
+let activeMessageUserId = null;
 
 /* -----------------------------
    Map setup
@@ -397,12 +497,121 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors"
 }).addTo(map);
 
-// Create all markers
-pins.forEach((pin) => {
+function createMarkerForPin(pin) {
   const marker = L.marker([pin.lat, pin.lng]).addTo(map);
   markers[pin.id] = marker;
   updateMarkerPopup(pin.id);
+  return marker;
+}
+
+// Create all markers
+pins.forEach((pin) => {
+  createMarkerForPin(pin);
 });
+
+/* -----------------------------
+   Add pin flow
+----------------------------- */
+
+const addPinBtn = document.getElementById("addPinBtn");
+const addPinPanel = document.getElementById("addPinPanel");
+const cancelAddPinBtn = document.getElementById("cancelAddPinBtn");
+const addPinTextInput = document.getElementById("addPinText");
+const addPinCoordsEl = document.getElementById("addPinCoords");
+const addPinHintEl = document.getElementById("addPinHint");
+const savePinBtn = document.getElementById("savePinBtn");
+
+if (
+  addPinBtn &&
+  addPinPanel &&
+  addPinTextInput &&
+  addPinCoordsEl &&
+  addPinHintEl &&
+  savePinBtn
+) {
+  const mapContainer = map.getContainer();
+
+  function resetAddPinForm() {
+    pendingPinLatLng = null;
+    addPinCoordsEl.textContent = "No location selected yet.";
+    savePinBtn.disabled = true;
+    addPinTextInput.value = "";
+    if (draftPinMarker) {
+      map.removeLayer(draftPinMarker);
+      draftPinMarker = null;
+    }
+  }
+
+  function enterAddPinMode() {
+    addPinMode = true;
+    addPinBtn.classList.add("active");
+    addPinPanel.classList.add("show");
+    addPinHintEl.textContent = "Tap anywhere on the map to drop your pin.";
+    resetAddPinForm();
+    mapContainer.classList.add("add-pin-cursor");
+    addPinTextInput.focus();
+  }
+
+  function exitAddPinMode() {
+    addPinMode = false;
+    addPinBtn.classList.remove("active");
+    addPinPanel.classList.remove("show");
+    addPinHintEl.textContent = "Tap anywhere on the map to pick a spot.";
+    resetAddPinForm();
+    mapContainer.classList.remove("add-pin-cursor");
+  }
+
+  addPinBtn.addEventListener("click", () => {
+    if (addPinMode) {
+      exitAddPinMode();
+    } else {
+      enterAddPinMode();
+    }
+  });
+
+  if (cancelAddPinBtn) {
+    cancelAddPinBtn.addEventListener("click", exitAddPinMode);
+  }
+
+  addPinTextInput.addEventListener("input", () => {
+    const hasText = addPinTextInput.value.trim().length > 0;
+    savePinBtn.disabled = !(hasText && pendingPinLatLng);
+  });
+
+  map.on("click", (e) => {
+    if (!addPinMode) return;
+    pendingPinLatLng = e.latlng;
+    addPinCoordsEl.textContent = `Selected: ${e.latlng.lat.toFixed(
+      5
+    )}, ${e.latlng.lng.toFixed(5)}`;
+    if (draftPinMarker) {
+      map.removeLayer(draftPinMarker);
+    }
+    draftPinMarker = L.marker(e.latlng, { opacity: 0.6 }).addTo(map);
+    savePinBtn.disabled = !(addPinTextInput.value.trim() && pendingPinLatLng);
+  });
+
+  savePinBtn.addEventListener("click", () => {
+    const text = addPinTextInput.value.trim();
+    if (!text || !pendingPinLatLng) return;
+
+    const newPin = {
+      id: `pin${Date.now()}`,
+      lat: pendingPinLatLng.lat,
+      lng: pendingPinLatLng.lng,
+      userId: currentUserId,
+      text,
+      baseLikes: 0,
+      liked: false,
+      comments: []
+    };
+
+    pins.unshift(newPin);
+    createMarkerForPin(newPin);
+    markers[newPin.id].openPopup();
+    exitAddPinMode();
+  });
+}
 
 /* -----------------------------
    Helpers
@@ -421,16 +630,25 @@ function likeCount(pin) {
 }
 
 /* Update Leaflet popup HTML for a pin */
+
 function updateMarkerPopup(pinId) {
   const pin = getPin(pinId);
   const likes = likeCount(pin);
   const comments = countComments(pin);
+  const authorId = pin.userId || "you";
+  const author = users[authorId] || users["you"];
 
   const html = `
     <div>
       <div class="pin-title">${pin.text}</div>
+      <div class="pin-author">
+        Posted by
+        <button class="pin-author-button" onclick="showProfile('${authorId}')">
+          ${author.name}
+        </button>
+      </div>
       <div class="pin-meta-line">
-        Likes: <span id="like-count-${pin.id}">${likes}</span> ·
+        Likes: <span id="like-count-${pin.id}">${likes}</span> A?
         Comments: <span id="comment-count-${pin.id}">${comments}</span>
       </div>
       <div class="pin-actions">
@@ -446,7 +664,6 @@ function updateMarkerPopup(pinId) {
 
   markers[pin.id].bindPopup(html);
 }
-
 /* -----------------------------
    Pin like handler
 ----------------------------- */
@@ -471,6 +688,7 @@ const overlay = document.getElementById("overlay");
 const commentsListEl = document.getElementById("commentsList");
 const commentsPinTextEl = document.getElementById("comments-pin-text");
 const commentsMetaEl = document.getElementById("comments-meta");
+const commentsAuthorEl = document.getElementById("comments-author");
 const newCommentInput = document.getElementById("newCommentInput");
 const postCommentBtn = document.getElementById("postCommentBtn");
 const closeOverlayBtn = document.getElementById("closeOverlayBtn");
@@ -480,22 +698,38 @@ const profileCard = document.getElementById("profileCard");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
 const profileBio = document.getElementById("profileBio");
+const profileConnectBtn = document.getElementById("profileConnectBtn");
+const profileMessageBtn = document.getElementById("profileMessageBtn");
+const messageCard = document.getElementById("messageCard");
+const messageAvatar = document.getElementById("messageAvatar");
+const messageRecipient = document.getElementById("messageRecipient");
+const messageMeta = document.getElementById("messageMeta");
+const messageInput = document.getElementById("messageInput");
+const sendMessageBtn = document.getElementById("sendMessageBtn");
+const closeMessageBtn = document.getElementById("closeMessageBtn");
+const messageStatusEl = document.getElementById("messageStatus");
+
 
 function openCommentsOverlay(pinId) {
   activePinId = pinId;
   const pin = getPin(pinId);
 
   commentsPinTextEl.textContent = pin.text;
-  commentsMetaEl.textContent = `Likes: ${likeCount(pin)} · Comments: ${countComments(
+  commentsMetaEl.textContent = `Likes: ${likeCount(pin)} | Comments: ${countComments(
     pin
   )}`;
+  if (commentsAuthorEl) {
+    const authorId = pin.userId || "you";
+    const author = users[authorId] || users["you"];
+    commentsAuthorEl.textContent = `Posted by ${author.name}`;
+    commentsAuthorEl.onclick = () => showProfile(authorId);
+  }
 
   newCommentInput.value = "";
   hideProfile();
   renderComments();
   overlay.classList.add("show");
 }
-
 function closeCommentsOverlay() {
   overlay.classList.remove("show");
   activePinId = null;
@@ -648,10 +882,105 @@ function toggleReaction(commentIndex, emoji) {
 function updateOverlayCounts() {
   if (!activePinId) return;
   const pin = getPin(activePinId);
-  commentsMetaEl.textContent = `Likes: ${likeCount(
-    pin
-  )} · Comments: ${countComments(pin)}`;
+  commentsMetaEl.textContent = `Likes: ${likeCount(pin)} | Comments: ${countComments(pin)}`;
   updateMarkerPopup(activePinId);
+}
+
+
+
+/* -----------------------------
+   Message composer
+----------------------------- */
+
+if (profileMessageBtn) {
+  profileMessageBtn.addEventListener("click", () => {
+    if (activeProfileUserId) {
+      openMessageComposer(activeProfileUserId);
+    }
+  });
+}
+
+if (closeMessageBtn) {
+  closeMessageBtn.addEventListener("click", closeMessageComposer);
+}
+
+if (messageInput) {
+  messageInput.addEventListener("input", () => {
+    if (sendMessageBtn) {
+      sendMessageBtn.disabled = messageInput.value.trim().length === 0;
+    }
+  });
+}
+
+if (sendMessageBtn) {
+  sendMessageBtn.addEventListener("click", () => {
+    if (!activeMessageUserId || !messageInput) return;
+    const text = messageInput.value.trim();
+    if (!text) return;
+    const threadUser = users[activeMessageUserId] || {
+      name: "New Comet",
+      avatar: "💬"
+    };
+    upsertChatThread({
+      userId: activeMessageUserId,
+      name: threadUser.name,
+      avatar: threadUser.avatar,
+      message: text
+    });
+    if (messageStatusEl) {
+      messageStatusEl.textContent = "Message sent!";
+    }
+    sendMessageBtn.disabled = true;
+    messageInput.value = "";
+    setTimeout(() => {
+      if (messageStatusEl) messageStatusEl.textContent = "";
+      closeMessageComposer();
+    }, 1200);
+  });
+}
+
+function openMessageComposer(userId) {
+  if (!messageCard) return;
+  const user = users[userId] || users["you"];
+  activeMessageUserId = userId;
+  if (messageAvatar) messageAvatar.textContent = user.avatar || user.name[0];
+  if (messageRecipient) messageRecipient.textContent = user.name;
+  if (messageMeta) messageMeta.textContent = user.bio;
+  if (messageStatusEl) messageStatusEl.textContent = "";
+  if (messageInput) {
+    messageInput.value = "";
+    messageInput.focus();
+  }
+  if (sendMessageBtn) sendMessageBtn.disabled = true;
+  messageCard.classList.add("show");
+}
+
+function closeMessageComposer() {
+  if (messageCard) messageCard.classList.remove("show");
+  activeMessageUserId = null;
+}
+
+if (profileConnectBtn) {
+  profileConnectBtn.addEventListener("click", () => {
+    if (!activeProfileUserId || connectedUsers.has(activeProfileUserId)) return;
+    connectedUsers.add(activeProfileUserId);
+    persistConnections();
+    updateProfileActionStates(activeProfileUserId);
+    if (profileMessageBtn) profileMessageBtn.focus();
+  });
+}
+
+function updateProfileActionStates(userId) {
+  if (!userId) return;
+  const connected = connectedUsers.has(userId);
+  if (profileConnectBtn) {
+    profileConnectBtn.textContent = connected ? "Connected ✓" : "Connect";
+    profileConnectBtn.classList.toggle("connected", connected);
+    profileConnectBtn.disabled = connected;
+  }
+  if (profileMessageBtn) {
+    profileMessageBtn.classList.toggle("highlight", connected);
+  }
 }
 
 /* -----------------------------
@@ -659,13 +988,17 @@ function updateOverlayCounts() {
 ----------------------------- */
 
 function showProfile(userId) {
+  if (!profileCard) return;
   const user = users[userId] || users["you"];
-  profileAvatar.textContent = user.avatar;
-  profileName.textContent = user.name;
-  profileBio.textContent = user.bio;
+  activeProfileUserId = userId;
+  if (profileAvatar) profileAvatar.textContent = user.avatar || user.name[0];
+  if (profileName) profileName.textContent = user.name;
+  if (profileBio) profileBio.textContent = user.bio;
+  updateProfileActionStates(userId);
   profileCard.classList.add("show");
 }
 
 function hideProfile() {
-  profileCard.classList.remove("show");
+  if (profileCard) profileCard.classList.remove("show");
+  activeProfileUserId = null;
 }

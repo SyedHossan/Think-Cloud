@@ -31,6 +31,36 @@
 
   <div id="map"></div>
 
+  <div class="add-pin-ui">
+    <button id="addPinBtn" class="add-pin-btn">Drop a thought</button>
+
+    <div id="addPinPanel" class="add-pin-panel">
+      <div class="add-pin-panel-header">
+        <div>
+          <div class="add-pin-title">Share your own pin</div>
+          <div class="add-pin-subtitle">1. Tap the map, 2. Post your thought.</div>
+        </div>
+        <button id="cancelAddPinBtn" class="add-pin-close" aria-label="Cancel adding pin">
+          &times;
+        </button>
+      </div>
+
+      <div id="addPinHint" class="add-pin-hint">Tap anywhere on the map to pick a spot.</div>
+      <div id="addPinCoords" class="add-pin-coords">No location selected yet.</div>
+
+      <textarea
+        id="addPinText"
+        class="add-pin-input"
+        rows="3"
+        placeholder="What's happening around campus?"
+      ></textarea>
+
+      <button id="savePinBtn" class="add-pin-submit" type="button" disabled>
+        Post to map
+      </button>
+    </div>
+  </div>
+
   <!-- Comments popup overlay -->
   <div id="overlay" class="overlay-backdrop">
     <div class="comments-modal">
@@ -39,21 +69,13 @@
           <div>
             <div id="comments-pin-text" class="comments-title"></div>
             <div id="comments-meta" class="comments-meta"></div>
+            <button id="comments-author" class="comments-author" type="button"></button>
           </div>
           <button class="comments-close" id="closeOverlayBtn">✕</button>
         </div>
       </div>
 
       <!-- Profile mini-card -->
-      <div id="profileCard" class="profile-card">
-        <div id="profileAvatar" class="profile-avatar">🌿</div>
-        <div class="profile-main">
-          <div id="profileName" class="profile-name">Name</div>
-          <div id="profileBio" class="profile-bio">Bio text...</div>
-        </div>
-        <button class="profile-close" onclick="hideProfile()">Close</button>
-      </div>
-
       <div id="commentsList" class="comments-body"></div>
 
       <div class="comments-footer">
@@ -62,6 +84,50 @@
       </div>
     </div>
   </div>
+
+
+<!-- Profile mini-card -->
+<div id="profileCard" class="profile-card">
+  <div id="profileAvatar" class="profile-avatar">dYO???</div>
+  <div class="profile-main">
+    <div id="profileName" class="profile-name">Name</div>
+    <div id="profileBio" class="profile-bio">Bio text...</div>
+  </div>
+  <div class="profile-actions">
+    <button id="profileMessageBtn" class="profile-message-btn" type="button">
+      Send message
+    </button>
+    <button id="profileConnectBtn" class="profile-connect-btn" type="button">
+      Connect
+    </button>
+    <button class="profile-close" type="button" onclick="hideProfile()">Close</button>
+  </div>
+</div>
+
+<div id="messageCard" class="message-card">
+  <div class="message-card-header">
+    <div class="message-target">
+      <div id="messageAvatar" class="message-avatar">?</div>
+      <div>
+        <div id="messageRecipient" class="message-recipient">Recipient</div>
+        <div id="messageMeta" class="message-meta">Bio</div>
+      </div>
+    </div>
+    <button id="closeMessageBtn" class="message-close" type="button">&times;</button>
+  </div>
+  <textarea
+    id="messageInput"
+    class="message-input"
+    rows="4"
+    placeholder="Type your message..."
+  ></textarea>
+  <div class="message-card-footer">
+    <div id="messageStatus" class="message-status"></div>
+    <button id="sendMessageBtn" class="message-send-btn" type="button" disabled>
+      Send message
+    </button>
+  </div>
+</div>
 
   <!-- Bottom nav bar -->
   <nav class="bottom-nav">

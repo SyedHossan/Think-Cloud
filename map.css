@@ -65,6 +65,22 @@ html, body {
     font-size: 0.8rem;
     opacity: 0.9;
   }
+
+  .comments-author {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: #eff6ff;
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    border-radius: 999px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  .comments-author:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
   
   .comments-close {
     border: none;
@@ -205,9 +221,9 @@ html, body {
   
   /* Simple profile mini-card */
   .profile-card {
-    position: absolute;
-    left: 12px;
-    top: 56px;
+    position: fixed;
+    top: 96px;
+    right: 24px;
     background: #eff6ff;
     border-radius: 12px;
     padding: 8px 10px;
@@ -216,6 +232,7 @@ html, body {
     max-width: 280px;
     font-size: 0.8rem;
     box-shadow: 0 16px 40px rgba(15, 23, 42, 0.25);
+    z-index: 1100;
   }
   
   .profile-card.show {
@@ -250,14 +267,173 @@ html, body {
     color: #4b5563;
     line-height: 1.4;
   }
-  
+
+  .profile-actions {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+
+  .profile-message-btn {
+    border: none;
+    background: #1d4ed8;
+    color: #fff;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 10px 24px rgba(37, 99, 235, 0.25);
+  }
+
+  .profile-message-btn.highlight {
+    background: #16a34a;
+    box-shadow: 0 10px 24px rgba(22, 163, 74, 0.35);
+  }
+
+  .profile-connect-btn {
+    border: 1px solid #94a3b8;
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 999px;
+    padding: 5px 12px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .profile-connect-btn:hover:not(.connected) {
+    border-color: #1d4ed8;
+    color: #1d4ed8;
+  }
+
+  .profile-connect-btn.connected {
+    background: #d1fae5;
+    border-color: #10b981;
+    color: #065f46;
+    cursor: default;
+  }
+
   .profile-close {
     border: none;
     background: transparent;
     cursor: pointer;
     font-size: 0.8rem;
     color: #4b5563;
-    align-self: flex-start;
+    align-self: flex-end;
+  }
+
+  /* Message composer */
+  .message-card {
+    position: fixed;
+    top: 220px;
+    right: 24px;
+    width: 320px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+    padding: 14px;
+    display: none;
+    z-index: 1100;
+  }
+
+  .message-card.show {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .message-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .message-target {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .message-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    background: #1d4ed8;
+    color: #eff6ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+  }
+
+  .message-recipient {
+    font-weight: 600;
+    color: #0f172a;
+    font-size: 0.9rem;
+  }
+
+  .message-meta {
+    font-size: 0.78rem;
+    color: #475569;
+  }
+
+  .message-close {
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #475569;
+  }
+
+  .message-input {
+    border-radius: 12px;
+    border: 1px solid #cbd5f5;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    resize: none;
+    min-height: 110px;
+  }
+
+  .message-input:focus {
+    outline: none;
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 2px #bfdbfe;
+  }
+
+  .message-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .message-status {
+    font-size: 0.78rem;
+    color: #059669;
+    min-height: 18px;
+  }
+
+  .message-send-btn {
+    border: none;
+    background: #1d4ed8;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  .message-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
   
   /* Leaflet popup text tweaks */
@@ -271,6 +447,25 @@ html, body {
     font-size: 0.78rem;
     color: #6b7280;
     margin: 2px 0 4px;
+  }
+
+  .pin-author {
+    font-size: 0.78rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+
+  .pin-author-button {
+    border: none;
+    background: #e5edff;
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: 0.76rem;
+    cursor: pointer;
   }
   
   .pin-actions {
@@ -286,4 +481,129 @@ html, body {
     cursor: pointer;
     background: #e5edff;
     color: #1d4ed8;
+  }
+
+  /* Add-pin controls */
+  .add-pin-ui {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 900;
+  }
+
+  .add-pin-btn {
+    border: none;
+    background: #1d4ed8;
+    color: #ffffff;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 15px 35px rgba(37, 99, 235, 0.25);
+    cursor: pointer;
+    align-self: flex-end;
+  }
+
+  .add-pin-btn.active {
+    background: #0b2a5b;
+  }
+
+  .add-pin-panel {
+    width: 300px;
+    max-width: calc(100vw - 40px);
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+    display: none;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      sans-serif;
+  }
+
+  .add-pin-panel.show {
+    display: block;
+  }
+
+  .add-pin-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .add-pin-title {
+    font-weight: 600;
+    color: #0b1220;
+  }
+
+  .add-pin-subtitle {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+
+  .add-pin-close {
+    border: none;
+    background: transparent;
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+    color: #6b7280;
+  }
+
+  .add-pin-hint {
+    font-size: 0.78rem;
+    color: #4b5563;
+    margin-bottom: 4px;
+  }
+
+  .add-pin-coords {
+    font-size: 0.8rem;
+    color: #111827;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+  }
+
+  .add-pin-input {
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    resize: none;
+    font-family: inherit;
+    margin-bottom: 10px;
+  }
+
+  .add-pin-input:focus {
+    outline: none;
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 2px #bfdbfe;
+  }
+
+  .add-pin-submit {
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 10px;
+    background: #1d4ed8;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .add-pin-submit:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .leaflet-container.add-pin-cursor {
+    cursor: crosshair;
   }

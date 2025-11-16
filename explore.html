@@ -259,38 +259,168 @@
     }
 
     /* Friend request button */
-    .friend-btn {
-      margin-top: 6px;
+    .user-actions {
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .message-btn {
       align-self: flex-start;
       border-radius: 999px;
-      border: 1px solid #d1d5db;
-      padding: 6px 12px;
-      font-size: 12px;
-      font-weight: 500;
-      background: #f9fafb;
-      color: #111827;
+      border: none;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      background: var(--accent);
+      color: #fff;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+      transition: background 120ms ease, transform 120ms ease;
+      box-shadow: 0 12px 30px rgba(79, 70, 229, 0.25);
     }
 
-    .friend-btn:hover {
-      background: #eef2ff;
-      border-color: #c7d2fe;
+    .message-btn:hover {
+      background: #4338ca;
+      transform: translateY(-1px);
     }
 
-    .friend-btn.friend-requested {
-      background: #e0e7ff;
-      border-color: #a5b4fc;
-      color: #4338ca;
+    .message-btn.highlight {
+      background: #16a34a;
+      box-shadow: 0 12px 30px rgba(22, 163, 74, 0.35);
+    }
+
+    .connect-btn {
+      border-radius: 999px;
+      border: 1px solid #cbd5f5;
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #fff;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: all 120ms ease;
+    }
+
+    .connect-btn:hover:not(.connected) {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .connect-btn.connected {
+      background: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
       cursor: default;
     }
 
-    .friend-btn.friend-requested::before {
-      content: "✓";
-      font-size: 12px;
-    }
+.message-card {
+  position: fixed;
+  top: 120px;
+  right: 30px;
+  width: 320px;
+  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.25);
+  padding: 16px;
+  display: none;
+  z-index: 900;
+}
+
+.message-card.show {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.message-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.message-target {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.message-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.message-recipient {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.message-meta {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.message-close {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.message-input {
+  border-radius: 12px;
+  border: 1px solid #cbd5f5;
+  padding: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: none;
+  min-height: 110px;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+}
+
+.message-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.message-status {
+  font-size: 13px;
+  color: #059669;
+  min-height: 18px;
+}
+
+.message-send-btn {
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.message-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
     @media (max-width: 880px) {
       .layout {
@@ -429,7 +559,9 @@
             data-school="UTD"
             data-major="Computer Science"
             data-status="Current"
-            data-country="USA">
+            data-country="USA"
+            data-avatar="MP"
+            data-bio="CS junior organizing hackathon coffee chats.">
             <div class="user-name">Manya Prakash</div>
             <div class="user-row">
               <span class="tag">UTD</span>
@@ -438,9 +570,14 @@
             <div class="user-row">
               <span>Current · USA</span>
             </div>
-            <button class="friend-btn" data-user-id="manya-prakash">
-              + Add friend
-            </button>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="manya-prakash">
+                Send message
+              </button>
+              <button class="connect-btn" data-user-id="manya-prakash">
+                Connect
+              </button>
+            </div>
           </article>
 
           <article class="user-card"
@@ -449,7 +586,9 @@
             data-school="UT Austin"
             data-major="Biology"
             data-status="Incoming"
-            data-country="USA">
+            data-country="USA"
+            data-avatar="AJ"
+            data-bio="Incoming biology major searching for study buddies.">
             <div class="user-name">Arya Jonnadula</div>
             <div class="user-row">
               <span class="tag">UT Austin</span>
@@ -458,9 +597,14 @@
             <div class="user-row">
               <span>Incoming · USA</span>
             </div>
-            <button class="friend-btn" data-user-id="arya-jonnadula">
-              + Add friend
-            </button>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="arya-jonnadula">
+                Send message
+              </button>
+              <button class="connect-btn" data-user-id="arya-jonnadula">
+                Connect
+              </button>
+            </div>
           </article>
 
           <article class="user-card"
@@ -469,7 +613,9 @@
             data-school="UNT"
             data-major="Mechanical Engineering"
             data-status="Current"
-            data-country="USA">
+            data-country="USA"
+            data-avatar="RL"
+            data-bio="Mechanical engineer prototyping DIY electric boards.">
             <div class="user-name">Robert Ly</div>
             <div class="user-row">
               <span class="tag">UNT</span>
@@ -478,9 +624,14 @@
             <div class="user-row">
               <span>Current · USA</span>
             </div>
-            <button class="friend-btn" data-user-id="robert-ly">
-              + Add friend
-            </button>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="robert-ly">
+                Send message
+              </button>
+              <button class="connect-btn" data-user-id="robert-ly">
+                Connect
+              </button>
+            </div>
           </article>
 
           <article class="user-card"
@@ -489,7 +640,9 @@
             data-school="UTD"
             data-major="Child Development"
             data-status="Alumni"
-            data-country="USA">
+            data-country="USA"
+            data-avatar="SF"
+            data-bio="Child development alum mentoring new Comets.">
             <div class="user-name">Sam Foster</div>
             <div class="user-row">
               <span class="tag">UTD</span>
@@ -498,12 +651,43 @@
             <div class="user-row">
               <span>Alumni · USA</span>
             </div>
-            <button class="friend-btn" data-user-id="sam-foster">
-              + Add friend
-            </button>
+            <div class="user-actions">
+              <button class="message-btn" data-user-id="sam-foster">
+                Send message
+              </button>
+              <button class="connect-btn" data-user-id="sam-foster">
+                Connect
+              </button>
+            </div>
           </article>
         </section>
       </main>
+    </div>
+  </div>
+
+  <!-- Message composer -->
+  <div id="messageCard" class="message-card">
+    <div class="message-card-header">
+      <div class="message-target">
+        <div id="messageAvatar" class="message-avatar">MP</div>
+        <div>
+          <div id="messageRecipient" class="message-recipient">User</div>
+          <div id="messageMeta" class="message-meta">Major - School</div>
+        </div>
+      </div>
+      <button id="closeMessageBtn" class="message-close" type="button">&times;</button>
+    </div>
+    <textarea
+      id="messageInput"
+      class="message-input"
+      rows="4"
+      placeholder="Type your message..."
+    ></textarea>
+    <div class="message-card-footer">
+      <div id="messageStatus" class="message-status"></div>
+      <button id="sendMessageBtn" class="message-send-btn" type="button" disabled>
+        Send message
+      </button>
     </div>
   </div>
 
@@ -542,7 +726,91 @@
     const resultsCount = document.getElementById("resultsCount");
     const activeFilterPill = document.getElementById("activeFilterPill");
     const clearBtn = document.getElementById("clearFiltersBtn");
-    const FRIEND_KEY = "tc_friendRequests";
+    const messageCard = document.getElementById("messageCard");
+    const messageAvatar = document.getElementById("messageAvatar");
+    const messageRecipient = document.getElementById("messageRecipient");
+    const messageMeta = document.getElementById("messageMeta");
+    const messageInput = document.getElementById("messageInput");
+    const sendMessageBtn = document.getElementById("sendMessageBtn");
+    const closeMessageBtn = document.getElementById("closeMessageBtn");
+    const messageStatusEl = document.getElementById("messageStatus");
+    const CURRENT_USER_ID = "you";
+    let activeMessageTarget = null;
+    let activeMessageData = null;
+    const CONNECTION_KEY = "tc_connections";
+    const CHAT_THREADS_KEY = "tc_conversations";
+
+    function loadConnections() {
+      try {
+        const raw = localStorage.getItem(CONNECTION_KEY);
+        if (!raw) return new Set();
+        return new Set(JSON.parse(raw));
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveConnections(set) {
+      try {
+        localStorage.setItem(CONNECTION_KEY, JSON.stringify(Array.from(set)));
+      } catch {
+        // ignore storage errors
+      }
+    }
+
+    const connections = loadConnections();
+
+    function loadChatThreads() {
+      try {
+        const raw = localStorage.getItem(CHAT_THREADS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    let chatThreads = loadChatThreads();
+
+    function persistChatThreads() {
+      try {
+        localStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(chatThreads));
+      } catch {
+        // ignore storage errors
+      }
+    }
+
+    function upsertChatThread(record) {
+      if (!record || !record.userId || !record.message) return;
+      const now = Date.now();
+      let thread = chatThreads.find(t => t.userId === record.userId);
+      if (!thread) {
+        thread = {
+          userId: record.userId,
+          name: record.name,
+          avatar: record.avatar,
+          lastMessage: "",
+          updatedAt: now,
+          messages: []
+        };
+        chatThreads.push(thread);
+      } else {
+        if (!thread.name && record.name) thread.name = record.name;
+        if (!thread.avatar && record.avatar) thread.avatar = record.avatar;
+        thread.messages = thread.messages || [];
+      }
+      thread.messages.push({
+        id: `m${now}`,
+        text: record.message,
+        senderId: CURRENT_USER_ID,
+        ts: now
+      });
+      thread.lastMessage = record.message.slice(0, 160);
+      thread.updatedAt = now;
+      chatThreads.sort((a, b) => b.updatedAt - a.updatedAt);
+      persistChatThreads();
+    }
 
     function getActiveFilters() {
       const filters = { school: [], major: [], status: [], country: [] };
@@ -611,50 +879,124 @@
       updateResults();
     });
 
-    // Friend request helpers
-    function loadFriendRequests() {
-      try {
-        const raw = localStorage.getItem(FRIEND_KEY);
-        if (!raw) return new Set();
-        return new Set(JSON.parse(raw));
-      } catch {
-        return new Set();
+    function openMessageComposer(card) {
+      if (!messageCard) return;
+      activeMessageTarget = card.dataset.userId;
+      activeMessageData = {
+        userId: card.dataset.userId,
+        name: card.dataset.name,
+        avatar: card.dataset.avatar || card.dataset.name.charAt(0)
+      };
+      if (messageAvatar) {
+        const initials = card.dataset.avatar || card.dataset.name.charAt(0);
+        messageAvatar.textContent = initials;
+      }
+      if (messageRecipient) messageRecipient.textContent = card.dataset.name;
+      if (messageMeta) {
+        const bio =
+          card.dataset.bio ||
+          `${card.dataset.major} - ${card.dataset.school}`;
+        messageMeta.textContent = bio;
+      }
+      if (messageStatusEl) messageStatusEl.textContent = "";
+      if (messageInput) {
+        messageInput.value = "";
+        messageInput.focus();
+      }
+      if (sendMessageBtn) sendMessageBtn.disabled = true;
+      messageCard.classList.add("show");
+    }
+
+    function closeMessageComposer() {
+      if (messageCard) messageCard.classList.remove("show");
+      activeMessageTarget = null;
+      activeMessageData = null;
+    }
+
+    function updateCardActions(card) {
+      const userId = card.dataset.userId;
+      const connected = connections.has(userId);
+      const connectBtn = card.querySelector(".connect-btn");
+      const messageBtn = card.querySelector(".message-btn");
+      if (connectBtn) {
+        connectBtn.textContent = connected ? "Connected ✓" : "Connect";
+        connectBtn.classList.toggle("connected", connected);
+        connectBtn.disabled = connected;
+      }
+      if (messageBtn) {
+        messageBtn.classList.toggle("highlight", connected);
       }
     }
 
-    function saveFriendRequests(set) {
-      localStorage.setItem(FRIEND_KEY, JSON.stringify(Array.from(set)));
+    function initConnectButtons() {
+      const buttons = document.querySelectorAll(".connect-btn");
+      buttons.forEach(btn => {
+        const card = btn.closest(".user-card");
+        if (!card) return;
+        updateCardActions(card);
+        btn.addEventListener("click", () => {
+          const userId = card.dataset.userId;
+          if (connections.has(userId)) return;
+          connections.add(userId);
+          saveConnections(connections);
+          updateCardActions(card);
+          const messageBtn = card.querySelector(".message-btn");
+          if (messageBtn) messageBtn.focus();
+        });
+      });
     }
 
-    function initFriendButtons() {
-      const requests = loadFriendRequests();
-      const buttons = document.querySelectorAll(".friend-btn");
-
+    function initMessageButtons() {
+      const buttons = document.querySelectorAll(".message-btn");
       buttons.forEach(btn => {
-        const userId = btn.dataset.userId;
-
-        function markRequested() {
-          btn.classList.add("friend-requested");
-          btn.textContent = "Requested";
-          btn.disabled = true;
-        }
-
-        if (requests.has(userId)) {
-          markRequested();
-        }
-
         btn.addEventListener("click", () => {
-          if (requests.has(userId)) return;
-          requests.add(userId);
-          saveFriendRequests(requests);
-          markRequested();
+          const card = btn.closest(".user-card");
+          if (card) openMessageComposer(card);
         });
+      });
+    }
+
+    if (closeMessageBtn) {
+      closeMessageBtn.addEventListener("click", closeMessageComposer);
+    }
+
+    if (messageInput) {
+      messageInput.addEventListener("input", () => {
+        if (sendMessageBtn) {
+          sendMessageBtn.disabled = messageInput.value.trim().length === 0;
+        }
+      });
+    }
+
+    if (sendMessageBtn) {
+      sendMessageBtn.addEventListener("click", () => {
+        if (!activeMessageTarget || !messageInput) return;
+        const text = messageInput.value.trim();
+        if (!text) return;
+        if (activeMessageData) {
+          upsertChatThread({
+            userId: activeMessageData.userId,
+            name: activeMessageData.name,
+            avatar: activeMessageData.avatar,
+            message: text
+          });
+        }
+        if (messageStatusEl) {
+          messageStatusEl.textContent = "Message sent!";
+        }
+        sendMessageBtn.disabled = true;
+        messageInput.value = "";
+        setTimeout(() => {
+          if (messageStatusEl) messageStatusEl.textContent = "";
+          closeMessageComposer();
+        }, 1200);
       });
     }
 
     // initial render
     updateResults();
-    initFriendButtons();
+    initConnectButtons();
+    initMessageButtons();
   </script>
 </body>
 </html>

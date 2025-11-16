@@ -29,6 +29,56 @@
       color: #6b7280;
     }
 
+    .chat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-card {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #ffffff;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .chat-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      background: #e0e7ff;
+      color: #1d4ed8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    .chat-main {
+      flex: 1;
+    }
+
+    .chat-name {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .chat-preview {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .chat-time {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
     .empty {
       padding: 16px;
       border-radius: 16px;
@@ -36,6 +86,153 @@
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
       font-size: 14px;
       color: #6b7280;
+      display: none;
+    }
+
+    .conversation-drawer {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      z-index: 1000;
+    }
+
+    .conversation-drawer.show {
+      display: flex;
+    }
+
+    .conversation-panel {
+      width: min(480px, 100%);
+      max-height: 90vh;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.3);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .conversation-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid #edf2ff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .conversation-target {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .conversation-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      background: #1d4ed8;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+
+    .conversation-name {
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .conversation-meta {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    .conversation-close {
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      cursor: pointer;
+      color: #475569;
+    }
+
+    .conversation-messages {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #f8fafc;
+    }
+
+    .message-bubble {
+      max-width: 75%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      font-size: 14px;
+      line-height: 1.3;
+      position: relative;
+      background: #e2e8f0;
+      color: #0f172a;
+      align-self: flex-start;
+    }
+
+    .message-bubble.me {
+      background: #1d4ed8;
+      color: #fff;
+      align-self: flex-end;
+    }
+
+    .message-time {
+      display: block;
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    .conversation-composer {
+      padding: 12px 16px 16px;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      gap: 10px;
+      background: #fff;
+    }
+
+    .conversation-composer textarea {
+      flex: 1;
+      border-radius: 12px;
+      border: 1px solid #cbd5f5;
+      padding: 10px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: none;
+      min-height: 70px;
+    }
+
+    .conversation-composer textarea:focus {
+      outline: none;
+      border-color: #1d4ed8;
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+
+    .conversation-send {
+      border: none;
+      border-radius: 999px;
+      background: #1d4ed8;
+      color: #fff;
+      font-weight: 600;
+      padding: 10px 16px;
+      cursor: pointer;
+    }
+
+    .conversation-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -44,9 +241,8 @@
     <h1>Chat</h1>
     <p class="subtitle">Start conversations with friends you’ve added.</p>
 
-    <div class="empty">
-      No conversations yet.
-    </div>
+    <div id="chatList" class="chat-list"></div>
+    <div id="chatEmpty" class="empty">No conversations yet.</div>
   </div>
 
   <nav class="bottom-nav">
@@ -75,5 +271,214 @@
       Profile
     </a>
   </nav>
+
+  <div id="conversationDrawer" class="conversation-drawer">
+    <div class="conversation-panel">
+      <div class="conversation-header">
+        <div class="conversation-target">
+          <div id="conversationAvatar" class="conversation-avatar">💬</div>
+          <div>
+            <div id="conversationName" class="conversation-name">Name</div>
+            <div id="conversationMeta" class="conversation-meta">Active now</div>
+          </div>
+        </div>
+        <button id="closeConversationBtn" class="conversation-close" type="button">&times;</button>
+      </div>
+      <div id="conversationMessages" class="conversation-messages"></div>
+      <div class="conversation-composer">
+        <textarea id="conversationInput" placeholder="Send a message"></textarea>
+        <button id="conversationSendBtn" class="conversation-send" type="button" disabled>Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const CHAT_THREADS_KEY = "tc_conversations";
+    const CURRENT_USER_ID = "you";
+    const chatListEl = document.getElementById("chatList");
+    const chatEmptyEl = document.getElementById("chatEmpty");
+    const drawer = document.getElementById("conversationDrawer");
+    const conversationAvatar = document.getElementById("conversationAvatar");
+    const conversationName = document.getElementById("conversationName");
+    const conversationMeta = document.getElementById("conversationMeta");
+    const conversationMessages = document.getElementById("conversationMessages");
+    const conversationInput = document.getElementById("conversationInput");
+    const conversationSendBtn = document.getElementById("conversationSendBtn");
+    const closeConversationBtn = document.getElementById("closeConversationBtn");
+
+    let threads = loadThreads();
+    let activeThreadId = null;
+
+    function loadThreads() {
+      try {
+        const raw = localStorage.getItem(CHAT_THREADS_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    function persistThreads() {
+      try {
+        localStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(threads));
+      } catch {
+        // ignore
+      }
+    }
+
+    function formatTime(timestamp) {
+      if (!timestamp) return "";
+      const date = new Date(timestamp);
+      const datePart = date.toLocaleDateString(undefined, {
+        month: "short",
+        day: "numeric"
+      });
+      const timePart = date.toLocaleTimeString(undefined, {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+      return `${datePart} · ${timePart}`;
+    }
+
+    function renderChatList() {
+      chatListEl.innerHTML = "";
+      if (!threads.length) {
+        chatEmptyEl.style.display = "block";
+        return;
+      }
+      chatEmptyEl.style.display = "none";
+      threads.forEach((thread) => {
+        const card = document.createElement("div");
+        card.className = "chat-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+
+        const avatar = document.createElement("div");
+        avatar.className = "chat-avatar";
+        avatar.textContent =
+          thread.avatar || (thread.name ? thread.name.charAt(0) : "💬");
+
+        const main = document.createElement("div");
+        main.className = "chat-main";
+
+        const nameEl = document.createElement("p");
+        nameEl.className = "chat-name";
+        nameEl.textContent = thread.name || "Unknown";
+
+        const previewEl = document.createElement("p");
+        previewEl.className = "chat-preview";
+        previewEl.textContent = thread.lastMessage || "";
+
+        main.appendChild(nameEl);
+        main.appendChild(previewEl);
+
+        const timeEl = document.createElement("div");
+        timeEl.className = "chat-time";
+        timeEl.textContent = formatTime(thread.updatedAt);
+
+        card.appendChild(avatar);
+        card.appendChild(main);
+        card.appendChild(timeEl);
+
+        card.addEventListener("click", () => openConversation(thread.userId));
+        card.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") openConversation(thread.userId);
+        });
+
+        chatListEl.appendChild(card);
+      });
+    }
+
+    function renderMessages(thread) {
+      conversationMessages.innerHTML = "";
+      const messages = (thread.messages || []).slice().sort((a, b) => a.ts - b.ts);
+      messages.forEach((msg) => {
+        const bubble = document.createElement("div");
+        bubble.className = "message-bubble";
+        if (msg.senderId === CURRENT_USER_ID) bubble.classList.add("me");
+        bubble.textContent = msg.text;
+
+        const time = document.createElement("span");
+        time.className = "message-time";
+        time.textContent = new Date(msg.ts).toLocaleTimeString(undefined, {
+          hour: "numeric",
+          minute: "2-digit"
+        });
+        bubble.appendChild(time);
+
+        conversationMessages.appendChild(bubble);
+      });
+      conversationMessages.scrollTop = conversationMessages.scrollHeight;
+    }
+
+    function openConversation(userId) {
+      const thread = threads.find((t) => t.userId === userId);
+      if (!thread) return;
+      activeThreadId = userId;
+      conversationAvatar.textContent =
+        thread.avatar || (thread.name ? thread.name.charAt(0) : "💬");
+      conversationName.textContent = thread.name || "Unknown";
+      conversationMeta.textContent = `Last active ${formatTime(thread.updatedAt)}`;
+      renderMessages(thread);
+      conversationInput.value = "";
+      conversationSendBtn.disabled = true;
+      drawer.classList.add("show");
+    }
+
+    function closeConversation() {
+      drawer.classList.remove("show");
+      activeThreadId = null;
+    }
+
+    function sendConversationMessage() {
+      if (!activeThreadId) return;
+      const text = conversationInput.value.trim();
+      if (!text) return;
+      const now = Date.now();
+      let thread = threads.find((t) => t.userId === activeThreadId);
+      if (!thread) {
+        thread = {
+          userId: activeThreadId,
+          name: "Unknown",
+          avatar: "💬",
+          lastMessage: "",
+          updatedAt: now,
+          messages: []
+        };
+        threads.push(thread);
+      }
+      thread.messages = thread.messages || [];
+      thread.messages.push({
+        id: `m${now}`,
+        text,
+        senderId: CURRENT_USER_ID,
+        ts: now
+      });
+      thread.lastMessage = text.slice(0, 160);
+      thread.updatedAt = now;
+      threads.sort((a, b) => b.updatedAt - a.updatedAt);
+      persistThreads();
+      renderMessages(thread);
+      conversationInput.value = "";
+      conversationSendBtn.disabled = true;
+      renderChatList();
+    }
+
+    conversationInput.addEventListener("input", () => {
+      conversationSendBtn.disabled = conversationInput.value.trim().length === 0;
+    });
+
+    conversationSendBtn.addEventListener("click", sendConversationMessage);
+    closeConversationBtn.addEventListener("click", closeConversation);
+    drawer.addEventListener("click", (e) => {
+      if (e.target === drawer) {
+        closeConversation();
+      }
+    });
+
+    renderChatList();
+  </script>
 </body>
 </html>
