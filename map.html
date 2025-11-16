@@ -31,35 +31,25 @@
 
   <div id="map"></div>
 
-  <div class="add-pin-ui">
-    <button id="addPinBtn" class="add-pin-btn">Drop a thought</button>
+  <!-- Status Filter Button -->
+<button id="filterBtn" class="filter-btn">Filters ⚙️</button>
 
-    <div id="addPinPanel" class="add-pin-panel">
-      <div class="add-pin-panel-header">
-        <div>
-          <div class="add-pin-title">Share your own pin</div>
-          <div class="add-pin-subtitle">1. Tap the map, 2. Post your thought.</div>
-        </div>
-        <button id="cancelAddPinBtn" class="add-pin-close" aria-label="Cancel adding pin">
-          &times;
-        </button>
-      </div>
+<!-- Filter Panel -->
+<div id="filterPanel" class="filter-panel">
+  <h3>Show Clouds</h3>
 
-      <div id="addPinHint" class="add-pin-hint">Tap anywhere on the map to pick a spot.</div>
-      <div id="addPinCoords" class="add-pin-coords">No location selected yet.</div>
+  <label><input type="checkbox" class="status-filter" value="current" checked> Current</label>
+  <label><input type="checkbox" class="status-filter" value="incoming" checked> Incoming</label>
+  <label><input type="checkbox" class="status-filter" value="alumni" checked> Alumni</label>
+  <label><input type="checkbox" class="status-filter" value="prospective" checked> Prospective</label>
 
-      <textarea
-        id="addPinText"
-        class="add-pin-input"
-        rows="3"
-        placeholder="What's happening around campus?"
-      ></textarea>
+  <button id="closeFilterBtn" class="close-filter-btn">Done</button>
+</div>
 
-      <button id="savePinBtn" class="add-pin-submit" type="button" disabled>
-        Post to map
-      </button>
-    </div>
-  </div>
+
+
+  <!-- Add Cloud (+) Button – opens create.html -->
+  <button class="addCloudButton" onclick="window.location.href='create.html'">+</button>
 
   <!-- Comments popup overlay -->
   <div id="overlay" class="overlay-backdrop">
@@ -69,65 +59,63 @@
           <div>
             <div id="comments-pin-text" class="comments-title"></div>
             <div id="comments-meta" class="comments-meta"></div>
-            <button id="comments-author" class="comments-author" type="button"></button>
           </div>
           <button class="comments-close" id="closeOverlayBtn">✕</button>
         </div>
       </div>
-
-      <!-- Profile mini-card -->
       <div id="commentsList" class="comments-body"></div>
 
-      <div class="comments-footer">
-        <input id="newCommentInput" placeholder="Add a thought..." />
-        <button id="postCommentBtn">Post</button>
-      </div>
+    <div class="comments-footer">
+      <input id="newCommentInput" placeholder="Add a thought..." />
+      <button id="postCommentBtn">Post</button>
     </div>
   </div>
+</div>
 
+<!-- Add Pin Panel (slide-up form) -->
+<div id="addPinPanel" class="add-pin-panel">
+  <div class="add-pin-title">Create Thought Cloud</div>
 
-<!-- Profile mini-card -->
+  <div id="addPinHint" class="add-pin-hint">
+    Tap anywhere on the map to drop a pin.
+  </div>
+
+  <div id="addPinCoords" class="add-pin-coords">
+    No location selected yet.
+  </div>
+
+  <textarea id="addPinText" placeholder="What's on your mind?"></textarea>
+
+  <div class="add-pin-buttons">
+    <button id="cancelAddPinBtn" class="cancel-btn">Cancel</button>
+    <button id="savePinBtn" class="save-btn" disabled>Post</button>
+  </div>
+</div>
+
+      <!-- Profile mini-card -->
 <div id="profileCard" class="profile-card">
-  <div id="profileAvatar" class="profile-avatar">dYO???</div>
+
+  <div id="profileAvatar" class="profile-avatar">🌿</div>
+
   <div class="profile-main">
     <div id="profileName" class="profile-name">Name</div>
     <div id="profileBio" class="profile-bio">Bio text...</div>
+    <div id="profileYear" class="profile-year"></div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="profile-actions">
+      <button id="profileConnectBtn" class="connect-btn">Connect</button>
+      <button id="profileMessageBtn" class="message-btn">Message</button>
+    </div>
   </div>
-  <div class="profile-actions">
-    <button id="profileMessageBtn" class="profile-message-btn" type="button">
-      Send message
-    </button>
-    <button id="profileConnectBtn" class="profile-connect-btn" type="button">
-      Connect
-    </button>
-    <button class="profile-close" type="button" onclick="hideProfile()">Close</button>
-  </div>
+
+  <!-- CLOSE BUTTON -->
+  <button class="profile-close" onclick="hideProfile()">Close</button>
+
 </div>
 
-<div id="messageCard" class="message-card">
-  <div class="message-card-header">
-    <div class="message-target">
-      <div id="messageAvatar" class="message-avatar">?</div>
-      <div>
-        <div id="messageRecipient" class="message-recipient">Recipient</div>
-        <div id="messageMeta" class="message-meta">Bio</div>
-      </div>
-    </div>
-    <button id="closeMessageBtn" class="message-close" type="button">&times;</button>
-  </div>
-  <textarea
-    id="messageInput"
-    class="message-input"
-    rows="4"
-    placeholder="Type your message..."
-  ></textarea>
-  <div class="message-card-footer">
-    <div id="messageStatus" class="message-status"></div>
-    <button id="sendMessageBtn" class="message-send-btn" type="button" disabled>
-      Send message
-    </button>
-  </div>
-</div>
+  <!-- Add Pin Button (floating + button) -->
+<button id="addPinBtn" class="add-pin-btn">+</button>
 
   <!-- Bottom nav bar -->
   <nav class="bottom-nav">

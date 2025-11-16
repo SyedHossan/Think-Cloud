@@ -5,36 +5,49 @@
 const currentUserId = "you";
 
 const users = {
-  u1: {
-    name: "Noah",
-    avatar: "🌿",
-    bio: "CS junior in UV3 who loves coffee chats and late-night LeetCode."
-  },
-  u2: {
-    name: "Maya",
-    avatar: "🌸",
-    bio: "Atec & UX student who sketches app ideas and grows too many plants."
-  },
-  u3: {
-    name: "Leo",
-    avatar: "🦊",
-    bio: "Night-owl who lives in Phase 8 and always knows when free food drops."
-  },
-  u4: {
-    name: "Sana",
-    avatar: "🌙",
-    bio: "Data science major running spontaneous study groups in ECSW."
-  },
-  u5: {
-    name: "Ray",
-    avatar: "🌊",
-    bio: "Gym regular & intramural champ, usually at Rec or on the courts."
-  },
-  you: {
-    name: "You",
-    avatar: "⭐️",
-    bio: "The cloud thinker behind this account."
-  }
+    u1: {
+  name: "Noah",
+  avatar: "🌿",
+  bio: "CS junior in UV3 who loves coffee chats and late-night LeetCode.",
+  status: "current",
+  year: "Junior (BS)"
+},
+u2: {
+  name: "Maya",
+  avatar: "🌸",
+  bio: "Atec & UX student who sketches app ideas and grows too many plants.",
+  status: "current",
+  year: "Senior (BS)"
+},
+u3: {
+  name: "Leo",
+  avatar: "🦊",
+  bio: "Night-owl who lives in Phase 8 and always knows when free food drops.",
+  status: "alumni",
+  year: "Alumni"
+},
+u4: {
+  name: "Sana",
+  avatar: "🌙",
+  bio: "Data science major joining ECSW soon.",
+  status: "incoming",
+  year: "Incoming Freshman"
+},
+u5: {
+  name: "Ray",
+  avatar: "🌊",
+  bio: "Gym regular & intramural champ, usually at Rec or on the courts.",
+  status: "prospective",
+  year: "Admitted Fall 2025"
+},
+you: {
+  name: "You",
+  avatar: "⭐️",
+  bio: "The cloud thinker behind this account.",
+  status: "current",
+  year: "Sophomore (BS)"
+}
+
 };
 
 const reactionOptions = ["👍", "❤️", "😂", "😮", "👎"];
@@ -123,8 +136,12 @@ function upsertChatThread({ userId, name, avatar, message }) {
   persistChatThreads();
 }
 
+// Load user-created pins from storage
+const savedUserPins = JSON.parse(localStorage.getItem("userClouds") || "[]");
+
 // Hardcoded pins around UTD
 let pins = [
+  ...savedUserPins,
   {
     id: "pin1",
     lat: 32.984746,
@@ -330,7 +347,7 @@ let pins = [
         id: "c1",
         userId: "u3",
         text: "I need a break from coding, I’m in.",
-        baseReactions: { "👍": 3, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
+        baseReactions: { "👍": 5, "❤️": 3, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
@@ -497,16 +514,103 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors"
 }).addTo(map);
 
+function getStatusColor(userId) {
+  const status = (users[userId] && users[userId].status) || "current";
+
+  const darkColors = {
+    current: "#3b8fe3ff",      // Strong Blue
+  incoming: "#f9f65eff",     // Vivid Yellow
+  alumni: "#18c373ff",       // Sharp Golden Orange
+  prospective: "#ee7811ff", 
+  };
+
+  return darkColors[status] || "#374151"; // dark gray fallback
+}
+
+
+
 function createMarkerForPin(pin) {
-  const marker = L.marker([pin.lat, pin.lng]).addTo(map);
+  const color = getStatusColor(pin.userId);
+
+
+const iconHtml = `
+  <div style="
+    position: relative;
+    width: 44px;
+    height: 40px;
+    transform: translate(-12px,-26px);
+  ">
+
+    <!-- Left puff -->
+    <div style="
+      position:absolute;
+      width: 26px;
+      height: 26px;
+      background:${color};
+      border-radius:50%;
+      top: 4px;
+      left: 0px;
+      filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+    "></div>
+
+    <!-- Center puff (bigger) -->
+    <div style="
+      position:absolute;
+      width: 30px;
+      height: 30px;
+      background:${color};
+      border-radius:50%;
+      top: 0px;
+      left: 10px;
+      filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+    "></div>
+
+    <!-- Right puff -->
+    <div style="
+      position:absolute;
+      width: 26px;
+      height: 26px;
+      background:${color};
+      border-radius:50%;
+      top: 6px;
+      left: 22px;
+      filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+    "></div>
+
+    <!-- Pointer -->
+    <div style="
+      position:absolute;
+      width:0;
+      height:0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 14px solid ${color};
+      left: 12px;
+      top: 26px;
+      filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.25));
+    "></div>
+
+  </div>
+`;
+
+  const customIcon = L.divIcon({
+    html: iconHtml,
+    iconSize: [40, 40],
+    className: "status-pin"
+  });
+
+  const marker = L.marker([pin.lat, pin.lng], { icon: customIcon }).addTo(map);
   markers[pin.id] = marker;
   updateMarkerPopup(pin.id);
   return marker;
 }
 
+
 // Create all markers
 pins.forEach((pin) => {
-  createMarkerForPin(pin);
+  if (!markers[pin.id]) {
+    createMarkerForPin(pin);
+  }
 });
 
 /* -----------------------------
@@ -543,23 +647,30 @@ if (
   }
 
   function enterAddPinMode() {
-    addPinMode = true;
-    addPinBtn.classList.add("active");
-    addPinPanel.classList.add("show");
-    addPinHintEl.textContent = "Tap anywhere on the map to drop your pin.";
-    resetAddPinForm();
-    mapContainer.classList.add("add-pin-cursor");
-    addPinTextInput.focus();
-  }
+  addPinMode = true;
+  addPinBtn.classList.add("active");
+  addPinPanel.classList.add("show");
+  addPinHintEl.textContent = "Tap anywhere on the map to drop your pin.";
+  resetAddPinForm();
+  map.getContainer().classList.add("add-pin-cursor");
+  addPinTextInput.focus();
 
-  function exitAddPinMode() {
-    addPinMode = false;
-    addPinBtn.classList.remove("active");
-    addPinPanel.classList.remove("show");
-    addPinHintEl.textContent = "Tap anywhere on the map to pick a spot.";
-    resetAddPinForm();
-    mapContainer.classList.remove("add-pin-cursor");
-  }
+  //  HIDE + BUTTON
+  addPinBtn.style.display = "none";
+}
+
+function exitAddPinMode() {
+  addPinMode = false;
+  addPinBtn.classList.remove("active");
+  addPinPanel.classList.remove("show");
+  addPinHintEl.textContent = "Tap anywhere on the map to pick a spot.";
+  resetAddPinForm();
+  map.getContainer().classList.remove("add-pin-cursor");
+
+  // SHOW + BUTTON AGAIN
+  addPinBtn.style.display = "flex";
+}
+
 
   addPinBtn.addEventListener("click", () => {
     if (addPinMode) {
@@ -567,6 +678,8 @@ if (
     } else {
       enterAddPinMode();
     }
+
+
   });
 
   if (cancelAddPinBtn) {
@@ -609,9 +722,53 @@ if (
     pins.unshift(newPin);
     createMarkerForPin(newPin);
     markers[newPin.id].openPopup();
+    localStorage.setItem("userClouds", JSON.stringify(pins.filter(p => p.userId === currentUserId)));
     exitAddPinMode();
   });
 }
+
+/* -----------------------------
+   Status Filter Logic
+----------------------------- */
+
+const filterBtn = document.getElementById("filterBtn");
+const filterPanel = document.getElementById("filterPanel");
+const closeFilterBtn = document.getElementById("closeFilterBtn");
+
+const filterCheckboxes = document.querySelectorAll(".status-filter");
+
+// Toggle filter panel open/close
+filterBtn.addEventListener("click", () => {
+  filterPanel.style.display =
+    filterPanel.style.display === "block" ? "none" : "block";
+});
+
+closeFilterBtn.addEventListener("click", () => {
+  filterPanel.style.display = "none";
+  applyStatusFilter();
+});
+
+// Apply filtering to markers
+function applyStatusFilter() {
+  const enabledStatuses = Array.from(filterCheckboxes)
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+
+  pins.forEach(pin => {
+    const user = users[pin.userId] || { status: "current" };
+    const status = user.status;
+
+    const marker = markers[pin.id];
+    if (!marker) return;
+
+    if (enabledStatuses.includes(status)) {
+      marker.addTo(map);
+    } else {
+      map.removeLayer(marker);
+    }
+  });
+}
+
 
 /* -----------------------------
    Helpers
@@ -641,29 +798,47 @@ function updateMarkerPopup(pinId) {
   const html = `
     <div>
       <div class="pin-title">${pin.text}</div>
+
       <div class="pin-author">
         Posted by
         <button class="pin-author-button" onclick="showProfile('${authorId}')">
           ${author.name}
         </button>
       </div>
+
       <div class="pin-meta-line">
-        Likes: <span id="like-count-${pin.id}">${likes}</span> A?
+        Likes: <span id="like-count-${pin.id}">${likes}</span> ·
         Comments: <span id="comment-count-${pin.id}">${comments}</span>
       </div>
+
       <div class="pin-actions">
         <button onclick="handleLikePin('${pin.id}', event)">
           ${pin.liked ? "Unlike" : "Like"}
         </button>
+
         <button onclick="openCommentsOverlay('${pin.id}')">
           Comments
         </button>
+
+        <button onclick="showProfile('${authorId}')">
+          View Profile
+        </button>
+
+        ${
+          pin.userId === currentUserId
+            ? `<button class="delete-pin-btn" onclick="deletePin('${pin.id}', event)">
+                 Delete
+               </button>`
+            : ""
+        }
       </div>
     </div>
   `;
 
   markers[pin.id].bindPopup(html);
 }
+
+
 /* -----------------------------
    Pin like handler
 ----------------------------- */
@@ -679,6 +854,34 @@ function handleLikePin(pinId, ev) {
   updateMarkerPopup(pinId);
   markers[pinId].openPopup(); // keep it open
 }
+
+/* -----------------------------
+Delete Pin handler
+-----------------------------*/
+function deletePin(pinId, ev) {
+  if (ev) {
+    ev.preventDefault();
+    ev.stopPropagation();
+  }
+
+  if (!confirm("Delete this thought cloud?")) return;
+
+  // Remove pin from array
+  pins = pins.filter(p => p.id !== pinId);
+
+  // Remove marker from map
+  if (markers[pinId]) {
+    map.removeLayer(markers[pinId]);
+    delete markers[pinId];
+  }
+
+  // Update localStorage only with user's own pins
+  const myPins = pins.filter(p => p.userId === currentUserId);
+  localStorage.setItem("userClouds", JSON.stringify(myPins));
+
+  alert("Thought cloud deleted!");
+}
+
 
 /* -----------------------------
    Comments overlay logic
@@ -698,6 +901,7 @@ const profileCard = document.getElementById("profileCard");
 const profileAvatar = document.getElementById("profileAvatar");
 const profileName = document.getElementById("profileName");
 const profileBio = document.getElementById("profileBio");
+const profileYear = document.getElementById("profileYear"); 
 const profileConnectBtn = document.getElementById("profileConnectBtn");
 const profileMessageBtn = document.getElementById("profileMessageBtn");
 const messageCard = document.getElementById("messageCard");
@@ -994,6 +1198,8 @@ function showProfile(userId) {
   if (profileAvatar) profileAvatar.textContent = user.avatar || user.name[0];
   if (profileName) profileName.textContent = user.name;
   if (profileBio) profileBio.textContent = user.bio;
+  if (profileYear) profileYear.textContent = user.year || "";
+
   updateProfileActionStates(userId);
   profileCard.classList.add("show");
 }
@@ -1002,3 +1208,4 @@ function hideProfile() {
   if (profileCard) profileCard.classList.remove("show");
   activeProfileUserId = null;
 }
+
