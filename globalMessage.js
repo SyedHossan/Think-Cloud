@@ -10,10 +10,30 @@ const msgInput = document.getElementById("msgInput");
 const msgSendBtn = document.getElementById("msgSendBtn");
 const msgCloseBtn = document.getElementById("msgCloseBtn");
 
+function getCurrentUserProfile() {
+  try {
+    return JSON.parse(localStorage.getItem("tc_currentUser")) || {};
+  } catch {
+    return {};
+  }
+}
+
+function getCurrentUserId(profile) {
+  if (profile && profile.userId) return profile.userId;
+  if (profile && profile.email) {
+    return profile.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  }
+  return "anya-patel";
+}
+
+const miniProfile = getCurrentUserProfile();
+const MINI_USER_ID = getCurrentUserId(miniProfile);
+const MINI_CHAT_KEY = `tc_conversations_${MINI_USER_ID}`;
+
 // Load chat threads
 function loadChatThreads() {
   try {
-    return JSON.parse(localStorage.getItem("tc_conversations")) || [];
+    return JSON.parse(localStorage.getItem(MINI_CHAT_KEY)) || [];
   } catch {
     return [];
   }
@@ -22,7 +42,7 @@ function loadChatThreads() {
 let chatThreads = loadChatThreads();
 
 function saveChatThreads() {
-  localStorage.setItem("tc_conversations", JSON.stringify(chatThreads));
+  localStorage.setItem(MINI_CHAT_KEY, JSON.stringify(chatThreads));
 }
 
 // OPEN modal
@@ -90,7 +110,7 @@ function renderMsgBubble(msg) {
   const row = document.createElement("div");
   
   // Check if message is from current user or other user
-  const isFromMe = msg.senderId === "you";
+  const isFromMe = msg.senderId === MINI_USER_ID || msg.senderId === "you";
   
   if (isFromMe) {
     // User's own messages - RIGHT SIDE, NO TIME, NO DELETE
@@ -144,12 +164,12 @@ function sendMessage() {
     id,
     text,
     ts: now,
-    senderId: "you"
+    senderId: MINI_USER_ID
   });
 
   saveChatThreads();
 
-  renderMsgBubble({ id, text, ts: now, senderId: "you" });
+  renderMsgBubble({ id, text, ts: now, senderId: MINI_USER_ID });
   msgInput.value = "";
   msgSendBtn.disabled = true;
   msgThread.scrollTop = msgThread.scrollHeight;

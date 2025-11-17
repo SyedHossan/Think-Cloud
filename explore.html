@@ -1130,9 +1130,26 @@
     const closeMessageBtn = document.getElementById("closeMessageBtn");
     const messageStatusEl = document.getElementById("messageStatus");
 
-    const CONNECTION_KEY = "tc_connections";
-    const CHAT_THREADS_KEY = "tc_conversations";
-    const CURRENT_USER_ID = "you";
+    function getCurrentUserProfile() {
+      try {
+        return JSON.parse(localStorage.getItem("tc_currentUser")) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function getUserId(profile) {
+      if (profile && profile.userId) return profile.userId;
+      if (profile && profile.email) {
+        return profile.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      }
+      return "anya-patel";
+    }
+
+    const currentUserProfile = getCurrentUserProfile();
+    const CURRENT_USER_ID = getUserId(currentUserProfile);
+    const CONNECTION_KEY = `tc_connections_${CURRENT_USER_ID}`;
+    const CHAT_THREADS_KEY = `tc_conversations_${CURRENT_USER_ID}`;
     const HIGHLIGHT_KEY = "highlightProfileId";
 
     let activeMessageTarget = null;
@@ -1203,7 +1220,8 @@
 /* --------------------------------------------------
    SEED INITIAL MENTOR CHATS FOR ANYA (only if empty)
 -----------------------------------------------------*/
-if (chatThreads.length === 0) {
+const shouldSeedMentors = CURRENT_USER_ID === "anya-patel";
+if (chatThreads.length === 0 && shouldSeedMentors) {
   const now = Date.now();
 
   chatThreads.push(
@@ -1223,7 +1241,7 @@ if (chatThreads.length === 0) {
         {
           id: "m2",
           text: "Thanks so much!! I’m really excited 😊",
-          senderId: "you",
+          senderId: CURRENT_USER_ID,
           ts: now - 30000
         }
       ]
@@ -1245,7 +1263,7 @@ if (chatThreads.length === 0) {
         {
           id: "m2",
           text: "That is so sweet of you, thank you!!",
-          senderId: "you",
+          senderId: CURRENT_USER_ID,
           ts: now - 25000
         }
       ]
@@ -1446,7 +1464,7 @@ if (chatThreads.length === 0) {
 
     function renderConnectionsSection() {
       if (!connectionsGrid || !connectionsEmptyEl) return;
-      const ids = Array.from(connections).filter(id => id && id !== "you");
+      const ids = Array.from(connections).filter(id => id && id !== CURRENT_USER_ID);
 
       if (connectionsCountEl) {
         connectionsCountEl.textContent = ids.length
@@ -1604,17 +1622,6 @@ if (chatThreads.length === 0) {
           if (card) openMessageComposer(card);
         });
       });
-    }
-
-    function highlightProfileFromStorage() {
-      const targetId = localStorage.getItem(HIGHLIGHT_KEY);
-      if (!targetId) return;
-      localStorage.removeItem(HIGHLIGHT_KEY);
-      const card = document.querySelector(`.user-card[data-user-id="${targetId}"]`);
-      if (!card) return;
-      card.classList.add("highlight");
-      card.scrollIntoView({ behavior: "smooth", block: "center" });
-      setTimeout(() => card.classList.remove("highlight"), 4000);
     }
 
     // Save explore users for chat page
