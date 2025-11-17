@@ -11,19 +11,39 @@
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       background: #f4f5ff;
       padding: 24px 16px 76px;
+      position: relative;
+    }
+
+    /* Back Button (top-left, same as Explore) */
+    .back-to-map {
+      position: fixed;
+      top: 14px;
+      left: 16px;
+      background: white;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      text-decoration: none;
+      color: #111;
+      font-weight: 600;
+      z-index: 999;
     }
 
     .notif-shell {
       max-width: 760px;
       margin: 0 auto;
+      margin-top: 40px;
     }
 
     h1 {
       margin: 0 0 6px;
       font-size: 24px;
+      text-align: center;
     }
 
     .subtitle {
+      text-align: center;
       margin: 0 0 18px;
       font-size: 14px;
       color: #6b7280;
@@ -124,14 +144,14 @@
   </style>
 </head>
 <body>
+  <a href="map.html" class="back-to-map-btn">← Back to Map</a>
+
   <div class="notif-shell">
     <h1>Notifications</h1>
     <p class="subtitle">Activity on your clouds and friend requests.</p>
 
-    <!-- TODAY (newest at top) -->
     <div class="section-label">Today</div>
     <div class="notif-list">
-      <!-- Newest -->
       <div class="notif-item friend">
         <div class="notif-icon">👥</div>
         <div class="notif-content">
@@ -140,13 +160,12 @@
             <span class="notif-pill">Friend</span>
           </div>
           <div class="notif-text">
-            <strong>Manya Prakash</strong> sent you a friend request after viewing your profile.
+            <strong>Manya Prakash</strong> sent you a friend request.
           </div>
-          <div class="notif-meta">3 min ago · from Explore</div>
+          <div class="notif-meta">3 min ago · Explore</div>
         </div>
       </div>
 
-      <!-- Second newest -->
       <div class="notif-item">
         <div class="notif-icon">❤️</div>
         <div class="notif-content">
@@ -155,29 +174,27 @@
             <span class="notif-pill">Cloud</span>
           </div>
           <div class="notif-text">
-            <strong>Arya Jonnadula</strong> liked your thought on the “UTD library study spots” pin.
+            <strong>Arya Jonnadula</strong> liked your thought on a UTD pin.
           </div>
-          <div class="notif-meta">25 min ago · on the map</div>
+          <div class="notif-meta">25 min ago · Map</div>
         </div>
       </div>
 
-      <!-- Oldest of today -->
       <div class="notif-item reply">
         <div class="notif-icon">💬</div>
         <div class="notif-content">
           <div class="notif-title-row">
-            <div class="notif-title">New reply to your cloud</div>
+            <div class="notif-title">New reply</div>
             <span class="notif-pill">Reply</span>
           </div>
           <div class="notif-text">
-            <strong>Robert Ly</strong> replied to your comment: “I also love late-night coffee walks near ECSW.”
+            <strong>Robert Ly</strong> replied: “Coffee walks near ECSW!!”
           </div>
-          <div class="notif-meta">1 hour ago · on the map</div>
+          <div class="notif-meta">1 hour ago · Map</div>
         </div>
       </div>
     </div>
 
-    <!-- EARLIER -->
     <div class="section-label">Earlier</div>
     <div class="notif-list">
       <div class="notif-item system">
@@ -188,7 +205,7 @@
             <span class="notif-pill">System</span>
           </div>
           <div class="notif-text">
-            Your account is all set up. Drop your first cloud on the map and see who else is nearby.
+            Your account is set up — drop your first cloud!
           </div>
           <div class="notif-meta">Yesterday</div>
         </div>
@@ -197,30 +214,12 @@
   </div>
 
   <nav class="bottom-nav">
-    <a href="explore.html">
-      <span class="icon">🧭</span>
-      Explore
-    </a>
-
-    <a href="notifications.html" class="active">
-      <span class="icon">🔔</span>
-      Notifications
-    </a>
-
-    <a href="map.html" class="center-icon">
-      <span class="icon">🗺️</span>
-      Map
-    </a>
-
-    <a href="chat.html">
-      <span class="icon">💬</span>
-      Chat
-    </a>
-
-    <a href="profile.html">
-      <span class="icon">👤</span>
-      Profile
-    </a>
+    <a href="explore.html"><span class="icon">🧭</span>Explore</a>
+    <a href="notifications.html" class="active"><span class="icon">🔔</span>Notifications</a>
+    <a href="map.html" class="center-icon"><span class="icon">🗺️</span>Map</a>
+    <a href="chat.html"><span class="icon">💬</span>Chat</a>
+    <a href="profile.html"><span class="icon">👤</span>Profile</a>
   </nav>
+
 </body>
 </html>
