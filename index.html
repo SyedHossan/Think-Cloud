@@ -1,11 +1,9 @@
-
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title>Think Cloud – Login</title>
   <link rel="stylesheet" href="styles.css?v=1">
-
 </head>
 <body>
 
@@ -21,10 +19,16 @@
     <h1>Think Cloud</h1>
     <p class="subtitle">Share your thoughts with those around you.</p>
 
-    <!-- Email -->
+    <!-- Email (HARD-CODED) -->
     <div class="field-group">
       <label for="loginEmail">Email</label>
-      <input id="loginEmail" type="email" placeholder="Email" required />
+      <input 
+        id="loginEmail" 
+        type="email"
+        placeholder="Email"
+        value="anya.patel9364@gmail.com"
+        readonly
+      />
     </div>
 
     <!-- Password -->
@@ -33,7 +37,7 @@
       <input id="loginPassword" type="password" placeholder="Password" required />
     </div>
 
-    <button id="loginBtn" class="primary-btn">Log In</button>
+    <button id="loginBtn" class="primary-btn" type="button">Log In</button>
 
     <p class="signup-text">
       New here?
@@ -43,10 +47,24 @@
   </div>
 
   <script>
-    document.getElementById("loginBtn").onclick = () => {
-      // simple demo login
+    // When clicking Log In → automatically loads Anya's profile
+    document.getElementById("loginBtn").addEventListener("click", () => {
+
+      // store hardcoded user profile
+      const profile = {
+        firstName: "Anya",
+        lastName: "Patel",
+        school: "UTD – The University of Texas at Dallas",
+        major: "Computer Science",
+        status: "Incoming",
+        country: "India",
+        bio: "Incoming UTD CS freshman from India 🌿"
+      };
+
+      localStorage.setItem("tc_currentUser", JSON.stringify(profile));
+
       window.location.href = "map.html";
-    };
+    });
   </script>
 
 </body>

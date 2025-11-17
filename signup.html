@@ -147,25 +147,39 @@
     </p>
   </div>
 
-  <script>
-    // Save basic profile to localStorage and go to map
-    document.getElementById("signupForm").addEventListener("submit", function (e) {
-      e.preventDefault();
+  
 
-      const profile = {
-        firstName: "Anya",
-        lastName: "Patel",
-        school: "UTD – The University of Texas at Dallas",
-        major: "Computer Science",
-        status: "Current",
-        country: "India",
-        bio: "Incoming CS student who loves maps and chai 🌿"
-      };
+<script>
+  // Auto-fill all fields immediately when the page loads
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("firstName").value = "Anya";
+    document.getElementById("lastName").value = "Patel";
+    document.getElementById("school").value = "UTD – The University of Texas at Dallas";
+    document.getElementById("major").value = "Computer Science";
+    document.getElementById("status").value = "Incoming";
+    document.getElementById("country").value = "India";
+    document.getElementById("bio").value = "Incoming UTD CS freshman from India 🌿";
+  });
 
-      localStorage.setItem("tc_currentUser", JSON.stringify(profile));
-      window.location.href = "map.html";
-    });
-  </script>
+  // When the tester clicks Create Account, auto-save the hardcoded profile
+  document.getElementById("signupForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const profile = {
+      firstName: "Anya",
+      lastName: "Patel",
+      school: "UTD – The University of Texas at Dallas",
+      major: "Computer Science",
+      status: "Incoming",
+      country: "India",
+      bio: "Incoming UTD CS freshman from India 🌿",
+    };
+
+    localStorage.setItem("tc_currentUser", JSON.stringify(profile));
+
+    window.location.href = "map.html";
+  });
+</script>
 
 </body>
 </html>
