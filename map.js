@@ -646,7 +646,7 @@ let pins = [
     id: "usa1",
     lat: 40.7128,
     lng: -74.0060,
-    userId: "u5", // prospective → yellow
+    userId: "emma-cole",   // prospective → fits perfectly
     text: "NYC! Anyone visiting during winter break?",
     baseLikes: 5,
     liked: false,
@@ -656,7 +656,7 @@ let pins = [
     id: "usa2",
     lat: 34.0522,
     lng: -118.2437,
-    userId: "u3", // alumni → orange
+    userId: "taylor-nguyen",  // design/UX student → LA vibes
     text: "LA sunshine hits different 😎",
     baseLikes: 3,
     liked: false,
@@ -666,7 +666,7 @@ let pins = [
     id: "usa3",
     lat: 41.8781,
     lng: -87.6298,
-    userId: "u1", // current → green
+    userId: "jordan-lee",   // business analytics → Chicago fits
     text: "Chicago downtown walk anyone? ❄️",
     baseLikes: 1,
     liked: false,
