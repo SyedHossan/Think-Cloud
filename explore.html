@@ -168,6 +168,105 @@
       justify-content: space-between;
     }
 
+    .connections-panel {
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 16px;
+    }
+
+    .connections-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .connections-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .connections-count {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .connections-empty-text {
+      font-size: 14px;
+      color: var(--text-muted);
+      padding: 8px 0;
+      display: none;
+    }
+
+    .connections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .connection-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+    }
+
+    .connection-info {
+      flex: 1;
+    }
+
+    .connection-name {
+      margin: 0;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .connection-meta {
+      margin: 2px 0 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .connection-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .connection-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .connection-actions button {
+      border-radius: 999px;
+      border: 1px solid var(--accent);
+      padding: 4px 10px;
+      font-size: 12px;
+      background: #fff;
+      color: var(--accent);
+      cursor: pointer;
+    }
+
+    .connection-actions button.primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
     .search-input-wrap {
       flex: 1 1 220px;
       display: flex;
@@ -580,6 +679,17 @@
           </div>
         </div>
 
+        <section class="connections-panel" id="connectionsPanel">
+          <div class="connections-header">
+            <h2>Your connections</h2>
+            <span id="connectionsCount" class="connections-count">No connections yet</span>
+          </div>
+          <div id="connectionsEmpty" class="connections-empty-text">
+            You haven’t connected with anyone yet. Start by messaging someone below.
+          </div>
+          <div id="connectionsGrid" class="connections-grid"></div>
+        </section>
+
         <!-- USERS GRID -->
         
         <section class="user-grid" id="userGrid">
@@ -974,7 +1084,7 @@
 
   <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <a href="explore.html">
+    <a href="explore.html" class="active">
       <span class="icon">🧭</span>
       Explore
     </a>
@@ -984,7 +1094,7 @@
       Notifications
     </a>
 
-    <a href="map.html" class="center-icon active">
+    <a href="map.html" class="center-icon">
       <span class="icon">🗺️</span>
       Map
     </a>
@@ -1009,6 +1119,10 @@
     const resultsCount = document.getElementById("resultsCount");
     const activeFilterPill = document.getElementById("activeFilterPill");
     const clearBtn = document.getElementById("clearFiltersBtn");
+    const connectionsPanel = document.getElementById("connectionsPanel");
+    const connectionsGrid = document.getElementById("connectionsGrid");
+    const connectionsEmptyEl = document.getElementById("connectionsEmpty");
+    const connectionsCountEl = document.getElementById("connectionsCount");
 
     const messageCard = document.getElementById("messageCard");
     const messageAvatar = document.getElementById("messageAvatar");
@@ -1038,6 +1152,39 @@
       }
     }
     const connections = loadConnections();
+
+    function safeParseProfiles() {
+      try {
+        const raw = localStorage.getItem("tc_exploreUsers");
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+
+    const storedProfiles = safeParseProfiles();
+    const storedProfileMap = {};
+    storedProfiles.forEach(profile => {
+      if (profile.userId) storedProfileMap[profile.userId] = profile;
+    });
+
+    const userDataMap = {};
+    userCards.forEach(card => {
+      userDataMap[card.dataset.userId] = {
+        userId: card.dataset.userId,
+        name: card.dataset.name,
+        avatar: card.dataset.avatar,
+        bio: card.dataset.bio,
+        major: card.dataset.major,
+        school: card.dataset.school
+      };
+    });
+
+    function getProfileData(userId) {
+      return userDataMap[userId] || storedProfileMap[userId] || null;
+    }
 
     function saveConnections(set) {
       localStorage.setItem(CONNECTION_KEY, JSON.stringify(Array.from(set)));
@@ -1221,28 +1368,39 @@ if (chatThreads.length === 0) {
 
     /* MESSAGE COMPOSER */
 
-    function openMessageComposer(card) {
-      activeMessageTarget = card.dataset.userId;
+    function openMessageComposerWithProfile(profile) {
+      if (!profile || !profile.userId) return;
+      activeMessageTarget = profile.userId;
       activeMessageData = {
-        userId: card.dataset.userId,
-        name: card.dataset.name,
-        avatar: card.dataset.avatar,
-        bio: card.dataset.bio
+        userId: profile.userId,
+        name: profile.name,
+        avatar: profile.avatar,
+        bio: profile.bio
       };
 
-      messageAvatar.textContent = card.dataset.avatar;
-      messageRecipient.textContent = card.dataset.name;
+      messageAvatar.textContent = profile.avatar || (profile.name ? profile.name.charAt(0) : "💬");
+      messageRecipient.textContent = profile.name || "New connection";
 
-      messageMeta.textContent =
-        card.dataset.bio || `${card.dataset.major} — ${card.dataset.school}`;
+      const metaFallback = [profile.major, profile.school].filter(Boolean).join(" • ");
+      messageMeta.textContent = profile.bio || metaFallback;
 
       messageInput.value = "";
       messageStatusEl.textContent = "";
-
       sendMessageBtn.disabled = true;
-
       messageCard.classList.add("show");
       messageInput.focus();
+    }
+
+    function openMessageComposer(card) {
+      if (!card) return;
+      openMessageComposerWithProfile({
+        userId: card.dataset.userId,
+        name: card.dataset.name,
+        avatar: card.dataset.avatar,
+        bio: card.dataset.bio,
+        major: card.dataset.major,
+        school: card.dataset.school
+      });
     }
 
     closeMessageBtn.addEventListener("click", () => {
@@ -1274,6 +1432,95 @@ if (chatThreads.length === 0) {
       }, 1200);
     });
 
+    function focusUserCard(userId) {
+      const card = document.querySelector(`.user-card[data-user-id="${userId}"]`);
+      if (!card) return;
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      card.classList.add("highlight");
+      setTimeout(() => card.classList.remove("highlight"), 4000);
+    }
+
+    function startMessageForUser(userId) {
+      const data = getProfileData(userId);
+      if (data) {
+        openMessageComposerWithProfile(data);
+      }
+    }
+
+    function renderConnectionsSection() {
+      if (!connectionsGrid || !connectionsEmptyEl) return;
+      const ids = Array.from(connections).filter(id => id && id !== "you");
+
+      if (connectionsCountEl) {
+        connectionsCountEl.textContent = ids.length
+          ? `${ids.length} connection${ids.length === 1 ? "" : "s"}`
+          : "No connections yet";
+      }
+
+      connectionsGrid.innerHTML = "";
+
+      if (!ids.length) {
+        connectionsEmptyEl.style.display = "block";
+        return;
+      }
+
+      connectionsEmptyEl.style.display = "none";
+
+      ids.forEach(userId => {
+        const data = getProfileData(userId);
+        if (!data) return;
+
+        const card = document.createElement("div");
+        card.className = "connection-card";
+        card.addEventListener("click", () => focusUserCard(userId));
+
+        const avatar = document.createElement("div");
+        avatar.className = "connection-avatar";
+        avatar.textContent = data.avatar || (data.name ? data.name.charAt(0) : "🙂");
+
+        const info = document.createElement("div");
+        info.className = "connection-info";
+        const nameEl = document.createElement("p");
+        nameEl.className = "connection-name";
+        nameEl.textContent = data.name || userId;
+        const metaEl = document.createElement("p");
+        metaEl.className = "connection-meta";
+        metaEl.textContent = data.bio || [data.major, data.school].filter(Boolean).join(" • ");
+        info.appendChild(nameEl);
+        info.appendChild(metaEl);
+
+        const actions = document.createElement("div");
+        actions.className = "connection-actions";
+        const viewBtn = document.createElement("button");
+        viewBtn.textContent = "View";
+        viewBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          focusUserCard(userId);
+        });
+        const msgBtn = document.createElement("button");
+        msgBtn.textContent = "Message";
+        msgBtn.classList.add("primary");
+        msgBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          startMessageForUser(userId);
+        });
+        actions.appendChild(msgBtn);
+        actions.appendChild(viewBtn);
+
+        card.appendChild(avatar);
+        card.appendChild(info);
+        card.appendChild(actions);
+        connectionsGrid.appendChild(card);
+      });
+    }
+
+    function highlightProfileFromStorage() {
+      const targetId = localStorage.getItem(HIGHLIGHT_KEY);
+      if (!targetId) return;
+      localStorage.removeItem(HIGHLIGHT_KEY);
+      focusUserCard(targetId);
+    }
+
     /* CONNECT BUTTONS */
 
     let pendingUndoUserId = null;
@@ -1294,6 +1541,7 @@ if (chatThreads.length === 0) {
 
       const card = document.querySelector(`[data-user-id="${pendingUndoUserId}"]`);
       if (card) updateCardActions(card);
+      renderConnectionsSection();
 
       confirmPopup.classList.add("hidden");
       pendingUndoUserId = null;
@@ -1307,12 +1555,14 @@ if (chatThreads.length === 0) {
       const messageBtn = card.querySelector(".message-btn");
 
       // Update connect button
-      if (connected) {
-        connectBtn.textContent = "Connected ✓";
-        connectBtn.classList.add("connected");
-      } else {
-        connectBtn.textContent = "Connect";
-        connectBtn.classList.remove("connected");
+      if (connectBtn) {
+        if (connected) {
+          connectBtn.textContent = "Connected ✓";
+          connectBtn.classList.add("connected");
+        } else {
+          connectBtn.textContent = "Connect";
+          connectBtn.classList.remove("connected");
+        }
       }
 
       // Highlight message button if connected
@@ -1340,6 +1590,7 @@ if (chatThreads.length === 0) {
           connections.add(userId);
           saveConnections(connections);
           updateCardActions(card);
+          renderConnectionsSection();
 
           const msgBtn = card.querySelector(".message-btn");
           if (msgBtn) msgBtn.focus();
@@ -1376,15 +1627,18 @@ if (chatThreads.length === 0) {
         userId: card.dataset.userId,
         name: card.dataset.name,
         avatar: card.dataset.avatar,
-        bio: card.dataset.bio
+        bio: card.dataset.bio,
+        major: card.dataset.major,
+        school: card.dataset.school
       }));
       localStorage.setItem("tc_exploreUsers", JSON.stringify(list));
     })();
 
-    // INITIALIZE EVERYTHING
+// INITIALIZE EVERYTHING
     updateResults();
     initConnectButtons();
     initMessageButtons();
+    renderConnectionsSection();
     highlightProfileFromStorage();
   </script>
 
