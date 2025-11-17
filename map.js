@@ -116,7 +116,8 @@ const users = {
     bio: "Incoming Software Engineering major from Sydney, excited for Texas.",
     status: "incoming",
     year: "Freshman (BS)"
-  }
+  },
+  
 };
 
 
@@ -569,7 +570,7 @@ let pins = [
     id: "india1",
     lat: 12.9716,
     lng: 77.5946,
-    userId: "u4", // incoming → purple
+    userId: "you",   // stays Anya Patel
     text: "Hello from Bangalore 🇮🇳!",
     baseLikes: 3,
     liked: false,
@@ -579,7 +580,7 @@ let pins = [
     id: "india2",
     lat: 19.0760,
     lng: 72.8777,
-    userId: "u4", // incoming → purple
+    userId: "rhea-sharma",   // <- Mumbai posted by Rhea Sharma
     text: "Mumbai checking in 🌊",
     baseLikes: 4,
     liked: false,
@@ -589,13 +590,12 @@ let pins = [
     id: "india3",
     lat: 13.0827,
     lng: 80.2707,
-    userId: "u4", // incoming → purple
+    userId: "priya-iyer",    // <- Chennai posted by Priya Iyer
     text: "Chennai → UTD ✈️ Anyone else from TN?",
     baseLikes: 2,
     liked: false,
     comments: []
   },
-  
   /* ===== USA PINS ===== */
   
   {
