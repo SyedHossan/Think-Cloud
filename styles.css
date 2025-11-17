@@ -23,6 +23,7 @@ body {
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.14);
   text-align: center;
   margin: 40px auto;
+  box-sizing: border-box;
 }
 
 .logo {
@@ -52,6 +53,7 @@ h1 {
   background-color: #f9fafb;
   font-size: 0.95rem;
   outline: none;
+  box-sizing: border-box;
 }
 
 .login-container input::placeholder {
@@ -70,12 +72,14 @@ h1 {
   border: none;
   border-radius: 999px;
   padding: 12px 16px;
-  margin-top: 4px;
+  margin: 12px auto 0;
   font-weight: 600;
   background: linear-gradient(135deg, #4f46e5, #2563eb);
   color: #ffffff;
   cursor: pointer;
   box-shadow: 0 18px 40px rgba(37, 99, 235, 0.35);
+  max-width: 360px;
+  display: block;
 }
 
 .login-container button:hover {
@@ -97,7 +101,9 @@ h1 {
 /* Fix alignment of labels + inputs */
 .field-group {
   text-align: left;
-  margin-bottom: 18px;
+  margin: 0 auto 18px;
+  width: 100%;
+  max-width: 360px;
 }
 
 .field-group label {
@@ -460,4 +466,22 @@ h1 {
 .page-header p {
   color: #6b7280;
   margin-top: 4px;
+}
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 16px;
+  background: linear-gradient(180deg, #edf2ff 0%, #e7ecff 60%, #f6f7ff 100%);
+}
+
+.login-page,
+body.login-page {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.login-page .login-container {
+  margin: 0;
 }
