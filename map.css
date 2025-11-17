@@ -400,6 +400,19 @@ html, body {
   overflow-y: auto;
 }
 
+#addPinText {
+  flex: 1;
+  width: 100%;
+  padding: 14px 18px;      /* nicer inner spacing */
+  margin-top: 10px;         /* space from text above */
+  margin-bottom: 16px;      /* space from buttons */
+  border-radius: 14px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
 
 /* Button row */
 .add-pin-buttons {
