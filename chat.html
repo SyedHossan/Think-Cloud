@@ -327,8 +327,25 @@
 
   <!-- FULL JS (unchanged, included 100%) -->
   <script>
-    const CURRENT_USER_ID = "you"; 
-    const CHAT_THREADS_KEY = "tc_conversations";
+    function getCurrentUserProfile() {
+      try {
+        return JSON.parse(localStorage.getItem("tc_currentUser")) || {};
+      } catch {
+        return {};
+      }
+    }
+
+    function getUserId(profile) {
+      if (profile && profile.userId) return profile.userId;
+      if (profile && profile.email) {
+        return profile.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      }
+      return "anya-patel";
+    }
+
+    const currentUserProfile = getCurrentUserProfile();
+    const CURRENT_USER_ID = getUserId(currentUserProfile);
+    const CHAT_THREADS_KEY = `tc_conversations_${CURRENT_USER_ID}`;
 
     const users = {
       u1:{name:"Noah",avatar:"NH",bio:"CS junior in UV3 who loves coffee chats and late-night LeetCode."},
@@ -357,8 +374,27 @@
       "lucia-garcia": {name:"Lucia García",avatar:"LG",bio:"Prospective psychology student from Spain visiting UTD this summer."},
 
       "oliver-king": {name:"Oliver King",avatar:"OK",bio:"Incoming UTD Software Engineering major from Sydney, Australia."},
-      "emma-cole": {name:"Emma Cole",avatar:"EC",bio:"UNT nursing student who loves late-night library study sessions."}
+      "emma-cole": {name:"Emma Cole",avatar:"EC",bio:"UNT nursing student who loves late-night library study sessions."},
+
+      "mentor-karthik": {name:"Karthik Rao",avatar:"KR",bio:"UTD CS alum mentoring incoming students."},
+      "mentor-riya": {name:"Riya Mehta",avatar:"RM",bio:"CS mentor helping new international students feel at home."}
     };
+
+    const fullName = [currentUserProfile.firstName, currentUserProfile.lastName]
+      .filter(Boolean)
+      .join(" ")
+      .trim() || "You";
+    const initials = fullName
+      .split(" ")
+      .map((part) => part.charAt(0).toUpperCase())
+      .join("");
+
+    users[CURRENT_USER_ID] = {
+      name: fullName,
+      avatar: currentUserProfile.avatar || initials || "You",
+      bio: currentUserProfile.bio || "The cloud thinker behind this account."
+    };
+    users["you"] = users[CURRENT_USER_ID];
 
     const chatList = document.getElementById("chatList");
     const chatEmpty = document.getElementById("chatEmpty");
@@ -387,30 +423,35 @@
       }catch(err){console.error("save fail:",err)}
     }
 
-    let chatThreads=[];
+    let chatThreads=loadChatThreads();
 
     function seedChats(){
       const now=Date.now();
-      chatThreads=[
+      return [
         {userId:"manya-prakash",lastMessage:"Welcome to UTD!!",updatedAt:now-100000,
           messages:[
             {id:"m1",text:"Hey Anya, welcome to UTD! If you need CS help just ask :)",senderId:"manya-prakash",ts:now-120000},
-            {id:"m2",text:"Thank you so much! I’m excited and nervous haha",senderId:"you",ts:now-90000}
+            {id:"m2",text:"Thank you so much! I’m excited and nervous haha",senderId:CURRENT_USER_ID,ts:now-90000}
           ]
         },
         {userId:"rhea-sharma",lastMessage:"You got this!",updatedAt:now-50000,
           messages:[
             {id:"m3",text:"Hi Anya, I’m a CS senior from Mumbai. Always happy to mentor incoming students!",senderId:"rhea-sharma",ts:now-60000},
-            {id:"m4",text:"Hi Rhea! That means a lot omg thank you 💛",senderId:"you",ts:now-40000}
+            {id:"m4",text:"Hi Rhea! That means a lot omg thank you 💛",senderId:CURRENT_USER_ID,ts:now-40000}
           ]
         },
         {userId:"oliver-king",lastMessage:"See you soon!",updatedAt:now-20000,
           messages:[
             {id:"m5",text:"Incoming SE major from Sydney here. Let's connect at orientation!",senderId:"oliver-king",ts:now-25000},
-            {id:"m6",text:"Yes let’s!! I would love to meet people from abroad too 😄",senderId:"you",ts:now-20000}
+            {id:"m6",text:"Yes let’s!! I would love to meet people from abroad too 😄",senderId:CURRENT_USER_ID,ts:now-20000}
           ]
         }
       ];
+    }
+
+    if(chatThreads.length===0 && CURRENT_USER_ID==="anya-patel"){
+      chatThreads=seedChats();
+      saveChatThreads();
     }
 
     function getTimeAgo(ts){
@@ -491,15 +532,16 @@
       const messages=thread.messages.sort((a,b)=>a.ts-b.ts);
 
       messages.forEach(msg=>{
+        const isMe = msg.senderId===CURRENT_USER_ID || msg.senderId==="you";
         const row=document.createElement("div");
-        row.className=msg.senderId===CURRENT_USER_ID?"message-row me":"message-row them";
+        row.className=isMe?"message-row me":"message-row them";
 
         const bubble=document.createElement("div");
         bubble.className="msg-bubble";
         bubble.textContent=msg.text;
         row.appendChild(bubble);
 
-        if(msg.senderId!==CURRENT_USER_ID){
+        if(!isMe){
           const time=document.createElement("div");
           time.className="msg-time";
           time.textContent=new Date(msg.ts).toLocaleTimeString([],{

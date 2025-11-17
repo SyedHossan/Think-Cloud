@@ -166,19 +166,31 @@
     e.preventDefault();
 
     const profile = {
-      firstName: "Anya",
-      lastName: "Patel",
-      school: "UTD – The University of Texas at Dallas",
-      major: "Computer Science",
-      status: "Incoming",
-      country: "India",
-      bio: "Incoming UTD CS freshman from India 🌿",
+      firstName: document.getElementById("firstName").value.trim(),
+      lastName: document.getElementById("lastName").value.trim(),
+      school: document.getElementById("school").value.trim(),
+      major: document.getElementById("major").value.trim(),
+      status: document.getElementById("status").value,
+      country: document.getElementById("country").value.trim(),
+      bio: document.getElementById("bio").value.trim()
     };
+
+    profile.userId = generateUserId(profile.firstName, profile.lastName);
 
     localStorage.setItem("tc_currentUser", JSON.stringify(profile));
 
     window.location.href = "map.html";
   });
+
+  function generateUserId(firstName, lastName) {
+    const slug = [firstName, lastName]
+      .filter(Boolean)
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "cloud-user";
+    return `${slug}-${Date.now().toString(36)}`;
+  }
 </script>
 
 </body>

@@ -51,15 +51,17 @@
     document.getElementById("loginBtn").addEventListener("click", () => {
 
       // store hardcoded user profile
-      const profile = {
-        firstName: "Anya",
-        lastName: "Patel",
-        school: "UTD – The University of Texas at Dallas",
-        major: "Computer Science",
-        status: "Incoming",
-        country: "India",
-        bio: "Incoming UTD CS freshman from India 🌿"
-      };
+    const profile = {
+      firstName: "Anya",
+      lastName: "Patel",
+      school: "UTD — The University of Texas at Dallas",
+      major: "Computer Science",
+      status: "Incoming",
+      country: "India",
+      bio: "Incoming UTD CS freshman from India 🌿",
+      email: "anya.patel9364@gmail.com",
+      userId: "anya-patel"
+    };
 
       localStorage.setItem("tc_currentUser", JSON.stringify(profile));
 

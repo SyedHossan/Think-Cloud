@@ -2,6 +2,24 @@
    Data model
 ----------------------------- */
 
+function getActiveUserProfile() {
+  try {
+    return JSON.parse(localStorage.getItem("tc_currentUser")) || {};
+  } catch {
+    return {};
+  }
+}
+
+function getActiveUserId(profile) {
+  if (profile && profile.userId) return profile.userId;
+  if (profile && profile.email) {
+    return profile.email.split("@")[0].toLowerCase().replace(/[^a-z0-9]+/g, "-");
+  }
+  return "anya-patel";
+}
+
+const activeUserProfile = getActiveUserProfile();
+const activeUserId = getActiveUserId(activeUserProfile);
 const currentUserId = "you";
 
 const users = {
@@ -116,16 +134,42 @@ const users = {
     bio: "Incoming Software Engineering major from Sydney, excited for Texas.",
     status: "incoming",
     year: "Freshman (BS)"
-  },
-  
+  }
 };
+
+if (activeUserProfile && Object.keys(activeUserProfile).length) {
+  const fullName = [activeUserProfile.firstName, activeUserProfile.lastName]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+  const generatedInitials = fullName
+    ? fullName
+        .split(" ")
+        .map((part) => part.charAt(0).toUpperCase())
+        .join("")
+    : null;
+
+  users["you"] = {
+    ...users["you"],
+    name: fullName || users["you"].name,
+    avatar: activeUserProfile.avatar || generatedInitials || users["you"].avatar,
+    bio: activeUserProfile.bio || users["you"].bio,
+    status: (activeUserProfile.status || users["you"].status || "").toLowerCase(),
+    year: activeUserProfile.major || users["you"].year
+  };
+}
 
 
 const reactionOptions = ["👍", "❤️", "😂", "😮", "👎"];
 
 
-const CONNECTIONS_STORAGE_KEY = "tc_connections";
-const CHAT_THREADS_STORAGE_KEY = "tc_conversations";
+function getUserScopedKey(base) {
+  return `${base}_${activeUserId}`;
+}
+
+const CONNECTIONS_STORAGE_KEY = getUserScopedKey("tc_connections");
+const CHAT_THREADS_STORAGE_KEY = getUserScopedKey("tc_conversations");
+const CUSTOM_PIN_KEY = getUserScopedKey("userClouds");
 
 function loadConnectionsFromStorage() {
   try {
@@ -198,7 +242,7 @@ function upsertChatThread({ userId, name, avatar, message }) {
   thread.messages.push({
     id: `m${now}`,
     text: message,
-    senderId: currentUserId,
+    senderId: activeUserId,
     ts: now
   });
 
@@ -209,7 +253,7 @@ function upsertChatThread({ userId, name, avatar, message }) {
 }
 
 // Load user-created pins from storage
-const savedUserPins = JSON.parse(localStorage.getItem("userClouds") || "[]");
+const savedUserPins = JSON.parse(localStorage.getItem(CUSTOM_PIN_KEY) || "[]");
 
 // Hardcoded pins around UTD
 let pins = [
@@ -861,7 +905,7 @@ function exitAddPinMode() {
     pins.unshift(newPin);
     createMarkerForPin(newPin);
     markers[newPin.id].openPopup();
-    localStorage.setItem("userClouds", JSON.stringify(pins.filter(p => p.userId === currentUserId)));
+    localStorage.setItem(CUSTOM_PIN_KEY, JSON.stringify(pins.filter(p => p.userId === currentUserId)));
     exitAddPinMode();
   });
 }
@@ -1016,7 +1060,7 @@ function deletePin(pinId, ev) {
 
   // Update localStorage only with user's own pins
   const myPins = pins.filter(p => p.userId === currentUserId);
-  localStorage.setItem("userClouds", JSON.stringify(myPins));
+  localStorage.setItem(CUSTOM_PIN_KEY, JSON.stringify(myPins));
 
   alert("Thought cloud deleted!");
 }
