@@ -41,11 +41,11 @@ u5: {
   year: "Admitted Fall 2025"
 },
 you: {
-  name: "You",
+  name: "Anya Patel",
   avatar: "⭐️",
-  bio: "The cloud thinker behind this account.",
-  status: "current",
-  year: "Sophomore (BS)"
+  bio: "Incoming UTD CS freshman from India 🌿",
+  status: "incoming",
+  year: "Freshman (BS)"
 }
 
 };

@@ -153,14 +153,13 @@
       e.preventDefault();
 
       const profile = {
-        firstName: document.getElementById("firstName").value.trim(),
-        lastName:  document.getElementById("lastName").value.trim(),
-        school:    document.getElementById("school").value.trim(),
-        major:     document.getElementById("major").value.trim(),
-        status:    document.getElementById("status").value,
-        country:   document.getElementById("country").value.trim(),
-        bio:       document.getElementById("bio").value.trim()
-        // avatar handling could be added later
+        firstName: "Anya",
+        lastName: "Patel",
+        school: "UTD – The University of Texas at Dallas",
+        major: "Computer Science",
+        status: "Current",
+        country: "India",
+        bio: "Incoming CS student who loves maps and chai 🌿"
       };
 
       localStorage.setItem("tc_currentUser", JSON.stringify(profile));
