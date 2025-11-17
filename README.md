@@ -1,3 +1,14 @@
 # Think-Cloud Social Media App
-"Think Cloud" is a social platform designed to help students especially international students connect, share and feel supported in every stage of their academic journey. ​
-Users can post their thoughts on a live map, explore thoughts from around the world and choose to connect with people from their own university, other schools or even colleges they are considering. By sharing real stories and experiences, Think Cloud creates a bridge between current and prospective students helping the newcomers make more informed choices while also giving current students a space to express themselves and build meaningful connections.​
+Thought Cloud is an interactive map-based web UI where users can:
+	•	Create “Thought Clouds” by tapping anywhere on the map
+	•	View nearby thoughts posted by others
+	•	Open a comments drawer for each pin
+	•	View mini user profiles
+	•	React, reply, and interact with posts
+	•	Filter the map by user's student status
+	•	Log in, sign up, and manage a simple local profile
+	•	Use the fixed bottom navigation (Home / Explore / Profile)
+
+This prototype runs entirely in the browser using HTML, CSS, JS, and LocalStorage.
+
+The UI is fully functional without installing any additional tools.
