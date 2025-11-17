@@ -564,6 +564,69 @@ let pins = [
         myReactions: {}
       }
     ]
+  },
+  {
+    id: "india1",
+    lat: 12.9716,
+    lng: 77.5946,
+    userId: "u4", // incoming → purple
+    text: "Hello from Bangalore 🇮🇳!",
+    baseLikes: 3,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "india2",
+    lat: 19.0760,
+    lng: 72.8777,
+    userId: "u4", // incoming → purple
+    text: "Mumbai checking in 🌊",
+    baseLikes: 4,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "india3",
+    lat: 13.0827,
+    lng: 80.2707,
+    userId: "u4", // incoming → purple
+    text: "Chennai → UTD ✈️ Anyone else from TN?",
+    baseLikes: 2,
+    liked: false,
+    comments: []
+  },
+  
+  /* ===== USA PINS ===== */
+  
+  {
+    id: "usa1",
+    lat: 40.7128,
+    lng: -74.0060,
+    userId: "u5", // prospective → yellow
+    text: "NYC! Anyone visiting during winter break?",
+    baseLikes: 5,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "usa2",
+    lat: 34.0522,
+    lng: -118.2437,
+    userId: "u3", // alumni → orange
+    text: "LA sunshine hits different 😎",
+    baseLikes: 3,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "usa3",
+    lat: 41.8781,
+    lng: -87.6298,
+    userId: "u1", // current → green
+    text: "Chicago downtown walk anyone? ❄️",
+    baseLikes: 1,
+    liked: false,
+    comments: []
   }
 ];
 
@@ -579,7 +642,7 @@ let activeMessageUserId = null;
    Map setup
 ----------------------------- */
 
-const map = L.map("map").setView([32.985, -96.752], 16);
+const map = L.map("map").setView([20, 0], 3);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap contributors"
