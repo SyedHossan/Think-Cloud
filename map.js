@@ -7,7 +7,7 @@ const currentUserId = "you";
 const users = {
   you: {
     name: "Anya Patel",
-    avatar: "??",
+    avatar: "AP",
     bio: "Incoming UTD CS freshman from India, nervous-excited about moving to Dallas.",
     status: "incoming",
     year: "Freshman (BS)"
@@ -1057,6 +1057,15 @@ function showProfile(userId) {
   profileName.textContent = u.name;
   profileBio.textContent = u.bio;
   profileYear.textContent = u.year;
+
+  // Hide buttons on your own profile
+  if (userId === "you") {
+  profileConnectBtn.style.display = "none";
+  profileMessageBtn.style.display = "none";
+} else {
+  profileConnectBtn.style.display = "block";
+  profileMessageBtn.style.display = "block";
+}
 
   // Connect button state
   if (connectedUsers.has(userId)) {

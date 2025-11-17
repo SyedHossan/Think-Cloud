@@ -323,34 +323,34 @@ const users = {
   // Map users (same as before)
   u1: { 
     name: "Noah", 
-    avatar: "🌿", 
+    avatar: "NH", 
     bio: "CS junior in UV3 who loves coffee chats and late-night LeetCode." 
   },
   u2: { 
     name: "Maya", 
-    avatar: "🌸", 
+    avatar: "MA", 
     bio: "Atec & UX student who sketches app ideas and grows too many plants." 
   },
   u3: { 
     name: "Leo", 
-    avatar: "🦊", 
+    avatar: "LE", 
     bio: "Night-owl who lives in Phase 8 and always knows when free food drops." 
   },
   u4: { 
     name: "Sana", 
-    avatar: "🌙", 
+    avatar: "SA", 
     bio: "Data science major joining ECSW soon." 
   },
   u5: { 
     name: "Ray", 
-    avatar: "🌊", 
+    avatar: "RA", 
     bio: "Gym regular & intramural champ, usually at Rec or on the courts." 
   },
 
   // YOU – main user
   you: { 
     name: "Anya Patel", 
-    avatar: "⭐️", 
+    avatar: "AP", 
     bio: "Incoming UTD CS freshman from India 🌿" 
   },
 
@@ -393,7 +393,7 @@ const users = {
     bio: "UTD HCI student from Chennai, obsessed with Figma and chai."
   },
 
-  // 🇺🇸 additional US students
+  //  additional US students
   "jordan-lee": {
     name: "Jordan Lee",
     avatar: "JL",
@@ -405,7 +405,7 @@ const users = {
     bio: "UT Austin Design & UX student who loves campus photo walks."
   },
 
-  // 🇲🇽 Mexico
+  //  Mexico
   "sofia-ramirez": {
     name: "Sofia Ramirez",
     avatar: "SR",
@@ -417,21 +417,21 @@ const users = {
     bio: "Data Science sophomore from Mexico City exploring Dallas food spots."
   },
 
-  // 🇸🇬 Singapore
+  //  Singapore
   "li-wei": {
     name: "Li Wei",
     avatar: "LW",
     bio: "Exchange student from Singapore interested in AI and robotics."
   },
 
-  // 🇪🇸 Spain
+  // Spain
   "lucia-garcia": {
     name: "Lucia García",
     avatar: "LG",
     bio: "Prospective psychology student from Spain visiting UTD this summer."
   },
 
-  // 🇦🇺 Australia
+  //  Australia
   "oliver-king": {
     name: "Oliver King",
     avatar: "OK",
@@ -486,37 +486,118 @@ function saveChatThreads() {
   }
 }
 
-let chatThreads = loadChatThreads();
+let chatThreads = [];   // always start empty
 
 /* ============================================================
-   AUTO-SEED SAMPLE CHAT IF EMPTY
+  SEED SAMPLE CHAT 
 ============================================================ */
-function seedChatsIfEmpty() {
-  if (chatThreads.length > 0) return;
-
+function seedChats() {
   const now = Date.now();
 
-  chatThreads.push({
-    userId: "u1",
-    lastMessage: "Hi, welcome to Think Cloud!",
-    updatedAt: now,
-    messages: [
-      {
-        id: "m1",
-        text: "Hi!",
-        senderId: "u1",
-        ts: now - 60000
-      },
-      {
-        id: "m2",
-        text: "Hello Noah!",
-        senderId: CURRENT_USER_ID,
-        ts: now - 30000
-      }
-    ]
-  });
+  chatThreads = [
+    // 1. Manya
+    {
+      userId: "manya-prakash",
+      lastMessage: "Welcome to UTD!!",
+      updatedAt: now - 100000,
+      messages: [
+        { id: "m1", text: "Hey Anya, welcome to UTD! If you need CS help just ask :)", senderId: "manya-prakash", ts: now - 120000 },
+        { id: "m2", text: "Thank you so much! I’m excited and nervous haha", senderId: "you", ts: now - 90000 }
+      ]
+    },
 
-  saveChatThreads();
+    // 2. Rhea
+    {
+      userId: "rhea-sharma",
+      lastMessage: "You got this!",
+      updatedAt: now - 50000,
+      messages: [
+        { id: "m3", text: "Hi Anya, I’m a CS senior from Mumbai. Always happy to mentor incoming students!", senderId: "rhea-sharma", ts: now - 60000 },
+        { id: "m4", text: "Hi Rhea! That means a lot omg thank you 💛", senderId: "you", ts: now - 40000 }
+      ]
+    },
+
+    // 3. Oliver
+    {
+      userId: "oliver-king",
+      lastMessage: "See you soon!",
+      updatedAt: now - 20000,
+      messages: [
+        { id: "m5", text: "Hey! Incoming SE major from Sydney here. We should connect when orientation starts!", senderId: "oliver-king", ts: now - 25000 },
+        { id: "m6", text: "Yess let’s! I would love to meet people from abroad too 😄", senderId: "you", ts: now - 20000 }
+      ]
+    },
+
+    // 4. Li Wei
+    {
+      userId: "li-wei",
+      lastMessage: "We'll explore ATEC together!",
+      updatedAt: now - 45000,
+      messages: [
+        { id: "m20", text: "Hi Anya! I’m Li Wei — exchange student from Singapore. Your cloud showed you like CS!", senderId: "li-wei", ts: now - 95000 },
+        { id: "m21", text: "Hiii! Yes I am 😄 Are you excited for UTD?", senderId: "you", ts: now - 90000 },
+        { id: "m22", text: "Very excited… and slightly scared haha. Hoping to make friends early.", senderId: "li-wei", ts: now - 88000 },
+        { id: "m23", text: "Same here omg. We can explore ECSW together!", senderId: "you", ts: now - 53000 },
+        { id: "m24", text: "We'll explore ATEC together!", senderId: "li-wei", ts: now - 45000 }
+      ]
+    },
+
+    // 5. Lucia
+    {
+      userId: "lucia-garcia",
+      lastMessage: "Can't wait to meet on campus!",
+      updatedAt: now - 60000,
+      messages: [
+        { id: "m30", text: "Hola Anya! I’m Lucia from Spain. Are you joining UTD this fall?", senderId: "lucia-garcia", ts: now - 130000 },
+        { id: "m31", text: "Yes I am! 😄 Still feels unreal haha", senderId: "you", ts: now - 124000 },
+        {  id: "m32", text: "Preparing for Texas heat… they say it’s horrible 😭", senderId: "lucia-garcia", ts: now - 120000 },
+        { id: "m33", text: "I've heard it's like walking into an oven 😭🔥", senderId: "you", ts: now - 118000 },
+        { id: "m34", text: "Can't wait to meet on campus!", senderId: "lucia-garcia", ts: now - 60000 }
+      ]
+    },
+
+    // 6. Emma
+    {
+      userId: "emma-cole",
+      lastMessage: "We’ll survive move-in together!",
+      updatedAt: now - 30000,
+      messages: [
+         { id: "m40", text: "Hey!! I'm Emma! Also starting college this fall 😭 looking for roommates.", senderId: "emma-cole", ts: now - 95000 },
+        { id: "m41", text: "Omg same, I’m terrified of move-in day haha", senderId: "you", ts: now - 90000 },
+        { id: "m42", text: "At least Think Cloud is helping meet people early 🥲", senderId: "emma-cole", ts: now - 88000 },
+        { id: "m43", text: "That’s exactly why I love this app 🥹✨", senderId: "you", ts: now - 82000 },
+        { id: "m44", text: "We’ll survive move-in together!", senderId: "emma-cole", ts: now - 30000 }
+      ]
+    },
+
+    // 7. Jordan
+    {
+      userId: "jordan-lee",
+      lastMessage: "Join IEEE — you'll love it!",
+      updatedAt: now - 42000,
+      messages: [
+        { id: "m50", text: "Hey Anya! Joining clubs helps a TON with nerves!", senderId: "jordan-lee", ts: now - 90000 },
+        { id: "m51", text: "I want to but idk which ones 😭", senderId: "you", ts: now - 86000 },
+         { id: "m52", text: "Join IEEE! And ASIA club — both are great.", senderId: "jordan-lee", ts: now - 83000 },
+        { id: "m53", text: "Ooo I’ll look into IEEE for sure!", senderId: "you", ts: now - 80000 },
+        { id: "m54", text: "Join IEEE — you'll love it!", senderId: "jordan-lee", ts: now - 42000 }
+      ]
+    },
+
+    // 8. Diego
+    {
+      userId: "diego-martinez",
+      lastMessage: "See you around the SU!",
+      updatedAt: now - 55000,
+      messages: [
+        { id: "m60", text: "Hey Anya! Saw your pin near JSOM — exploring food spots?", senderId: "diego-martinez", ts: now - 105000 },
+     { id: "m61", text: "Yesss I love food 😂 any recs?", senderId: "you", ts: now - 100000 },
+      { id: "m62", text: "Try Madurai Mes! And the UV food truck sometimes hits.", senderId: "diego-martinez", ts: now - 96000 },
+      { id: "m63", text: "Omg I heard about that truck too!!", senderId: "you", ts: now - 92000 },
+        { id: "m64", text: "See you around the SU!", senderId: "diego-martinez", ts: now - 55000 }
+      ]
+    }
+  ];
 }
 
 /* ============================================================
@@ -675,7 +756,6 @@ function sendMessage() {
 
   let thread = chatThreads.find(t => t.userId === activeThreadUserId);
   if (!thread) {
-    const user = users[activeThreadUserId];
     thread = {
       userId: activeThreadUserId,
       lastMessage: "",
@@ -685,6 +765,7 @@ function sendMessage() {
     chatThreads.push(thread);
   }
 
+  // Add the user's message
   thread.messages.push({
     id: msgId,
     text,
@@ -695,12 +776,16 @@ function sendMessage() {
   thread.lastMessage = text.slice(0, 50);
   thread.updatedAt = now;
 
+  // Save updated chat list
   saveChatThreads();
 
   conversationInput.value = "";
   conversationSendBtn.disabled = true;
 
+  // Re-render messages in the drawer
   renderMessages();
+
+  // Re-render the chat list (but WITHOUT resetting)
   renderChatList();
 }
 
@@ -731,10 +816,19 @@ conversationDrawer.addEventListener("click", e => {
   }
 });
 
-/* ============================================================
-   INITIAL LOAD
-============================================================ */
-seedChatsIfEmpty();
+
+// Only seed chats if none exist yet
+let existing = loadChatThreads();
+
+if (!existing || existing.length === 0) {
+  seedChats();
+  saveChatThreads();
+} else {
+  chatThreads = existing;
+}
+
+
+// show them
 renderChatList();
   </script>
 
