@@ -68,12 +68,13 @@
       font-size: 32px;
       letter-spacing: -0.03em;
     }
-
-    .subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      max-width: 480px;
-    }
+.subtitle {
+  font-size: 14px;
+  color: var(--text-muted);
+  max-width: 480px;
+  margin: 0 auto;        /* centers the block */
+  text-align: center;    /* centers the text */
+}
 
     .layout {
       display: grid;
@@ -604,11 +605,9 @@
 </head>
 
 <body>
+  <a href="map.html" class="back-to-map-btn">← Back to Map</a>
   <div class="page-shell">
     <div class="page-header">
-      <a href="map.html" class="back-link">
-        <span>←</span> Back to map
-      </a>
       <div>
         <h1>Explore users</h1>
         <p class="subtitle">
@@ -1082,13 +1081,12 @@
     </div>
   </div>
 
-  <!-- BOTTOM NAV -->
   <nav class="bottom-nav">
-    <a href="explore.html" class="active">
+    <a href="explore.html" class="active" class="active">
       <span class="icon">🧭</span>
       Explore
     </a>
-
+  
     <a href="notifications.html">
       <span class="icon">🔔</span>
       Notifications
@@ -1098,18 +1096,17 @@
       <span class="icon">🗺️</span>
       Map
     </a>
-
+  
     <a href="chat.html">
       <span class="icon">💬</span>
       Chat
     </a>
-
+  
     <a href="profile.html">
       <span class="icon">👤</span>
       Profile
     </a>
   </nav>
-
 
   <!-- JS SCRIPT -->
   <script>

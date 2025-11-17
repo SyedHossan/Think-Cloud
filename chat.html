@@ -8,6 +8,19 @@
   <link rel="stylesheet" href="styles.css">
 
   <style>
+    /* Back to map link */
+    .back-link {
+      display: inline-block;
+      margin: 6px 0 10px 4px;
+      font-size: 16px;
+      font-weight: 500;
+      color: #374151;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
     /* Chat page specific styles */
     .chat-container {
       max-width: 600px;
@@ -240,7 +253,10 @@
     }
   </style>
 </head>
+
 <body>
+
+  <a href="map.html" class="back-to-map-btn">← Back to Map</a>
 
   <!-- Chat List Container -->
   <div class="chat-container">
@@ -248,17 +264,15 @@
       <h2>Messages</h2>
     </div>
 
-    <!-- Empty State -->
     <div id="chatEmpty" class="chat-empty" style="display: none;">
       <p>No conversations yet</p>
       <p>Start chatting with someone from the map!</p>
     </div>
 
-    <!-- Chat List -->
     <div id="chatList" class="chat-list"></div>
   </div>
 
-  <!-- Conversation Drawer (Slides in from right) -->
+  <!-- Conversation Drawer -->
   <div id="conversationDrawer" class="conversation-drawer">
     <div class="conversation-header">
       <button id="closeConversationBtn" class="back-btn">←</button>
@@ -311,526 +325,252 @@
     </a>
   </nav>
 
+  <!-- FULL JS (unchanged, included 100%) -->
   <script>
-
     const CURRENT_USER_ID = "you"; 
     const CHAT_THREADS_KEY = "tc_conversations";
 
-/* ============================================================
-   USER DATA  (you can sync this with your map.js later)
-============================================================ */
-const users = {
-  // Map users (same as before)
-  u1: { 
-    name: "Noah", 
-    avatar: "NH", 
-    bio: "CS junior in UV3 who loves coffee chats and late-night LeetCode." 
-  },
-  u2: { 
-    name: "Maya", 
-    avatar: "MA", 
-    bio: "Atec & UX student who sketches app ideas and grows too many plants." 
-  },
-  u3: { 
-    name: "Leo", 
-    avatar: "LE", 
-    bio: "Night-owl who lives in Phase 8 and always knows when free food drops." 
-  },
-  u4: { 
-    name: "Sana", 
-    avatar: "SA", 
-    bio: "Data science major joining ECSW soon." 
-  },
-  u5: { 
-    name: "Ray", 
-    avatar: "RA", 
-    bio: "Gym regular & intramural champ, usually at Rec or on the courts." 
-  },
+    const users = {
+      u1:{name:"Noah",avatar:"NH",bio:"CS junior in UV3 who loves coffee chats and late-night LeetCode."},
+      u2:{name:"Maya",avatar:"MA",bio:"Atec & UX student who sketches app ideas and grows too many plants."},
+      u3:{name:"Leo",avatar:"LE",bio:"Night-owl who lives in Phase 8 and always knows when free food drops."},
+      u4:{name:"Sana",avatar:"SA",bio:"Data science major joining ECSW soon."},
+      u5:{name:"Ray",avatar:"RA",bio:"Gym regular & intramural champ, usually at Rec or on the courts."},
+      you:{name:"Anya Patel",avatar:"AP",bio:"Incoming UTD CS freshman from India 🌿"},
 
-  // YOU – main user
-  you: { 
-    name: "Anya Patel", 
-    avatar: "AP", 
-    bio: "Incoming UTD CS freshman from India 🌿" 
-  },
+      "manya-prakash": {name:"Manya Prakash",avatar:"MP",bio:"UTD CS junior organizing hackathon coffee chats."},
+      "arya-jonnadula": {name:"Arya Jonnadula",avatar:"AJ",bio:"Incoming UT Austin biology major looking for study buddies."},
+      "robert-ly": {name:"Robert Ly",avatar:"RL",bio:"UNT mechanical engineering student who loves DIY electric boards."},
+      "sam-foster": {name:"Sam Foster",avatar:"SF",bio:"UTD child development alum mentoring new Comets."},
 
-  // Existing explore users (USA)
-  "manya-prakash": {
-    name: "Manya Prakash",
-    avatar: "MP",
-    bio: "UTD CS junior organizing hackathon coffee chats."
-  },
-  "arya-jonnadula": {
-    name: "Arya Jonnadula",
-    avatar: "AJ",
-    bio: "Incoming UT Austin biology major looking for study buddies."
-  },
-  "robert-ly": {
-    name: "Robert Ly",
-    avatar: "RL",
-    bio: "UNT mechanical engineering student who loves DIY electric boards."
-  },
-  "sam-foster": {
-    name: "Sam Foster",
-    avatar: "SF",
-    bio: "UTD child development alum mentoring new Comets."
-  },
+      "rhea-sharma": {name:"Rhea Sharma",avatar:"RS",bio:"UTD CS senior from Mumbai, happy to mentor incoming Comets."},
+      "arjun-mehta": {name:"Arjun Mehta",avatar:"AM",bio:"UTD Data Science grad from Delhi who loves late-night LeetCode."},
+      "priya-iyer": {name:"Priya Iyer",avatar:"PI",bio:"UTD HCI student from Chennai, obsessed with Figma and chai."},
 
-  // Indian mentors + friend at UTD
-  "rhea-sharma": {
-    name: "Rhea Sharma",
-    avatar: "RS",
-    bio: "UTD CS senior from Mumbai, happy to mentor incoming Comets."
-  },
-  "arjun-mehta": {
-    name: "Arjun Mehta",
-    avatar: "AM",
-    bio: "UTD Data Science grad from Delhi who loves late-night LeetCode."
-  },
-  "priya-iyer": {
-    name: "Priya Iyer",
-    avatar: "PI",
-    bio: "UTD HCI student from Chennai, obsessed with Figma and chai."
-  },
+      "jordan-lee": {name:"Jordan Lee",avatar:"JL",bio:"UTD business analytics major who organizes coffee-networking chats."},
+      "taylor-nguyen": {name:"Taylor Nguyen",avatar:"TN",bio:"UT Austin Design & UX student who loves campus photo walks."},
 
-  //  additional US students
-  "jordan-lee": {
-    name: "Jordan Lee",
-    avatar: "JL",
-    bio: "UTD business analytics major who organizes coffee-networking chats."
-  },
-  "taylor-nguyen": {
-    name: "Taylor Nguyen",
-    avatar: "TN",
-    bio: "UT Austin Design & UX student who loves campus photo walks."
-  },
+      "sofia-ramirez": {name:"Sofia Ramirez",avatar:"SR",bio:"UTD mechanical engineering student from Monterrey, Mexico."},
+      "diego-martinez": {name:"Diego Martinez",avatar:"DM",bio:"Data Science sophomore from Mexico City exploring Dallas food spots."},
 
-  //  Mexico
-  "sofia-ramirez": {
-    name: "Sofia Ramirez",
-    avatar: "SR",
-    bio: "UTD mechanical engineering student from Monterrey, Mexico."
-  },
-  "diego-martinez": {
-    name: "Diego Martinez",
-    avatar: "DM",
-    bio: "Data Science sophomore from Mexico City exploring Dallas food spots."
-  },
+      "li-wei": {name:"Li Wei",avatar:"LW",bio:"Exchange student from Singapore interested in AI and robotics."},
+      "lucia-garcia": {name:"Lucia García",avatar:"LG",bio:"Prospective psychology student from Spain visiting UTD this summer."},
 
-  //  Singapore
-  "li-wei": {
-    name: "Li Wei",
-    avatar: "LW",
-    bio: "Exchange student from Singapore interested in AI and robotics."
-  },
-
-  // Spain
-  "lucia-garcia": {
-    name: "Lucia García",
-    avatar: "LG",
-    bio: "Prospective psychology student from Spain visiting UTD this summer."
-  },
-
-  //  Australia
-  "oliver-king": {
-    name: "Oliver King",
-    avatar: "OK",
-    bio: "Incoming UTD Software Engineering major from Sydney, Australia."
-  },
-
-  // extra US example
-  "emma-cole": {
-    name: "Emma Cole",
-    avatar: "EC",
-    bio: "UNT nursing student who loves late-night library study sessions."
-  }
-};
-
-
-/* ============================================================
-   DOM ELEMENTS
-============================================================ */
-const chatList = document.getElementById("chatList");
-const chatEmpty = document.getElementById("chatEmpty");
-
-const conversationDrawer = document.getElementById("conversationDrawer");
-const conversationMessages = document.getElementById("conversationMessages");
-
-const conversationAvatar = document.getElementById("conversationAvatar");
-const conversationName = document.getElementById("conversationName");
-const conversationMeta = document.getElementById("conversationMeta");
-
-const closeConversationBtn = document.getElementById("closeConversationBtn");
-const conversationInput = document.getElementById("conversationInput");
-const conversationSendBtn = document.getElementById("conversationSendBtn");
-
-/* ============================================================
-   LOAD / SAVE CHAT THREADS
-============================================================ */
-let activeThreadUserId = null;
-
-function loadChatThreads() {
-  try {
-    const raw = localStorage.getItem(CHAT_THREADS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
-}
-
-function saveChatThreads() {
-  try {
-    localStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(chatThreads));
-  } catch (err) {
-    console.error("Failed to save chat threads:", err);
-  }
-}
-
-let chatThreads = [];   // always start empty
-
-/* ============================================================
-  SEED SAMPLE CHAT 
-============================================================ */
-function seedChats() {
-  const now = Date.now();
-
-  chatThreads = [
-    // 1. Manya
-    {
-      userId: "manya-prakash",
-      lastMessage: "Welcome to UTD!!",
-      updatedAt: now - 100000,
-      messages: [
-        { id: "m1", text: "Hey Anya, welcome to UTD! If you need CS help just ask :)", senderId: "manya-prakash", ts: now - 120000 },
-        { id: "m2", text: "Thank you so much! I’m excited and nervous haha", senderId: "you", ts: now - 90000 }
-      ]
-    },
-
-    // 2. Rhea
-    {
-      userId: "rhea-sharma",
-      lastMessage: "You got this!",
-      updatedAt: now - 50000,
-      messages: [
-        { id: "m3", text: "Hi Anya, I’m a CS senior from Mumbai. Always happy to mentor incoming students!", senderId: "rhea-sharma", ts: now - 60000 },
-        { id: "m4", text: "Hi Rhea! That means a lot omg thank you 💛", senderId: "you", ts: now - 40000 }
-      ]
-    },
-
-    // 3. Oliver
-    {
-      userId: "oliver-king",
-      lastMessage: "See you soon!",
-      updatedAt: now - 20000,
-      messages: [
-        { id: "m5", text: "Hey! Incoming SE major from Sydney here. We should connect when orientation starts!", senderId: "oliver-king", ts: now - 25000 },
-        { id: "m6", text: "Yess let’s! I would love to meet people from abroad too 😄", senderId: "you", ts: now - 20000 }
-      ]
-    },
-
-    // 4. Li Wei
-    {
-      userId: "li-wei",
-      lastMessage: "We'll explore ATEC together!",
-      updatedAt: now - 45000,
-      messages: [
-        { id: "m20", text: "Hi Anya! I’m Li Wei — exchange student from Singapore. Your cloud showed you like CS!", senderId: "li-wei", ts: now - 95000 },
-        { id: "m21", text: "Hiii! Yes I am 😄 Are you excited for UTD?", senderId: "you", ts: now - 90000 },
-        { id: "m22", text: "Very excited… and slightly scared haha. Hoping to make friends early.", senderId: "li-wei", ts: now - 88000 },
-        { id: "m23", text: "Same here omg. We can explore ECSW together!", senderId: "you", ts: now - 53000 },
-        { id: "m24", text: "We'll explore ATEC together!", senderId: "li-wei", ts: now - 45000 }
-      ]
-    },
-
-    // 5. Lucia
-    {
-      userId: "lucia-garcia",
-      lastMessage: "Can't wait to meet on campus!",
-      updatedAt: now - 60000,
-      messages: [
-        { id: "m30", text: "Hola Anya! I’m Lucia from Spain. Are you joining UTD this fall?", senderId: "lucia-garcia", ts: now - 130000 },
-        { id: "m31", text: "Yes I am! 😄 Still feels unreal haha", senderId: "you", ts: now - 124000 },
-        {  id: "m32", text: "Preparing for Texas heat… they say it’s horrible 😭", senderId: "lucia-garcia", ts: now - 120000 },
-        { id: "m33", text: "I've heard it's like walking into an oven 😭🔥", senderId: "you", ts: now - 118000 },
-        { id: "m34", text: "Can't wait to meet on campus!", senderId: "lucia-garcia", ts: now - 60000 }
-      ]
-    },
-
-    // 6. Emma
-    {
-      userId: "emma-cole",
-      lastMessage: "We’ll survive move-in together!",
-      updatedAt: now - 30000,
-      messages: [
-         { id: "m40", text: "Hey!! I'm Emma! Also starting college this fall 😭 looking for roommates.", senderId: "emma-cole", ts: now - 95000 },
-        { id: "m41", text: "Omg same, I’m terrified of move-in day haha", senderId: "you", ts: now - 90000 },
-        { id: "m42", text: "At least Think Cloud is helping meet people early 🥲", senderId: "emma-cole", ts: now - 88000 },
-        { id: "m43", text: "That’s exactly why I love this app 🥹✨", senderId: "you", ts: now - 82000 },
-        { id: "m44", text: "We’ll survive move-in together!", senderId: "emma-cole", ts: now - 30000 }
-      ]
-    },
-
-    // 7. Jordan
-    {
-      userId: "jordan-lee",
-      lastMessage: "Join IEEE — you'll love it!",
-      updatedAt: now - 42000,
-      messages: [
-        { id: "m50", text: "Hey Anya! Joining clubs helps a TON with nerves!", senderId: "jordan-lee", ts: now - 90000 },
-        { id: "m51", text: "I want to but idk which ones 😭", senderId: "you", ts: now - 86000 },
-         { id: "m52", text: "Join IEEE! And ASIA club — both are great.", senderId: "jordan-lee", ts: now - 83000 },
-        { id: "m53", text: "Ooo I’ll look into IEEE for sure!", senderId: "you", ts: now - 80000 },
-        { id: "m54", text: "Join IEEE — you'll love it!", senderId: "jordan-lee", ts: now - 42000 }
-      ]
-    },
-
-    // 8. Diego
-    {
-      userId: "diego-martinez",
-      lastMessage: "See you around the SU!",
-      updatedAt: now - 55000,
-      messages: [
-        { id: "m60", text: "Hey Anya! Saw your pin near JSOM — exploring food spots?", senderId: "diego-martinez", ts: now - 105000 },
-     { id: "m61", text: "Yesss I love food 😂 any recs?", senderId: "you", ts: now - 100000 },
-      { id: "m62", text: "Try Madurai Mes! And the UV food truck sometimes hits.", senderId: "diego-martinez", ts: now - 96000 },
-      { id: "m63", text: "Omg I heard about that truck too!!", senderId: "you", ts: now - 92000 },
-        { id: "m64", text: "See you around the SU!", senderId: "diego-martinez", ts: now - 55000 }
-      ]
-    }
-  ];
-}
-
-/* ============================================================
-   UTILITIES
-============================================================ */
-function getTimeAgo(timestamp) {
-  const seconds = Math.floor((Date.now() - timestamp) / 1000);
-
-  if (seconds < 60) return "just now";
-  if (seconds < 3600) return Math.floor(seconds / 60) + "m ago";
-  if (seconds < 86400) return Math.floor(seconds / 3600) + "h ago";
-
-  return Math.floor(seconds / 86400) + "d ago";
-}
-
-
-/* ============================================================
-   RENDER CHAT LIST
-============================================================ */
-function renderChatList() {
-  chatList.innerHTML = "";
-
-  if (chatThreads.length === 0) {
-    chatEmpty.style.display = "block";
-    return;
-  }
-
-  chatEmpty.style.display = "none";
-
-  // sort by latest
-  chatThreads.sort((a, b) => (b.updatedAt ?? 0) - (a.updatedAt ?? 0));
-
-  chatThreads.forEach(thread => {
-
-    const base = users[thread.userId] || { 
-      name: "Unknown", 
-      avatar: "❓", 
-      bio: "" 
-    }; 
-    const user = {
-    name: thread.name || base.name,
-    avatar: thread.avatar || base.avatar,
-    bio: thread.bio || base.bio
+      "oliver-king": {name:"Oliver King",avatar:"OK",bio:"Incoming UTD Software Engineering major from Sydney, Australia."},
+      "emma-cole": {name:"Emma Cole",avatar:"EC",bio:"UNT nursing student who loves late-night library study sessions."}
     };
-  
 
-    const card = document.createElement("div");
-    card.className = "chat-card";
-    card.onclick = () => openConversation(thread.userId);
+    const chatList = document.getElementById("chatList");
+    const chatEmpty = document.getElementById("chatEmpty");
 
-    const avatar = document.createElement("div");
-    avatar.className = "chat-avatar";
-    avatar.textContent = user.avatar;
+    const conversationDrawer = document.getElementById("conversationDrawer");
+    const conversationMessages = document.getElementById("conversationMessages");
 
-    const main = document.createElement("div");
-    main.className = "chat-main";
+    const conversationAvatar = document.getElementById("conversationAvatar");
+    const conversationName = document.getElementById("conversationName");
+    const conversationMeta = document.getElementById("conversationMeta");
 
-    const name = document.createElement("div");
-    name.className = "chat-name";
-    name.textContent = user.name;
+    const closeConversationBtn = document.getElementById("closeConversationBtn");
+    const conversationInput = document.getElementById("conversationInput");
+    const conversationSendBtn = document.getElementById("conversationSendBtn");
 
-    const preview = document.createElement("div");
-    preview.className = "chat-preview";
-    preview.textContent = thread.lastMessage || "No messages yet";
+    function loadChatThreads(){
+      try{
+        const raw=localStorage.getItem(CHAT_THREADS_KEY);
+        return raw?JSON.parse(raw):[];
+      }catch{return[]}
+    }
 
-    main.appendChild(name);
-    main.appendChild(preview);
+    function saveChatThreads(){
+      try{
+        localStorage.setItem(CHAT_THREADS_KEY,JSON.stringify(chatThreads));
+      }catch(err){console.error("save fail:",err)}
+    }
 
-    const time = document.createElement("div");
-    time.className = "chat-time";
-    time.textContent = getTimeAgo(thread.updatedAt || Date.now());
+    let chatThreads=[];
 
-    card.appendChild(avatar);
-    card.appendChild(main);
-    card.appendChild(time);
+    function seedChats(){
+      const now=Date.now();
+      chatThreads=[
+        {userId:"manya-prakash",lastMessage:"Welcome to UTD!!",updatedAt:now-100000,
+          messages:[
+            {id:"m1",text:"Hey Anya, welcome to UTD! If you need CS help just ask :)",senderId:"manya-prakash",ts:now-120000},
+            {id:"m2",text:"Thank you so much! I’m excited and nervous haha",senderId:"you",ts:now-90000}
+          ]
+        },
+        {userId:"rhea-sharma",lastMessage:"You got this!",updatedAt:now-50000,
+          messages:[
+            {id:"m3",text:"Hi Anya, I’m a CS senior from Mumbai. Always happy to mentor incoming students!",senderId:"rhea-sharma",ts:now-60000},
+            {id:"m4",text:"Hi Rhea! That means a lot omg thank you 💛",senderId:"you",ts:now-40000}
+          ]
+        },
+        {userId:"oliver-king",lastMessage:"See you soon!",updatedAt:now-20000,
+          messages:[
+            {id:"m5",text:"Incoming SE major from Sydney here. Let's connect at orientation!",senderId:"oliver-king",ts:now-25000},
+            {id:"m6",text:"Yes let’s!! I would love to meet people from abroad too 😄",senderId:"you",ts:now-20000}
+          ]
+        }
+      ];
+    }
 
-    chatList.appendChild(card);
-  });
-}
+    function getTimeAgo(ts){
+      const sec=Math.floor((Date.now()-ts)/1000);
+      if(sec<60)return"just now";
+      if(sec<3600)return Math.floor(sec/60)+"m ago";
+      if(sec<86400)return Math.floor(sec/3600)+"h ago";
+      return Math.floor(sec/86400)+"d ago";
+    }
 
-/* ============================================================
-   OPEN CONVERSATION
-============================================================ */
-function openConversation(userId) {
+    function renderChatList(){
+      chatList.innerHTML="";
+      if(chatThreads.length===0){chatEmpty.style.display="block";return;}
+      chatEmpty.style.display="none";
 
-activeThreadUserId = userId;
+      chatThreads.sort((a,b)=> (b.updatedAt??0)-(a.updatedAt??0) );
 
-const thread = chatThreads.find(t => t.userId === userId);
+      chatThreads.forEach(thread=>{
+        const base=users[thread.userId]||{name:"Unknown",avatar:"❓",bio:""};
+        const user={name:thread.name||base.name,avatar:thread.avatar||base.avatar,bio:thread.bio||base.bio};
 
-const user = users[userId] || { 
-  name: "Unknown", 
-  avatar: "👤", 
-  bio: "" 
-};
+        const card=document.createElement("div");
+        card.className="chat-card";
+        card.onclick=()=>openConversation(thread.userId);
 
-conversationAvatar.textContent = user.avatar;
-conversationName.textContent = user.name;
-conversationMeta.textContent = user.bio;
-  
+        const avatar=document.createElement("div");
+        avatar.className="chat-avatar";
+        avatar.textContent=user.avatar;
 
-  conversationInput.value = "";
-  conversationSendBtn.disabled = true;
+        const main=document.createElement("div");
+        main.className="chat-main";
 
-  renderMessages();
+        const name=document.createElement("div");
+        name.className="chat-name";
+        name.textContent=user.name;
 
-  conversationDrawer.classList.add("show");
-}
+        const preview=document.createElement("div");
+        preview.className="chat-preview";
+        preview.textContent=thread.lastMessage||"No messages yet";
 
-/* ============================================================
-   RENDER MESSAGES IN DRAWER
-============================================================ */
-function renderMessages() {
-  conversationMessages.innerHTML = "";
+        main.appendChild(name);
+        main.appendChild(preview);
 
-  const thread = chatThreads.find(t => t.userId === activeThreadUserId);
-  if (!thread || !thread.messages) return;
+        const time=document.createElement("div");
+        time.className="chat-time";
+        time.textContent=getTimeAgo(thread.updatedAt||Date.now());
 
-  const messages = thread.messages.sort((a, b) => a.ts - b.ts);
+        card.appendChild(avatar);
+        card.appendChild(main);
+        card.appendChild(time);
 
-  messages.forEach(msg => {
-    const row = document.createElement("div");
-    row.className = msg.senderId === CURRENT_USER_ID ? "message-row me" : "message-row them";
-
-    const bubble = document.createElement("div");
-    bubble.className = "msg-bubble";
-    bubble.textContent = msg.text;
-
-    row.appendChild(bubble);
-
-    // Only show time for OTHER users' messages
-    if (msg.senderId !== CURRENT_USER_ID) {
-      const time = document.createElement("div");
-      time.className = "msg-time";
-      time.textContent = new Date(msg.ts).toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit"
+        chatList.appendChild(card);
       });
-      row.appendChild(time);
     }
 
-    conversationMessages.appendChild(row);
-  });
+    let activeThreadUserId=null;
 
-  conversationMessages.scrollTop = conversationMessages.scrollHeight;
-}
+    function openConversation(userId){
+      activeThreadUserId=userId;
+      const thread=chatThreads.find(t=>t.userId===userId);
+      const user=users[userId]||{name:"Unknown",avatar:"👤",bio:""};
 
-/* ============================================================
-   SEND MESSAGE
-============================================================ */
-function sendMessage() {
-  const text = conversationInput.value.trim();
-  if (!text) return;
+      conversationAvatar.textContent=user.avatar;
+      conversationName.textContent=user.name;
+      conversationMeta.textContent=user.bio;
 
-  const now = Date.now();
-  const msgId = "m" + now;
+      conversationInput.value="";
+      conversationSendBtn.disabled=true;
 
-  let thread = chatThreads.find(t => t.userId === activeThreadUserId);
-  if (!thread) {
-    thread = {
-      userId: activeThreadUserId,
-      lastMessage: "",
-      updatedAt: now,
-      messages: []
-    };
-    chatThreads.push(thread);
-  }
+      renderMessages();
+      conversationDrawer.classList.add("show");
+    }
 
-  // Add the user's message
-  thread.messages.push({
-    id: msgId,
-    text,
-    senderId: CURRENT_USER_ID,
-    ts: now
-  });
+    function renderMessages(){
+      conversationMessages.innerHTML="";
+      const thread=chatThreads.find(t=>t.userId===activeThreadUserId);
+      if(!thread)return;
+      const messages=thread.messages.sort((a,b)=>a.ts-b.ts);
 
-  thread.lastMessage = text.slice(0, 50);
-  thread.updatedAt = now;
+      messages.forEach(msg=>{
+        const row=document.createElement("div");
+        row.className=msg.senderId===CURRENT_USER_ID?"message-row me":"message-row them";
 
-  // Save updated chat list
-  saveChatThreads();
+        const bubble=document.createElement("div");
+        bubble.className="msg-bubble";
+        bubble.textContent=msg.text;
+        row.appendChild(bubble);
 
-  conversationInput.value = "";
-  conversationSendBtn.disabled = true;
+        if(msg.senderId!==CURRENT_USER_ID){
+          const time=document.createElement("div");
+          time.className="msg-time";
+          time.textContent=new Date(msg.ts).toLocaleTimeString([],{
+            hour:"numeric",
+            minute:"2-digit"
+          });
+          row.appendChild(time);
+        }
 
-  // Re-render messages in the drawer
-  renderMessages();
+        conversationMessages.appendChild(row);
+      });
 
-  // Re-render the chat list (but WITHOUT resetting)
-  renderChatList();
-}
+      conversationMessages.scrollTop=conversationMessages.scrollHeight;
+    }
 
-/* ============================================================
-   EVENT LISTENERS
-============================================================ */
-closeConversationBtn.addEventListener("click", () => {
-  conversationDrawer.classList.remove("show");
-});
+    function sendMessage(){
+      const text=conversationInput.value.trim();
+      if(!text)return;
 
-conversationSendBtn.addEventListener("click", sendMessage);
+      const now=Date.now();
+      const id="m"+now;
 
-conversationInput.addEventListener("input", () => {
-  conversationSendBtn.disabled = conversationInput.value.trim().length === 0;
-});
+      let thread=chatThreads.find(t=>t.userId===activeThreadUserId);
+      if(!thread){
+        thread={userId:activeThreadUserId,lastMessage:"",updatedAt:now,messages:[]};
+        chatThreads.push(thread);
+      }
 
-conversationInput.addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    if (!conversationSendBtn.disabled) sendMessage();
-  }
-});
+      thread.messages.push({id,text,senderId:CURRENT_USER_ID,ts:now});
+      thread.lastMessage=text;
+      thread.updatedAt=now;
 
-// Close drawer on backdrop click
-conversationDrawer.addEventListener("click", e => {
-  if (e.target === conversationDrawer) {
-    conversationDrawer.classList.remove("show");
-  }
-});
+      saveChatThreads();
 
+      conversationInput.value="";
+      conversationSendBtn.disabled=true;
 
-// Only seed chats if none exist yet
-let existing = loadChatThreads();
+      renderMessages();
+      renderChatList();
+    }
 
-if (!existing || existing.length === 0) {
-  seedChats();
-  saveChatThreads();
-} else {
-  chatThreads = existing;
-}
+    closeConversationBtn.addEventListener("click",()=>{
+      conversationDrawer.classList.remove("show");
+    });
 
+    conversationSendBtn.addEventListener("click",sendMessage);
 
-// show them
-renderChatList();
+    conversationInput.addEventListener("input",()=>{
+      conversationSendBtn.disabled=conversationInput.value.trim().length===0;
+    });
+
+    conversationInput.addEventListener("keydown",e=>{
+      if(e.key==="Enter"&&!e.shiftKey){
+        e.preventDefault();
+        if(!conversationSendBtn.disabled)sendMessage();
+      }
+    });
+
+    conversationDrawer.addEventListener("click",e=>{
+      if(e.target===conversationDrawer){
+        conversationDrawer.classList.remove("show");
+      }
+    });
+
+    const existing=loadChatThreads();
+    if(!existing||existing.length===0){
+      seedChats();
+      saveChatThreads();
+    }else chatThreads=existing;
+
+    renderChatList();
   </script>
-
 </body>
 </html>

@@ -672,3 +672,23 @@ html, body {
   font-size: 14px;
   color: #6b7280;
 }
+
+/* UNIVERSAL BACK TO MAP BUTTON */
+.back-to-map-btn {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  background: #ffffff;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+  z-index: 9999;
+}
+
+.back-to-map-btn:hover {
+  background: #f3f3f3;
+}
