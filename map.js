@@ -5,50 +5,120 @@
 const currentUserId = "you";
 
 const users = {
-    u1: {
-  name: "Noah",
-  avatar: "🌿",
-  bio: "CS junior in UV3 who loves coffee chats and late-night LeetCode.",
-  status: "current",
-  year: "Junior (BS)"
-},
-u2: {
-  name: "Maya",
-  avatar: "🌸",
-  bio: "Atec & UX student who sketches app ideas and grows too many plants.",
-  status: "current",
-  year: "Senior (BS)"
-},
-u3: {
-  name: "Leo",
-  avatar: "🦊",
-  bio: "Night-owl who lives in Phase 8 and always knows when free food drops.",
-  status: "alumni",
-  year: "Alumni"
-},
-u4: {
-  name: "Sana",
-  avatar: "🌙",
-  bio: "Data science major joining ECSW soon.",
-  status: "incoming",
-  year: "Incoming Freshman"
-},
-u5: {
-  name: "Ray",
-  avatar: "🌊",
-  bio: "Gym regular & intramural champ, usually at Rec or on the courts.",
-  status: "prospective",
-  year: "Admitted Fall 2025"
-},
-you: {
-  name: "Anya Patel",
-  avatar: "⭐️",
-  bio: "Incoming UTD CS freshman from India 🌿",
-  status: "incoming",
-  year: "Freshman (BS)"
-}
-
+  you: {
+    name: "Anya Patel",
+    avatar: "??",
+    bio: "Incoming UTD CS freshman from India, nervous-excited about moving to Dallas.",
+    status: "incoming",
+    year: "Freshman (BS)"
+  },
+  "manya-prakash": {
+    name: "Manya Prakash",
+    avatar: "MP",
+    bio: "UTD CS junior organizing hackathon coffee chats.",
+    status: "current",
+    year: "Junior (BS)"
+  },
+  "arya-jonnadula": {
+    name: "Arya Jonnadula",
+    avatar: "AJ",
+    bio: "Incoming UT Austin biology major searching for study buddies.",
+    status: "incoming",
+    year: "Freshman (BS)"
+  },
+  "robert-ly": {
+    name: "Robert Ly",
+    avatar: "RL",
+    bio: "UNT mechanical engineer prototyping DIY electric boards.",
+    status: "current",
+    year: "Senior (BS)"
+  },
+  "sam-foster": {
+    name: "Sam Foster",
+    avatar: "SF",
+    bio: "UTD child development alum mentoring new Comets.",
+    status: "alumni",
+    year: "Alumni"
+  },
+  "rhea-sharma": {
+    name: "Rhea Sharma",
+    avatar: "RS",
+    bio: "UTD CS senior from Mumbai, happy to mentor incoming Comets like Anya.",
+    status: "current",
+    year: "Senior (BS)"
+  },
+  "arjun-mehta": {
+    name: "Arjun Mehta",
+    avatar: "AM",
+    bio: "UTD Data Science grad from Delhi who mentors new CS and DS students.",
+    status: "alumni",
+    year: "Alumni"
+  },
+  "priya-iyer": {
+    name: "Priya Iyer",
+    avatar: "PI",
+    bio: "UTD HCI student from Chennai who loves UX research and chai.",
+    status: "current",
+    year: "Junior (BS)"
+  },
+  "jordan-lee": {
+    name: "Jordan Lee",
+    avatar: "JL",
+    bio: "UTD business analytics major who loves hosting coffee networking chats.",
+    status: "current",
+    year: "Senior (BS)"
+  },
+  "taylor-nguyen": {
+    name: "Taylor Nguyen",
+    avatar: "TN",
+    bio: "UT Austin Design & UX student who loves sketching campus app ideas.",
+    status: "current",
+    year: "Junior (BS)"
+  },
+  "emma-cole": {
+    name: "Emma Cole",
+    avatar: "EC",
+    bio: "Prospective UNT nursing student figuring out campus housing and roommates.",
+    status: "prospective",
+    year: "Admitted Fall 2025"
+  },
+  "sofia-ramirez": {
+    name: "Sofia Ramirez",
+    avatar: "SR",
+    bio: "UTD mechanical engineering student from Monterrey, Mexico.",
+    status: "current",
+    year: "Junior (BS)"
+  },
+  "diego-martinez": {
+    name: "Diego Martinez",
+    avatar: "DM",
+    bio: "Data Science sophomore from Mexico City exploring Dallas taco spots.",
+    status: "current",
+    year: "Sophomore (BS)"
+  },
+  "li-wei": {
+    name: "Li Wei",
+    avatar: "LW",
+    bio: "Exchange student from Singapore interested in AI and robotics.",
+    status: "incoming",
+    year: "Exchange"
+  },
+  "lucia-garcia": {
+    name: "Lucia Garcia",
+    avatar: "LG",
+    bio: "Prospective psychology student from Spain visiting Texas campuses.",
+    status: "prospective",
+    year: "Admitted Fall 2025"
+  },
+  "oliver-king": {
+    name: "Oliver King",
+    avatar: "OK",
+    bio: "Incoming Software Engineering major from Sydney, excited for Texas.",
+    status: "incoming",
+    year: "Freshman (BS)"
+  }
 };
+
 
 const reactionOptions = ["👍", "❤️", "😂", "😮", "👎"];
 
@@ -147,28 +217,28 @@ let pins = [
     id: "pin1",
     lat: 32.984746,
     lng: -96.752568,
-    userId: "u1",
+    userId: "manya-prakash",
     text: "Anyone want a coffee by UV3?",
     baseLikes: 7,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u1",
+        userId: "manya-prakash",
         text: "I’m headed to Starbucks in JSOM in 10 mins.",
         baseReactions: { "👍": 3, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u2",
+        userId: "arya-jonnadula",
         text: "Can we go to Study Grounds instead? It’s quieter.",
         baseReactions: { "👍": 2, "❤️": 2, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u3",
+        userId: "robert-ly",
         text: "If someone brings me a latte, I’ll trade notes.",
         baseReactions: { "👍": 1, "❤️": 0, "😂": 2, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -179,28 +249,28 @@ let pins = [
     id: "pin2",
     lat: 32.9852,
     lng: -96.7519,
-    userId: "u4",
+    userId: "sam-foster",
     text: "CS 2336 study group tonight?",
     baseLikes: 5,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u4",
+        userId: "sam-foster",
         text: "Let’s meet in ECSW 2nd floor booths.",
         baseReactions: { "👍": 3, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u5",
+        userId: "rhea-sharma",
         text: "I can help with linked lists if someone explains AVL trees.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 1, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u2",
+        userId: "arya-jonnadula",
         text: "Bring laptops + chargers, outlets go fast.",
         baseReactions: { "👍": 1, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -211,28 +281,28 @@ let pins = [
     id: "pin3",
     lat: 32.9856,
     lng: -96.753,
-    userId: "u3",
+    userId: "robert-ly",
     text: "Free snacks in ECSW lobby!",
     baseLikes: 9,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u3",
+        userId: "robert-ly",
         text: "There are still granola bars + chips.",
         baseReactions: { "👍": 4, "❤️": 1, "😂": 0, "😮": 1, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u1",
+        userId: "manya-prakash",
         text: "Cookies are gone, but drinks left.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 1, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u5",
+        userId: "rhea-sharma",
         text: "Someone save me a snack, I’m in class.",
         baseReactions: { "👍": 1, "❤️": 0, "😂": 2, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -243,28 +313,28 @@ let pins = [
     id: "pin4",
     lat: 32.9861,
     lng: -96.7521,
-    userId: "u2",
+    userId: "arya-jonnadula",
     text: "Lost AirPods near SU stairs :(",
     baseLikes: 3,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u2",
+        userId: "arya-jonnadula",
         text: "Check the Info Desk, they keep lost items.",
         baseReactions: { "👍": 4, "❤️": 0, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u4",
+        userId: "sam-foster",
         text: "Put a note in other Think Cloud pins around SU.",
         baseReactions: { "👍": 2, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u1",
+        userId: "manya-prakash",
         text: "If I see any, I’ll DM you here.",
         baseReactions: { "👍": 3, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -275,28 +345,28 @@ let pins = [
     id: "pin5",
     lat: 32.9843,
     lng: -96.7534,
-    userId: "u5",
+    userId: "rhea-sharma",
     text: "Anyone going to the gym at 7?",
     baseLikes: 4,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u5",
+        userId: "rhea-sharma",
         text: "I’m doing legs today if anyone wants a buddy.",
         baseReactions: { "👍": 3, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u3",
+        userId: "robert-ly",
         text: "Can someone show me how to use the squat rack?",
         baseReactions: { "👍": 2, "❤️": 1, "😂": 1, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u4",
+        userId: "sam-foster",
         text: "Let’s meet by the front desk at 6:55.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -307,28 +377,28 @@ let pins = [
     id: "pin6",
     lat: 32.9859,
     lng: -96.7515,
-    userId: "u2",
+    userId: "arjun-mehta",
     text: "Looking for a quiet spot to write essay.",
     baseLikes: 2,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u2",
+        userId: "priya-iyer",
         text: "McDermott 4th floor is usually chill.",
         baseReactions: { "👍": 3, "❤️": 0, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u1",
+        userId: "li-wei",
         text: "ATEC lobby couches are nice too.",
         baseReactions: { "👍": 1, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u4",
+        userId: "jordan-lee",
         text: "Noise-cancelling headphones + SU atrium also works.",
         baseReactions: { "👍": 1, "❤️": 0, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -339,28 +409,28 @@ let pins = [
     id: "pin7",
     lat: 32.9863,
     lng: -96.7532,
-    userId: "u3",
+    userId: "priya-iyer",
     text: "Anyone free for a quick walk around campus?",
     baseLikes: 6,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u3",
+        userId: "taylor-nguyen",
         text: "I need a break from coding, I’m in.",
         baseReactions: { "👍": 5, "❤️": 3, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u5",
+        userId: "diego-martinez",
         text: "Let’s do a loop around the plinth.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 1, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u2",
+        userId: "sofia-ramirez",
         text: "I’ll bring my camera for sunset pics.",
         baseReactions: { "👍": 1, "❤️": 2, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -371,28 +441,28 @@ let pins = [
     id: "pin8",
     lat: 32.9841,
     lng: -96.7518,
-    userId: "u4",
+    userId: "jordan-lee",
     text: "Any recs for good vegetarian food nearby?",
     baseLikes: 8,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u4",
+        userId: "diego-martinez",
         text: "Madurai Mes has great dosas if you can Uber.",
         baseReactions: { "👍": 4, "❤️": 2, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u1",
+        userId: "lucia-garcia",
         text: "SU has decent veggie options if you mix sides.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 1, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u2",
+        userId: "li-wei",
         text: "There’s also a food truck near UV sometimes.",
         baseReactions: { "👍": 2, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -403,28 +473,28 @@ let pins = [
     id: "pin9",
     lat: 32.985,
     lng: -96.754,
-    userId: "u2",
+    userId: "taylor-nguyen",
     text: "Anyone working on HCI project today?",
     baseLikes: 3,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u2",
+        userId: "priya-iyer",
         text: "I’m prototyping in Figma in the ATEC labs.",
         baseReactions: { "👍": 2, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u3",
+        userId: "manya-prakash",
         text: "We’re doing user interviews at the SU couches.",
         baseReactions: { "👍": 1, "❤️": 0, "😂": 0, "😮": 1, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u4",
+        userId: "jordan-lee",
         text: "Drop your Figma link here and we can swap feedback.",
         baseReactions: { "👍": 2, "❤️": 1, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -435,28 +505,28 @@ let pins = [
     id: "pin10",
     lat: 32.9839,
     lng: -96.752,
-    userId: "u1",
+    userId: "emma-cole",
     text: "Anyone selling old textbooks this semester?",
     baseLikes: 4,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u1",
+        userId: "emma-cole",
         text: "I have CS 2336 and Discrete Math books.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u5",
+        userId: "lucia-garcia",
         text: "I have a slightly cursed copy of DB book with notes.",
         baseReactions: { "👍": 2, "❤️": 0, "😂": 2, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u3",
+        userId: "oliver-king",
         text: "Trade only, no one wants to pay bookstore prices lol.",
         baseReactions: { "👍": 1, "❤️": 0, "😂": 2, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -467,28 +537,28 @@ let pins = [
     id: "pin11",
     lat: 32.9864,
     lng: -96.7511,
-    userId: "u3",
+    userId: "oliver-king",
     text: "Late-night coding session after 10pm?",
     baseLikes: 6,
     liked: false,
     comments: [
       {
         id: "c1",
-        userId: "u3",
+        userId: "sofia-ramirez",
         text: "I’ll be in the ATEC lab until 1am probably.",
         baseReactions: { "👍": 3, "❤️": 0, "😂": 0, "😮": 1, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c2",
-        userId: "u4",
+        userId: "diego-martinez",
         text: "Bring snacks, I have extra extension cords.",
         baseReactions: { "👍": 2, "❤️": 1, "😂": 1, "😮": 0, "👎": 0 },
         myReactions: {}
       },
       {
         id: "c3",
-        userId: "u2",
+        userId: "li-wei",
         text: "Lo-fi playlist + silent study pact?",
         baseReactions: { "👍": 2, "❤️": 2, "😂": 0, "😮": 0, "👎": 0 },
         myReactions: {}
@@ -807,7 +877,7 @@ function updateMarkerPopup(pinId) {
 
       <div class="pin-author">
         Posted by
-        <button class="pin-author-button" onclick="showProfile('${authorId}')">
+        <button class="pin-author-button" onclick="goToExploreProfile('${authorId}')">
           ${author.name}
         </button>
       </div>
@@ -826,7 +896,7 @@ function updateMarkerPopup(pinId) {
           Comments
         </button>
 
-        <button onclick="showProfile('${authorId}')">
+        <button onclick="goToExploreProfile('${authorId}')">
           View Profile
         </button>
 
@@ -959,7 +1029,7 @@ function openCommentsOverlay(pinId) {
     const authorId = pin.userId || "you";
     const author = users[authorId] || users["you"];
     commentsAuthorEl.textContent = `Posted by ${author.name}`;
-    commentsAuthorEl.onclick = () => showProfile(authorId);
+    commentsAuthorEl.onclick = () => goToExploreProfile(authorId);
   }
 
   newCommentInput.value = "";
@@ -1130,11 +1200,22 @@ if (profileMessageBtn) {
   };
 }
 
+function goToExploreProfile(userId) {
+  if (!userId) return;
+  try {
+    localStorage.setItem("highlightProfileId", userId);
+  } catch (err) {
+    // ignore storage issues
+  }
+  window.location.href = "explore.html";
+}
+
 // Making functions available to inline HTML + Leaflet popups
 window.showProfile = showProfile;
 window.hideProfile = hideProfile;
 window.openCommentsOverlay = openCommentsOverlay;
 window.closeCommentsOverlay = closeCommentsOverlay;
+window.goToExploreProfile = goToExploreProfile;
 
 
 

@@ -233,6 +233,21 @@
       border-color: var(--accent-soft);
     }
 
+    .user-card.highlight {
+      border: 2px solid var(--accent);
+      box-shadow: 0 18px 45px rgba(79, 70, 229, 0.25);
+      animation: highlightPulse 0.6s ease forwards;
+    }
+
+    @keyframes highlightPulse {
+      from {
+        transform: scale(1);
+      }
+      to {
+        transform: scale(1.01);
+      }
+    }
+
     .user-name {
       font-weight: 700;
       font-size: 16px;
@@ -1012,6 +1027,7 @@
     const CONNECTION_KEY = "tc_connections";
     const CHAT_THREADS_KEY = "tc_conversations";
     const CURRENT_USER_ID = "you";
+    const HIGHLIGHT_KEY = "highlightProfileId";
 
     let activeMessageTarget = null;
     let activeMessageData = null;
@@ -1347,6 +1363,17 @@ if (chatThreads.length === 0) {
       });
     }
 
+    function highlightProfileFromStorage() {
+      const targetId = localStorage.getItem(HIGHLIGHT_KEY);
+      if (!targetId) return;
+      localStorage.removeItem(HIGHLIGHT_KEY);
+      const card = document.querySelector(`.user-card[data-user-id="${targetId}"]`);
+      if (!card) return;
+      card.classList.add("highlight");
+      card.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(() => card.classList.remove("highlight"), 4000);
+    }
+
     // Save explore users for chat page
     (function saveExploreUsers() {
       const cards = document.querySelectorAll(".user-card");
@@ -1363,6 +1390,7 @@ if (chatThreads.length === 0) {
     updateResults();
     initConnectButtons();
     initMessageButtons();
+    highlightProfileFromStorage();
   </script>
 
 </body>
