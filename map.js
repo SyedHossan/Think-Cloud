@@ -2,10 +2,25 @@
    Data model
 ----------------------------- */
 
+// Debug hook: prove that map.js is executing at all by updating
+// the loading message as soon as the script loads.
+(function bootstrapMapDebug() {
+  try {
+    var el = document.getElementById("mapLoading");
+    if (!el) return;
+    var p = el.querySelector("p");
+    if (p) {
+      p.textContent = "Initializing map…";
+    }
+  } catch (e) {
+    // ignore – this is only for debugging
+  }
+})();
+
 function getActiveUserProfile() {
   try {
     return JSON.parse(localStorage.getItem("tc_currentUser")) || {};
-  } catch {
+  } catch (e) {
     return {};
   }
 }
@@ -167,31 +182,87 @@ function getUserScopedKey(base) {
   return `${base}_${activeUserId}`;
 }
 
-const CONNECTIONS_STORAGE_KEY = getUserScopedKey("tc_connections");
+// Use a map-scoped key name to avoid colliding with the same constant in
+// globalMessage.js (which is loaded on this page).
+const MAP_GLOBAL_CONNECTIONS_KEY = "tc_globalConnections_v1";
 const CHAT_THREADS_STORAGE_KEY = getUserScopedKey("tc_conversations");
 const CUSTOM_PIN_KEY = getUserScopedKey("userClouds");
 
-function loadConnectionsFromStorage() {
+function loadGlobalConnections() {
   try {
-    const raw = localStorage.getItem(CONNECTIONS_STORAGE_KEY);
-    if (!raw) return new Set();
-    return new Set(JSON.parse(raw));
-  } catch {
-    return new Set();
+    const raw = localStorage.getItem(MAP_GLOBAL_CONNECTIONS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (e) {
+    // ignore and fall back to legacy migration
+  }
+
+  // One-time migration from old per-user storage (if present)
+  try {
+    const legacyKey = getUserScopedKey("tc_connections");
+    const legacyRaw = localStorage.getItem(legacyKey);
+    if (!legacyRaw) return [];
+    const ids = new Set(JSON.parse(legacyRaw));
+    const migrated = [];
+    ids.forEach((otherId) => {
+      if (!otherId || otherId === activeUserId) return;
+      const pair = [activeUserId, otherId].sort();
+      migrated.push({
+        aId: pair[0],
+        bId: pair[1],
+        createdAt: Date.now()
+      });
+    });
+    localStorage.setItem(MAP_GLOBAL_CONNECTIONS_KEY, JSON.stringify(migrated));
+    return migrated;
+  } catch (e) {
+    return [];
   }
 }
 
-const connectedUsers = loadConnectionsFromStorage();
+function saveGlobalConnections(all) {
+  try {
+    localStorage.setItem(MAP_GLOBAL_CONNECTIONS_KEY, JSON.stringify(all || []));
+  } catch (e) {
+    // ignore for demo
+  }
+}
+
+function computeConnectedUsers(userId, allConnections) {
+  const set = new Set();
+  allConnections.forEach((conn) => {
+    if (!conn || !conn.aId || !conn.bId) return;
+    if (conn.aId === userId) set.add(conn.bId);
+    else if (conn.bId === userId) set.add(conn.aId);
+  });
+  return set;
+}
+
+let connectedUsers = computeConnectedUsers(activeUserId, loadGlobalConnections());
 
 function persistConnections() {
-  try {
-    localStorage.setItem(
-      CONNECTIONS_STORAGE_KEY,
-      JSON.stringify(Array.from(connectedUsers))
+  const all = loadGlobalConnections().filter(
+    (conn) => conn && conn.aId !== activeUserId && conn.bId !== activeUserId
+  );
+
+  connectedUsers.forEach((otherId) => {
+    if (!otherId || otherId === activeUserId) return;
+    const pair = [activeUserId, otherId].sort();
+    const exists = all.some(
+      (c) => c.aId === pair[0] && c.bId === pair[1]
     );
-  } catch {
-    // ignore storage errors
-  }
+    if (!exists) {
+      all.push({
+        aId: pair[0],
+        bId: pair[1],
+        createdAt: Date.now()
+      });
+    }
+  });
+
+  saveGlobalConnections(all);
 }
 
 function loadChatThreads() {
@@ -200,7 +271,7 @@ function loadChatThreads() {
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
-  } catch {
+  } catch (e) {
     return [];
   }
 }
@@ -214,7 +285,7 @@ function persistChatThreads() {
       CHAT_THREADS_STORAGE_KEY,
       JSON.stringify(chatThreads)
     );
-  } catch {
+  } catch (e) {
     // ignore storage errors
   }
 }
@@ -673,16 +744,145 @@ let pins = [
     baseLikes: 1,
     liked: false,
     comments: []
+  },
+  // ===== SINGAPORE / SE-ASIA (Li Wei) =====
+  {
+    id: "sg1",
+    lat: 1.2966,
+    lng: 103.7764,
+    userId: "li-wei",
+    text: "NUS campus tour before exchange – any UTD students visiting?",
+    baseLikes: 4,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "sg2",
+    lat: 1.3001,
+    lng: 103.7702,
+    userId: "li-wei",
+    text: "Late-night coding at UTown café – best study snacks?",
+    baseLikes: 3,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "sg3",
+    lat: 1.2928,
+    lng: 103.7815,
+    userId: "li-wei",
+    text: "Looking for other exchange students heading to Dallas soon.",
+    baseLikes: 5,
+    liked: false,
+    comments: []
+  },
+
+  // ===== SYDNEY / AUSTRALIA (Oliver) =====
+  {
+    id: "sydney1",
+    lat: -33.8688,
+    lng: 151.2093,
+    userId: "oliver-king",
+    text: "Sydney → Texas flight buddies? Leaving this August.",
+    baseLikes: 6,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "sydney2",
+    lat: -33.8735,
+    lng: 151.2069,
+    userId: "oliver-king",
+    text: "Any tips for adjusting from Aussie summer to Texas heat?",
+    baseLikes: 2,
+    liked: false,
+    comments: []
+  },
+
+  // ===== MADRID / SPAIN (Lucia) =====
+  {
+    id: "madrid1",
+    lat: 40.4168,
+    lng: -3.7038,
+    userId: "lucia-garcia",
+    text: "Trying to decide between Madrid and Texas campuses.",
+    baseLikes: 4,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "madrid2",
+    lat: 40.4185,
+    lng: -3.7102,
+    userId: "lucia-garcia",
+    text: "Any psychology majors at UTD or UT Austin I can chat with?",
+    baseLikes: 3,
+    liked: false,
+    comments: []
+  },
+
+  // ===== MONTERREY / MEXICO (Sofia & Diego) =====
+  {
+    id: "monterrey1",
+    lat: 25.6866,
+    lng: -100.3161,
+    userId: "sofia-ramirez",
+    text: "From Monterrey to Dallas soon – nervous about the move.",
+    baseLikes: 5,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "monterrey2",
+    lat: 25.6912,
+    lng: -100.309,
+    userId: "diego-martinez",
+    text: "Any other Spanish speakers heading to UTD this fall?",
+    baseLikes: 4,
+    liked: false,
+    comments: []
+  },
+
+  // ===== EXTRA UTD / DALLAS CAMPUS CLUSTER =====
+  {
+    id: "utd-coffee-1",
+    lat: 32.9867,
+    lng: -96.7489,
+    userId: "manya-prakash",
+    text: "Morning coffee walk from UV to JSOM – join?",
+    baseLikes: 3,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "utd-library-1",
+    lat: 32.9872,
+    lng: -96.7508,
+    userId: "priya-iyer",
+    text: "Quiet corner in McDermott Library if you need focus time.",
+    baseLikes: 7,
+    liked: false,
+    comments: []
+  },
+  {
+    id: "utd-gym-1",
+    lat: 32.9837,
+    lng: -96.7542,
+    userId: "rhea-sharma",
+    text: "Rec Center lifting session tonight – beginners welcome.",
+    baseLikes: 6,
+    liked: false,
+    comments: []
   }
 ];
 
 const markers = {};
-let activePinId = null;
-let addPinMode = false;
-let pendingPinLatLng = null;
-let draftPinMarker = null;
-let activeProfileUserId = null;
-let activeMessageUserId = null;
+  let activePinId = null;
+  let addPinMode = false;
+  let pendingPinLatLng = null;
+  let draftPinMarker = null;
+  let activeProfileUserId = null;
+  let activeMessageUserId = null;
 
 /* -----------------------------
    Map setup
@@ -810,8 +1010,8 @@ const addPinCoordsEl = document.getElementById("addPinCoords");
 const addPinHintEl = document.getElementById("addPinHint");
 const savePinBtn = document.getElementById("savePinBtn");
 
-if (
-  addPinBtn &&
+  if (
+    addPinBtn &&
   addPinPanel &&
   addPinTextInput &&
   addPinCoordsEl &&
@@ -820,29 +1020,57 @@ if (
 ) {
   const mapContainer = map.getContainer();
 
-  function resetAddPinForm() {
-    pendingPinLatLng = null;
-    addPinCoordsEl.textContent = "No location selected yet.";
-    savePinBtn.disabled = true;
-    addPinTextInput.value = "";
-    if (draftPinMarker) {
-      map.removeLayer(draftPinMarker);
-      draftPinMarker = null;
+    function resetAddPinForm() {
+      pendingPinLatLng = null;
+      addPinCoordsEl.textContent = "No location selected yet.";
+      addPinCoordsEl.classList.remove("coords-error");
+      savePinBtn.disabled = true;
+      addPinTextInput.value = "";
+      if (draftPinMarker) {
+        map.removeLayer(draftPinMarker);
+        draftPinMarker = null;
+      }
     }
-  }
 
-  function enterAddPinMode() {
-  addPinMode = true;
-  addPinBtn.classList.add("active");
-  addPinPanel.classList.add("show");
-  addPinHintEl.textContent = "Select location: Tap anywhere on the map to drop your thought.";
-  resetAddPinForm();
-  map.getContainer().classList.add("add-pin-cursor");
-  addPinTextInput.focus();
+    function enterAddPinMode() {
+      addPinMode = true;
+      addPinBtn.classList.add("active");
+      addPinPanel.classList.add("show");
+      addPinHintEl.textContent =
+        "We dropped a pin where you are. Drag it or tap another spot on the map to move it.";
+      resetAddPinForm();
+      map.getContainer().classList.add("add-pin-cursor");
+      addPinTextInput.focus();
 
-  //  HIDE + BUTTON
-  addPinBtn.style.display = "none";
-}
+      // Start with a pin at your current area
+      if (postingOrigin) {
+        pendingPinLatLng = { lat: postingOrigin.lat, lng: postingOrigin.lng };
+        addPinCoordsEl.textContent = `Selected: ${formatLocation(
+          postingOrigin.lat,
+          postingOrigin.lng
+        )}`;
+        if (draftPinMarker) {
+          map.removeLayer(draftPinMarker);
+          draftPinMarker = null;
+        }
+        draftPinMarker = L.marker([postingOrigin.lat, postingOrigin.lng], {
+          opacity: 0.7,
+          draggable: true
+        }).addTo(map);
+
+        draftPinMarker.on("dragend", (e) => {
+          const latLng = e.target.getLatLng();
+          pendingPinLatLng = latLng;
+          addPinCoordsEl.textContent = `Selected: ${formatLocation(
+            latLng.lat,
+            latLng.lng
+          )}`;
+        });
+      }
+  
+      //  HIDE + BUTTON
+      addPinBtn.style.display = "none";
+    }
 
 function exitAddPinMode() {
   addPinMode = false;
@@ -876,22 +1104,50 @@ function exitAddPinMode() {
     savePinBtn.disabled = !(hasText && pendingPinLatLng);
   });
 
-  map.on("click", (e) => {
-    if (!addPinMode) return;
-    pendingPinLatLng = e.latlng;
-    addPinCoordsEl.textContent = `Selected: ${e.latlng.lat.toFixed(
-      5
-    )}, ${e.latlng.lng.toFixed(5)}`;
-    if (draftPinMarker) {
-      map.removeLayer(draftPinMarker);
-    }
-    draftPinMarker = L.marker(e.latlng, { opacity: 0.6 }).addTo(map);
-    savePinBtn.disabled = !(addPinTextInput.value.trim() && pendingPinLatLng);
-  });
+    map.on("click", (e) => {
+      if (!addPinMode) return;
+
+      const lat = e.latlng.lat;
+      const lng = e.latlng.lng;
+
+      if (!isWithinPostingRadius(lat, lng)) {
+        addPinCoordsEl.textContent =
+          "You can only drop thought clouds near where you are right now. Tap Recenter to return.";
+        addPinCoordsEl.classList.add("coords-error");
+        savePinBtn.disabled = true;
+        if (draftPinMarker) {
+          map.removeLayer(draftPinMarker);
+          draftPinMarker = null;
+        }
+        return;
+      }
+
+      pendingPinLatLng = e.latlng;
+      addPinCoordsEl.classList.remove("coords-error");
+      addPinCoordsEl.textContent = `Selected: ${formatLocation(lat, lng)}`;
+
+        if (draftPinMarker) {
+          map.removeLayer(draftPinMarker);
+        }
+        draftPinMarker = L.marker(e.latlng, {
+          opacity: 0.7,
+          draggable: true
+        }).addTo(map);
+
+        draftPinMarker.on("dragend", (event) => {
+          const ll = event.target.getLatLng();
+          pendingPinLatLng = ll;
+          addPinCoordsEl.textContent = `Selected: ${formatLocation(
+            ll.lat,
+            ll.lng
+          )}`;
+        });
+      savePinBtn.disabled = !(addPinTextInput.value.trim() && pendingPinLatLng);
+    });
 
   savePinBtn.addEventListener("click", () => {
-    const text = addPinTextInput.value.trim();
-    if (!text || !pendingPinLatLng) return;
+      const text = addPinTextInput.value.trim();
+      if (!text || !pendingPinLatLng) return;
 
     const newPin = {
       id: `pin${Date.now()}`,
@@ -904,10 +1160,13 @@ function exitAddPinMode() {
       comments: []
     };
 
-    pins.unshift(newPin);
-    createMarkerForPin(newPin);
-    markers[newPin.id].openPopup();
-    localStorage.setItem(CUSTOM_PIN_KEY, JSON.stringify(pins.filter(p => p.userId === currentUserId)));
+      pins.unshift(newPin);
+      createMarkerForPin(newPin);
+      markers[newPin.id].openPopup();
+      localStorage.setItem(CUSTOM_PIN_KEY, JSON.stringify(pins.filter(p => p.userId === currentUserId)));
+    if (typeof showToast === "function") {
+      showToast("Thought cloud posted near you.", "success");
+    }
     exitAddPinMode();
   });
 }
@@ -979,11 +1238,13 @@ function updateMarkerPopup(pinId) {
   const comments = countComments(pin);
   const authorId = pin.userId || "you";
   const author = users[authorId] || users["you"];
-
+  const locationLabel = formatLocation(pin.lat, pin.lng);
+  
   const html = `
-    <div>
-      <div class="pin-title">${pin.text}</div>
-
+      <div>
+        <div class="pin-title">${pin.text}</div>
+        <div class="pin-location">${locationLabel}</div>
+  
       <div class="pin-author">
         Posted by
         <button class="pin-author-button" onclick="goToExploreProfile('${authorId}')">
@@ -1043,7 +1304,7 @@ function handleLikePin(pinId, ev) {
 /* -----------------------------
 Delete Pin handler
 -----------------------------*/
-function deletePin(pinId, ev) {
+  function deletePin(pinId, ev) {
   if (ev) {
     ev.preventDefault();
     ev.stopPropagation();
@@ -1064,8 +1325,10 @@ function deletePin(pinId, ev) {
   const myPins = pins.filter(p => p.userId === currentUserId);
   localStorage.setItem(CUSTOM_PIN_KEY, JSON.stringify(myPins));
 
-  alert("Thought cloud deleted!");
-}
+    if (typeof showToast === "function") {
+      showToast("Thought cloud deleted.", "info");
+    }
+  }
 
 
 /* -----------------------------
@@ -1129,13 +1392,30 @@ function showProfile(userId) {
   overlay.classList.remove("show");
 }
 
-function hideProfile() {
-  profileCard.classList.remove("show");
-}
-
-
-
-function openCommentsOverlay(pinId) {
+  function hideProfile() {
+    profileCard.classList.remove("show");
+  }
+  
+  
+  
+  if (profileConnectBtn) {
+    profileConnectBtn.addEventListener("click", () => {
+      if (!activeProfileUserId || activeProfileUserId === "you") return;
+  
+      if (connectedUsers.has(activeProfileUserId)) {
+        if (!confirm("Disconnect from this connection?")) return;
+        connectedUsers.delete(activeProfileUserId);
+      } else {
+        connectedUsers.add(activeProfileUserId);
+      }
+  
+      persistConnections();
+      showProfile(activeProfileUserId);
+    });
+  }
+  
+  
+  function openCommentsOverlay(pinId) {
   activePinId = pinId;
   const pin = getPin(pinId);
 
@@ -1270,6 +1550,33 @@ function renderComments() {
     actionsRow.appendChild(reactionsRow);
     actionsRow.appendChild(replyBtn);
 
+    if (c.userId === currentUserId) {
+      const editBtn = document.createElement("button");
+      editBtn.className = "reply-button";
+      editBtn.textContent = "Edit";
+      editBtn.onclick = () => {
+        const updated = prompt("Edit your comment", c.text);
+        if (updated !== null) {
+          c.text = updated.trim();
+          renderComments();
+          updateOverlayCounts();
+        }
+      };
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "reply-button";
+      deleteBtn.textContent = "Delete";
+      deleteBtn.onclick = () => {
+        if (!confirm("Delete this comment?")) return;
+        pin.comments.splice(index, 1);
+        renderComments();
+        updateOverlayCounts();
+      };
+
+      actionsRow.appendChild(editBtn);
+      actionsRow.appendChild(deleteBtn);
+    }
+
     mainDiv.appendChild(headerLine);
     mainDiv.appendChild(textDiv);
     mainDiv.appendChild(actionsRow);
@@ -1314,6 +1621,13 @@ function updateOverlayCounts() {
 // When clicking "Message" inside profile card
 if (profileMessageBtn) {
   profileMessageBtn.onclick = () => {
+    if (!activeProfileUserId) return;
+    if (!connectedUsers.has(activeProfileUserId)) {
+      if (typeof showToast === "function") {
+        showToast("Connect with this user before messaging.", "info");
+      }
+      return;
+    }
     openMiniMessage(activeProfileUserId);   // use the small modal on map
   };
 }
@@ -1335,6 +1649,154 @@ window.openCommentsOverlay = openCommentsOverlay;
 window.closeCommentsOverlay = closeCommentsOverlay;
 window.goToExploreProfile = goToExploreProfile;
 
+/* -----------------------------
+   Geolocation centering + recenter
+----------------------------- */
+
+let initialViewCenter = [20, 0];
+let initialViewZoom = 3;
+let postingOrigin = null;
+const POST_RADIUS_KM =
+  (activeUserProfile && activeUserProfile.allowedRadiusKm) || 40;
+
+const mapLoadingEl = document.getElementById("mapLoading");
+const recenterBtn = document.getElementById("recenterBtn");
+
+function setLoadingMessage(text) {
+  if (!mapLoadingEl) return;
+  const msgEl = mapLoadingEl.querySelector("p");
+  if (msgEl && typeof text === "string") {
+    msgEl.textContent = text;
+  }
+}
+
+function hideMapLoading() {
+  if (mapLoadingEl) {
+    mapLoadingEl.classList.add("hidden");
+  }
+}
+
+function setInitialView(lat, lng, zoom) {
+  initialViewCenter = [lat, lng];
+  initialViewZoom = zoom;
+  postingOrigin = { lat, lng };
+  if (typeof map !== "undefined") {
+    map.setView(initialViewCenter, initialViewZoom);
+  }
+  hideMapLoading();
+}
+
+function deg2rad(deg) {
+  return (deg * Math.PI) / 180;
+}
+
+function distanceKm(aLat, aLng, bLat, bLng) {
+  const R = 6371;
+  const dLat = deg2rad(bLat - aLat);
+  const dLng = deg2rad(bLng - aLng);
+  const lat1 = deg2rad(aLat);
+  const lat2 = deg2rad(bLat);
+
+  const h =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLng / 2) *
+      Math.sin(dLng / 2) *
+      Math.cos(lat1) *
+      Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  return R * c;
+}
+
+function isWithinPostingRadius(lat, lng) {
+  if (!postingOrigin) return true;
+  const d = distanceKm(postingOrigin.lat, postingOrigin.lng, lat, lng);
+  return d <= POST_RADIUS_KM;
+}
+
+function formatLocation(lat, lng) {
+  const places = [
+    { name: "UTD - Richardson, Texas", lat: 32.985, lng: -96.75 },
+    { name: "Dallas, Texas", lat: 32.7767, lng: -96.797 },
+    { name: "Mumbai, India", lat: 19.076, lng: 72.8777 },
+    { name: "Singapore", lat: 1.3521, lng: 103.8198 },
+    { name: "Madrid, Spain", lat: 40.4168, lng: -3.7038 },
+    { name: "Sydney, Australia", lat: -33.8688, lng: 151.2093 },
+    { name: "Monterrey, Mexico", lat: 25.6866, lng: -100.3161 },
+    { name: "New York City, USA", lat: 40.7128, lng: -74.006 },
+    { name: "Los Angeles, USA", lat: 34.0522, lng: -118.2437 },
+    { name: "Chicago, USA", lat: 41.8781, lng: -87.6298 }
+  ];
+
+  const thresholdKm = 60;
+  for (const place of places) {
+    const d = distanceKm(lat, lng, place.lat, place.lng);
+    if (d <= thresholdKm) {
+      return `near ${place.name}`;
+    }
+  }
+
+  return `near (${lat.toFixed(3)}, ${lng.toFixed(3)})`;
+}
+
+(function initMapCentering() {
+  const DEFAULT_CENTER = [32.985, -96.75];
+  const DEFAULT_ZOOM = 13;
+  let geoResolved = false;
+
+  setLoadingMessage("Finding your location…");
+
+  function fallbackToProfileOrDefault() {
+    if (geoResolved) return;
+    geoResolved = true;
+    setLoadingMessage("Centering on your campus location…");
+    if (
+      activeUserProfile &&
+      typeof activeUserProfile.homeLat === "number" &&
+      typeof activeUserProfile.homeLng === "number"
+    ) {
+      setInitialView(activeUserProfile.homeLat, activeUserProfile.homeLng, 12);
+    } else {
+      setInitialView(DEFAULT_CENTER[0], DEFAULT_CENTER[1], DEFAULT_ZOOM);
+    }
+  }
+
+  if (!navigator.geolocation) {
+    setLoadingMessage("Location not available in this browser. Using your campus location instead.");
+    fallbackToProfileOrDefault();
+  } else {
+    try {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          geoResolved = true;
+          setLoadingMessage("Centering on your current location…");
+          setInitialView(pos.coords.latitude, pos.coords.longitude, 14);
+        },
+        () => {
+          fallbackToProfileOrDefault();
+        },
+        { enableHighAccuracy: true, timeout: 7000 }
+      );
+    } catch (e) {
+      // If the browser throws synchronously (e.g., insecure context), fall back.
+      fallbackToProfileOrDefault();
+    }
+
+    // Safety net: some browsers may never resolve geolocation callbacks.
+    setTimeout(() => {
+      if (!geoResolved) {
+        fallbackToProfileOrDefault();
+      }
+    }, 9000);
+  }
+
+  if (recenterBtn) {
+    recenterBtn.addEventListener("click", () => {
+      if (typeof map !== "undefined") {
+        map.setView(initialViewCenter, initialViewZoom, { animate: true });
+      }
+    });
+  }
+})();
 
 
 

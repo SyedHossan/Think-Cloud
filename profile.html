@@ -178,5 +178,91 @@
     }
   </script>
 
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    (function () {
+      const content = document.getElementById("profileContent");
+      if (!content) return;
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (!logoutBtn) return;
+
+      const editBtn = document.createElement("button");
+      editBtn.id = "editProfileBtn";
+      editBtn.className = "login-btn";
+      editBtn.textContent = "Edit profile";
+      editBtn.style.marginRight = "8px";
+
+      logoutBtn.parentNode.insertBefore(editBtn, logoutBtn);
+
+      function getCurrentUserSafe() {
+        if (window.Auth && typeof Auth.getCurrentUser === "function") {
+          return Auth.getCurrentUser();
+        }
+        try {
+          const raw = localStorage.getItem("tc_currentUser");
+          return raw ? JSON.parse(raw) : null;
+        } catch {
+          return null;
+        }
+      }
+
+      editBtn.addEventListener("click", () => {
+        const user = getCurrentUserSafe();
+        if (!user) return;
+
+        const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ");
+        const nameInput = prompt("Update your name", fullName || "");
+        if (nameInput === null) return;
+
+        const schoolInput = prompt("Update your school", user.school || "");
+        if (schoolInput === null) return;
+
+        const majorInput = prompt("Update your major", user.major || "");
+        if (majorInput === null) return;
+
+        const statusInput = prompt("Update your status", user.status || "");
+        if (statusInput === null) return;
+
+        const countryInput = prompt("Update your home country", user.country || "");
+        if (countryInput === null) return;
+
+        const bioInput = prompt("Update your bio", user.bio || "");
+        if (bioInput === null) return;
+
+        const [firstName, ...rest] = nameInput.trim().split(" ");
+        const lastName = rest.join(" ").trim();
+
+        const updated = {
+          ...user,
+          firstName: firstName || user.firstName || "",
+          lastName: lastName || user.lastName || "",
+          school: schoolInput.trim(),
+          major: majorInput.trim(),
+          status: statusInput.trim(),
+          country: countryInput.trim(),
+          bio: bioInput.trim()
+        };
+
+        if (window.Auth && typeof Auth.loadUsers === "function") {
+          const users = Auth.loadUsers();
+          const id = updated.id || updated.userId;
+          const idx = users.findIndex(
+            (u) => u.id === id || (u.email && u.email === updated.email)
+          );
+          if (idx >= 0) {
+            users[idx] = { ...users[idx], ...updated };
+          }
+          Auth.saveUsers(users);
+          Auth.setCurrentUser(users[idx] || updated);
+        } else {
+          localStorage.setItem("tc_currentUser", JSON.stringify(updated));
+        }
+
+        window.location.reload();
+      });
+    })();
+  </script>
+
 </body>
 </html>

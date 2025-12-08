@@ -216,6 +216,20 @@
       padding: 0 4px;
     }
 
+    .msg-delete-btn {
+      margin-top: 4px;
+      align-self: flex-end;
+      border: none;
+      background: none;
+      color: #9ca3af;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .msg-delete-btn:hover {
+      color: #ef4444;
+    }
+
     .conversation-input-row {
       display: flex;
       gap: 10px;
@@ -252,7 +266,8 @@
       cursor: not-allowed;
     }
   </style>
-</head>
+  <script src="ui.js"></script>
+  </head>
 
 <body>
 
@@ -345,7 +360,7 @@
 
     const currentUserProfile = getCurrentUserProfile();
     const CURRENT_USER_ID = getUserId(currentUserProfile);
-    const CHAT_THREADS_KEY = `tc_conversations_${CURRENT_USER_ID}`;
+    const GLOBAL_THREADS_KEY = "tc_globalThreads_v1";
 
     const users = {
       u1:{name:"Noah",avatar:"NH",bio:"CS junior in UV3 who loves coffee chats and late-night LeetCode."},
@@ -410,20 +425,28 @@
     const conversationInput = document.getElementById("conversationInput");
     const conversationSendBtn = document.getElementById("conversationSendBtn");
 
-    function loadChatThreads(){
-      try{
-        const raw=localStorage.getItem(CHAT_THREADS_KEY);
-        return raw?JSON.parse(raw):[];
-      }catch{return[]}
+    function loadGlobalThreads() {
+      try {
+        const raw = localStorage.getItem(GLOBAL_THREADS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
     }
 
-    function saveChatThreads(){
-      try{
-        localStorage.setItem(CHAT_THREADS_KEY,JSON.stringify(chatThreads));
-      }catch(err){console.error("save fail:",err)}
+    function saveGlobalThreads() {
+      try {
+        localStorage.setItem(GLOBAL_THREADS_KEY, JSON.stringify(globalThreads));
+      } catch {
+        // ignore
+      }
     }
 
-    let chatThreads=loadChatThreads();
+    function normalizeThreadPair(aId, bId) {
+      const pair = [aId, bId].sort();
+      return { aId: pair[0], bId: pair[1], key: `${pair[0]}::${pair[1]}` };
+    }
 
     function seedChats(){
       const now=Date.now();
@@ -436,154 +459,277 @@
             {id:"m8",text:"I'll be landing next week",senderId:CURRENT_USER_ID,ts:now-90000}
           ]
         },
-        {userId:"rhea-sharma",lastMessage:"You got this!",updatedAt:now-50000,
-          messages:[
-            {id:"m3",text:"Hi Anya, I’m a CS senior from Mumbai. Always happy to mentor incoming students!",senderId:"rhea-sharma",ts:now-60000},
-            {id:"m4",text:"Hi Rhea! That means a lot omg thank you 💛",senderId:CURRENT_USER_ID,ts:now-40000}
+        {
+          otherId: "rhea-sharma",
+          updatedAt: now - 50000,
+          lastMessage: "You got this!",
+          messages: [
+            {
+              id: "m3",
+              text: "Hi Anya, I''m a CS senior from Mumbai. Always happy to mentor incoming students!",
+              senderId: "rhea-sharma",
+              ts: now - 60000
+            },
+            {
+              id: "m4",
+              text: "Hi Rhea! That means a lot, thank you!",
+              senderId: CURRENT_USER_ID,
+              ts: now - 40000
+            }
           ]
         },
-        {userId:"oliver-king",lastMessage:"See you soon!",updatedAt:now-20000,
-          messages:[
-            {id:"m5",text:"Incoming SE major from Sydney here. Let's connect at orientation!",senderId:"oliver-king",ts:now-25000},
-            {id:"m6",text:"Yes let’s!! I would love to meet people from abroad too 😄",senderId:CURRENT_USER_ID,ts:now-20000}
+        {
+          otherId: "oliver-king",
+          updatedAt: now - 20000,
+          lastMessage: "See you soon!",
+          messages: [
+            {
+              id: "m5",
+              text: "Incoming SE major from Sydney here. Let''s connect at orientation!",
+              senderId: "oliver-king",
+              ts: now - 25000
+            },
+            {
+              id: "m6",
+              text: "Yes, let''s! I would love to meet other international students too.",
+              senderId: CURRENT_USER_ID,
+              ts: now - 20000
+            }
           ]
         }
       ];
+
+      seeds.forEach(seed => {
+        const pair = normalizeThreadPair(CURRENT_USER_ID, seed.otherId);
+        globalThreads.push({
+          key: pair.key,
+          aId: pair.aId,
+          bId: pair.bId,
+          updatedAt: seed.updatedAt,
+          lastMessage: seed.lastMessage,
+          messages: seed.messages.slice()
+        });
+      });
+
+      saveGlobalThreads();
     }
 
-    if(chatThreads.length===0 && CURRENT_USER_ID==="anya-patel"){
-      chatThreads=seedChats();
-      saveChatThreads();
+    seedThreadsForAnyaIfEmpty();
+
+    function getThreadForUser(otherUserId, createIfMissing) {
+      if (!otherUserId) return null;
+      const pair = normalizeThreadPair(CURRENT_USER_ID, otherUserId);
+      let thread = globalThreads.find(t => t && t.key === pair.key);
+      if (!thread && createIfMissing) {
+        thread = {
+          key: pair.key,
+          aId: pair.aId,
+          bId: pair.bId,
+          updatedAt: 0,
+          lastMessage: "",
+          messages: []
+        };
+        globalThreads.push(thread);
+      }
+      return thread || null;
     }
 
-    function getTimeAgo(ts){
-      const sec=Math.floor((Date.now()-ts)/1000);
-      if(sec<60)return"just now";
-      if(sec<3600)return Math.floor(sec/60)+"m ago";
-      if(sec<86400)return Math.floor(sec/3600)+"h ago";
-      return Math.floor(sec/86400)+"d ago";
+    function getUserThreads() {
+      return globalThreads
+        .filter(t => t && (t.aId === CURRENT_USER_ID || t.bId === CURRENT_USER_ID))
+        .map(t => {
+          const otherId = t.aId === CURRENT_USER_ID ? t.bId : t.aId;
+          return { otherId, thread: t };
+        });
     }
 
-    function renderChatList(){
-      chatList.innerHTML="";
-      if(chatThreads.length===0){chatEmpty.style.display="block";return;}
-      chatEmpty.style.display="none";
+    function getTimeAgo(ts) {
+      const sec = Math.floor((Date.now() - ts) / 1000);
+      if (sec < 60) return "just now";
+      if (sec < 3600) return Math.floor(sec / 60) + "m ago";
+      if (sec < 86400) return Math.floor(sec / 3600) + "h ago";
+      return Math.floor(sec / 86400) + "d ago";
+    }
 
-      chatThreads.sort((a,b)=> (b.updatedAt??0)-(a.updatedAt??0) );
+    function renderChatList() {
+      chatList.innerHTML = "";
+      const userThreads = getUserThreads();
 
-      chatThreads.forEach(thread=>{
-        const base=users[thread.userId]||{name:"Unknown",avatar:"❓",bio:""};
-        const user={name:thread.name||base.name,avatar:thread.avatar||base.avatar,bio:thread.bio||base.bio};
+      if (userThreads.length === 0) {
+        chatEmpty.style.display = "block";
+        return;
+      }
+      chatEmpty.style.display = "none";
 
-        const card=document.createElement("div");
-        card.className="chat-card";
-        card.onclick=()=>openConversation(thread.userId);
+      userThreads.sort((a, b) => (b.thread.updatedAt || 0) - (a.thread.updatedAt || 0));
 
-        const avatar=document.createElement("div");
-        avatar.className="chat-avatar";
-        avatar.textContent=user.avatar;
+      userThreads.forEach(({ otherId, thread }) => {
+        const base = users[otherId] || { name: "Unknown", avatar: "?", bio: "" };
+        const name = thread.name || base.name;
+        const avatar = thread.avatar || base.avatar;
+        const bio = thread.bio || base.bio;
 
-        const main=document.createElement("div");
-        main.className="chat-main";
+        const card = document.createElement("div");
+        card.className = "chat-card";
+        card.onclick = () => openConversation(otherId);
 
-        const name=document.createElement("div");
-        name.className="chat-name";
-        name.textContent=user.name;
+        const avatarEl = document.createElement("div");
+        avatarEl.className = "chat-avatar";
+        avatarEl.textContent = avatar;
 
-        const preview=document.createElement("div");
-        preview.className="chat-preview";
-        preview.textContent=thread.lastMessage||"No messages yet";
+        const main = document.createElement("div");
+        main.className = "chat-main";
 
-        main.appendChild(name);
+        const nameEl = document.createElement("div");
+        nameEl.className = "chat-name";
+        nameEl.textContent = name;
+
+        const preview = document.createElement("div");
+        preview.className = "chat-preview";
+        preview.textContent = thread.lastMessage || "No messages yet";
+
+        main.appendChild(nameEl);
         main.appendChild(preview);
 
-        const time=document.createElement("div");
-        time.className="chat-time";
-        time.textContent=getTimeAgo(thread.updatedAt||Date.now());
+        const timeEl = document.createElement("div");
+        timeEl.className = "chat-time";
+        timeEl.textContent = getTimeAgo(thread.updatedAt || Date.now());
 
-        card.appendChild(avatar);
+        card.appendChild(avatarEl);
         card.appendChild(main);
-        card.appendChild(time);
+        card.appendChild(timeEl);
 
         chatList.appendChild(card);
       });
     }
 
-    let activeThreadUserId=null;
+    let activeThreadUserId = null;
 
-    function openConversation(userId){
-      activeThreadUserId=userId;
-      const thread=chatThreads.find(t=>t.userId===userId);
-      const user=users[userId]||{name:"Unknown",avatar:"👤",bio:""};
+    function openConversation(userId) {
+      activeThreadUserId = userId;
+      const thread = getThreadForUser(userId, false);
+      const user = users[userId] || { name: "Unknown", avatar: "AP", bio: "" };
 
-      conversationAvatar.textContent=user.avatar;
-      conversationName.textContent=user.name;
-      conversationMeta.textContent=user.bio;
+      conversationAvatar.textContent = user.avatar;
+      conversationName.textContent = user.name;
+      conversationMeta.textContent = user.bio;
 
-      conversationInput.value="";
-      conversationSendBtn.disabled=true;
+      conversationInput.value = "";
+      conversationSendBtn.disabled = true;
 
       renderMessages();
       conversationDrawer.classList.add("show");
     }
 
-    function renderMessages(){
-      conversationMessages.innerHTML="";
-      const thread=chatThreads.find(t=>t.userId===activeThreadUserId);
-      if(!thread)return;
-      const messages=thread.messages.sort((a,b)=>a.ts-b.ts);
+    function renderMessages() {
+      conversationMessages.innerHTML = "";
+      const thread = getThreadForUser(activeThreadUserId, false);
+      if (!thread || !thread.messages) return;
 
-      messages.forEach(msg=>{
-        const isMe = msg.senderId===CURRENT_USER_ID || msg.senderId==="you";
-        const row=document.createElement("div");
-        row.className=isMe?"message-row me":"message-row them";
+      const messages = thread.messages.slice().sort((a, b) => a.ts - b.ts);
 
-        const bubble=document.createElement("div");
-        bubble.className="msg-bubble";
-        bubble.textContent=msg.text;
+      messages.forEach(msg => {
+        const isMe = msg.senderId === CURRENT_USER_ID || msg.senderId === "you";
+        const row = document.createElement("div");
+        row.className = isMe ? "message-row me" : "message-row them";
+
+        const bubble = document.createElement("div");
+        bubble.className = "msg-bubble";
+        bubble.textContent = msg.text;
         row.appendChild(bubble);
 
-        if(!isMe){
-          const time=document.createElement("div");
-          time.className="msg-time";
-          time.textContent=new Date(msg.ts).toLocaleTimeString([],{
-            hour:"numeric",
-            minute:"2-digit"
+        if (isMe) {
+          const delBtn = document.createElement("button");
+          delBtn.className = "msg-delete-btn";
+          delBtn.textContent = "Delete";
+          delBtn.addEventListener("click", e => {
+            e.stopPropagation();
+            deleteMessage(msg.id);
           });
-          row.appendChild(time);
+          row.appendChild(delBtn);
+        } else {
+          const timeEl = document.createElement("div");
+          timeEl.className = "msg-time";
+          timeEl.textContent = new Date(msg.ts).toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit"
+          });
+          row.appendChild(timeEl);
         }
 
         conversationMessages.appendChild(row);
       });
 
-      conversationMessages.scrollTop=conversationMessages.scrollHeight;
+      conversationMessages.scrollTop = conversationMessages.scrollHeight;
     }
 
-    function sendMessage(){
-      const text=conversationInput.value.trim();
-      if(!text)return;
+    function sendMessage() {
+      const text = conversationInput.value.trim();
+      if (!text || !activeThreadUserId) return;
 
-      const now=Date.now();
-      const id="m"+now;
+      const now = Date.now();
+      const id = "m" + now;
 
-      let thread=chatThreads.find(t=>t.userId===activeThreadUserId);
-      if(!thread){
-        thread={userId:activeThreadUserId,lastMessage:"",updatedAt:now,messages:[]};
-        chatThreads.push(thread);
-      }
+      const thread = getThreadForUser(activeThreadUserId, true);
+      if (!thread.messages) thread.messages = [];
 
-      thread.messages.push({id,text,senderId:CURRENT_USER_ID,ts:now});
-      thread.lastMessage=text;
-      thread.updatedAt=now;
+      thread.messages.push({
+        id,
+        text,
+        senderId: CURRENT_USER_ID,
+        ts: now
+      });
+      thread.lastMessage = text;
+      thread.updatedAt = now;
 
-      saveChatThreads();
+      saveGlobalThreads();
 
-      conversationInput.value="";
-      conversationSendBtn.disabled=true;
+      conversationInput.value = "";
+      conversationSendBtn.disabled = true;
 
       renderMessages();
       renderChatList();
     }
+
+    function deleteMessage(msgId) {
+      if (!activeThreadUserId) return;
+      const thread = getThreadForUser(activeThreadUserId, false);
+      if (!thread || !thread.messages) return;
+
+      thread.messages = thread.messages.filter(m => m.id !== msgId);
+      const last = thread.messages[thread.messages.length - 1];
+      thread.lastMessage = last ? last.text : "";
+      thread.updatedAt = last ? last.ts : thread.updatedAt;
+
+      saveGlobalThreads();
+      renderMessages();
+      renderChatList();
+    }
+
+    closeConversationBtn.addEventListener("click", () => {
+      conversationDrawer.classList.remove("show");
+    });
+
+    conversationSendBtn.addEventListener("click", sendMessage);
+
+    conversationInput.addEventListener("input", () => {
+      conversationSendBtn.disabled = conversationInput.value.trim().length === 0;
+    });
+
+    conversationInput.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (!conversationSendBtn.disabled) sendMessage();
+      }
+    });
+
+    conversationDrawer.addEventListener("click", e => {
+      if (e.target === conversationDrawer) {
+        conversationDrawer.classList.remove("show");
+      }
+    });
+
+    renderChatList();
 
     closeConversationBtn.addEventListener("click",()=>{
       conversationDrawer.classList.remove("show");
@@ -602,19 +748,8 @@
       }
     });
 
-    conversationDrawer.addEventListener("click",e=>{
-      if(e.target===conversationDrawer){
-        conversationDrawer.classList.remove("show");
-      }
-    });
-
-    const existing=loadChatThreads();
-    if(!existing||existing.length===0){
-      seedChats();
-      saveChatThreads();
-    }else chatThreads=existing;
-
     renderChatList();
   </script>
 </body>
 </html>
+

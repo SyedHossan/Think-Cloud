@@ -203,11 +203,74 @@
       display: none;
     }
 
-    .connections-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
+      .connections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+      }
+
+      .requests-panel {
+        margin-bottom: 18px;
+        background: var(--card-bg);
+        border-radius: var(--radius-lg);
+        border: 1px solid var(--border-subtle);
+        box-shadow: var(--shadow-soft);
+        padding: 14px 16px;
+      }
+
+      .requests-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        gap: 10px;
+      }
+
+      .requests-header h2 {
+        margin: 0;
+        font-size: 15px;
+      }
+
+      .requests-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .request-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 12px;
+        border: 1px solid var(--border-subtle);
+        background: #f9fafb;
+      }
+
+      .request-actions {
+        margin-left: auto;
+        display: flex;
+        gap: 6px;
+      }
+
+      .request-accept-btn,
+      .request-decline-btn {
+        border-radius: 999px;
+        border: none;
+        padding: 4px 10px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .request-accept-btn {
+        background: #22c55e;
+        color: white;
+      }
+
+      .request-decline-btn {
+        background: #e5e7eb;
+        color: #374151;
+      }
 
     .connection-card {
       border: 1px solid var(--border-subtle);
@@ -667,6 +730,13 @@
 
       <!-- USER RESULTS -->
       <main class="results-shell">
+        <section class="requests-panel" id="requestsPanel" style="display:none;">
+          <div class="requests-header">
+            <h2>Friend requests</h2>
+            <span id="requestsCount" class="connections-count"></span>
+          </div>
+            <div id="requestsList" class="requests-list"></div>
+        </section>
         <div class="results-toolbar">
           <div class="search-input-wrap">
             <span>🔍</span>
@@ -1109,6 +1179,7 @@
   </nav>
 
   <!-- JS SCRIPT -->
+  <script src="ui.js"></script>
   <script>
     const userCards = Array.from(document.querySelectorAll(".user-card"));
     const filterGroups = document.querySelectorAll(".filter-options");
@@ -1148,24 +1219,153 @@
 
     const currentUserProfile = getCurrentUserProfile();
     const CURRENT_USER_ID = getUserId(currentUserProfile);
-    const CONNECTION_KEY = `tc_connections_${CURRENT_USER_ID}`;
-    const CHAT_THREADS_KEY = `tc_conversations_${CURRENT_USER_ID}`;
-    const HIGHLIGHT_KEY = "highlightProfileId";
+      const HIGHLIGHT_KEY = "highlightProfileId";
+
+      const GLOBAL_CONNECTIONS_KEY = "tc_globalConnections_v1";
+      const GLOBAL_REQUESTS_KEY = "tc_globalFriendRequests_v1";
+      const GLOBAL_THREADS_KEY = "tc_globalThreads_v1";
 
     let activeMessageTarget = null;
     let activeMessageData = null;
 
-    /* CONNECTION STORAGE */
+    /* CONNECTION STORAGE (GLOBAL, SYMMETRIC) */
 
-    function loadConnections() {
-      try {
-        const raw = localStorage.getItem(CONNECTION_KEY);
-        return raw ? new Set(JSON.parse(raw)) : new Set();
-      } catch {
-        return new Set();
+      function loadArrayFromStorage(key) {
+        try {
+          const raw = localStorage.getItem(key);
+          const parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
       }
-    }
-    const connections = loadConnections();
+
+      function saveArrayToStorage(key, value) {
+        try {
+          localStorage.setItem(key, JSON.stringify(value || []));
+        } catch {
+          // ignore for demo
+        }
+      }
+
+      function normalizePair(aId, bId) {
+        const pair = [aId, bId].sort();
+        return { aId: pair[0], bId: pair[1], key: `${pair[0]}::${pair[1]}` };
+      }
+
+      let globalConnections = loadArrayFromStorage(GLOBAL_CONNECTIONS_KEY);
+      let globalRequests = loadArrayFromStorage(GLOBAL_REQUESTS_KEY);
+
+      const connections = new Set();       // confirmed two-way connections
+      const pendingRequests = new Set();   // incoming friend requests (others -> me)
+      const outgoingRequests = new Set();  // requests I have sent (me -> others)
+
+      function rebuildConnectionSets() {
+        connections.clear();
+        pendingRequests.clear();
+        outgoingRequests.clear();
+
+        globalConnections.forEach(conn => {
+          if (!conn || !conn.aId || !conn.bId) return;
+          if (conn.aId === CURRENT_USER_ID) connections.add(conn.bId);
+          else if (conn.bId === CURRENT_USER_ID) connections.add(conn.aId);
+        });
+
+        globalRequests.forEach(req => {
+          if (!req || !req.fromId || !req.toId) return;
+          if (req.toId === CURRENT_USER_ID) {
+            pendingRequests.add(req.fromId);
+          } else if (req.fromId === CURRENT_USER_ID) {
+            outgoingRequests.add(req.toId);
+          }
+        });
+      }
+
+      function persistGlobalConnections() {
+        saveArrayToStorage(GLOBAL_CONNECTIONS_KEY, globalConnections);
+      }
+
+      function persistGlobalRequests() {
+        saveArrayToStorage(GLOBAL_REQUESTS_KEY, globalRequests);
+      }
+
+      // Seed a couple of incoming friend requests globally (first run for demo)
+      if (globalRequests.length === 0 && CURRENT_USER_ID === "anya-patel") {
+        globalRequests.push(
+          { fromId: "manya-prakash", toId: "anya-patel", createdAt: Date.now() - 60000 },
+          { fromId: "rhea-sharma", toId: "anya-patel", createdAt: Date.now() - 120000 }
+        );
+        persistGlobalRequests();
+      }
+
+      rebuildConnectionSets();
+
+      function addConnection(otherUserId) {
+        if (!otherUserId || otherUserId === CURRENT_USER_ID) return;
+        const pair = normalizePair(CURRENT_USER_ID, otherUserId);
+
+        const exists = globalConnections.some(
+          (c) => c && c.aId === pair.aId && c.bId === pair.bId
+        );
+        if (!exists) {
+          globalConnections.push({
+            aId: pair.aId,
+            bId: pair.bId,
+            createdAt: Date.now()
+          });
+          persistGlobalConnections();
+        }
+
+        // Clear any requests between these two users (in either direction)
+        globalRequests = globalRequests.filter(
+          (r) =>
+            !(
+              (r.fromId === CURRENT_USER_ID && r.toId === otherUserId) ||
+              (r.fromId === otherUserId && r.toId === CURRENT_USER_ID)
+            )
+        );
+        persistGlobalRequests();
+        rebuildConnectionSets();
+      }
+
+      function removeConnection(otherUserId) {
+        if (!otherUserId) return;
+        const pair = normalizePair(CURRENT_USER_ID, otherUserId);
+        globalConnections = globalConnections.filter(
+          (c) => !(c.aId === pair.aId && c.bId === pair.bId)
+        );
+        persistGlobalConnections();
+        rebuildConnectionSets();
+      }
+
+      function sendFriendRequest(toUserId) {
+        if (!toUserId || toUserId === CURRENT_USER_ID) return;
+        if (connections.has(toUserId)) return;
+
+        const exists = globalRequests.some(
+          (r) =>
+            (r.fromId === CURRENT_USER_ID && r.toId === toUserId) ||
+            (r.fromId === toUserId && r.toId === CURRENT_USER_ID)
+        );
+        if (!exists) {
+          globalRequests.push({
+            fromId: CURRENT_USER_ID,
+            toId: toUserId,
+            createdAt: Date.now()
+          });
+          persistGlobalRequests();
+          rebuildConnectionSets();
+        }
+      }
+
+      function clearIncomingRequest(fromUserId) {
+        if (!fromUserId) return;
+        globalRequests = globalRequests.filter(
+          (r) => !(r.fromId === fromUserId && r.toId === CURRENT_USER_ID)
+        );
+        persistGlobalRequests();
+        rebuildConnectionSets();
+      }
 
     function safeParseProfiles() {
       try {
@@ -1178,7 +1378,7 @@
       }
     }
 
-    const storedProfiles = safeParseProfiles();
+      const storedProfiles = safeParseProfiles();
     const storedProfileMap = {};
     storedProfiles.forEach(profile => {
       if (profile.userId) storedProfileMap[profile.userId] = profile;
@@ -1196,106 +1396,61 @@
       };
     });
 
-    function getProfileData(userId) {
-      return userDataMap[userId] || storedProfileMap[userId] || null;
-    }
+      function getProfileData(userId) {
+        return userDataMap[userId] || storedProfileMap[userId] || null;
+      }
 
-    function saveConnections(set) {
-      localStorage.setItem(CONNECTION_KEY, JSON.stringify(Array.from(set)));
-    }
+    /* CHAT STORAGE (GLOBAL, SHARED BETWEEN USERS) */
 
-    /* CHAT STORAGE */
-
-    function loadChatThreads() {
+    function loadGlobalThreads() {
       try {
-        const raw = localStorage.getItem(CHAT_THREADS_KEY);
-        return raw ? JSON.parse(raw) : [];
+        const raw = localStorage.getItem(GLOBAL_THREADS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
       } catch {
         return [];
       }
     }
-     
-    let chatThreads = loadChatThreads();
 
-/* --------------------------------------------------
-   SEED INITIAL MENTOR CHATS FOR ANYA (only if empty)
------------------------------------------------------*/
-const shouldSeedMentors = CURRENT_USER_ID === "anya-patel";
-if (chatThreads.length === 0 && shouldSeedMentors) {
-  const now = Date.now();
-
-  chatThreads.push(
-    {
-      userId: "mentor-karthik",
-      name: "Karthik Rao",
-      avatar: "KR",
-      lastMessage: "Welcome to UTD, Anya! Proud of you!",
-      updatedAt: now - 5000,
-      messages: [
-        {
-          id: "m1",
-          text: "Hey Anya! I heard you're joining UTD CS soon — congrats! 🎉",
-          senderId: "mentor-karthik",
-          ts: now - 60000
-        },
-        {
-          id: "m2",
-          text: "Thanks so much!! I’m really excited 😊",
-          senderId: CURRENT_USER_ID,
-          ts: now - 30000
-        }
-      ]
-    },
-
-    {
-      userId: "mentor-riya",
-      name: "Riya Mehta",
-      avatar: "RM",
-      lastMessage: "Let me know anytime you want help with CS courses 💛",
-      updatedAt: now - 3000,
-      messages: [
-        {
-          id: "m1",
-          text: "Hi Anya! I mentor a few Indian incoming CS students, happy to help anytime 💛",
-          senderId: "mentor-riya",
-          ts: now - 45000
-        },
-        {
-          id: "m2",
-          text: "That is so sweet of you, thank you!!",
-          senderId: CURRENT_USER_ID,
-          ts: now - 25000
-        }
-      ]
+    function saveGlobalThreads() {
+      try {
+        localStorage.setItem(GLOBAL_THREADS_KEY, JSON.stringify(globalThreads));
+      } catch {
+        // ignore for this prototype
+      }
     }
-  );
 
-  persistChatThreads();
-}
+    function normalizeThreadPair(aId, bId) {
+      const pair = [aId, bId].sort();
+      return { aId: pair[0], bId: pair[1], key: `${pair[0]}::${pair[1]}` };
+    }
 
+    let globalThreads = loadGlobalThreads();
 
-
-
-
-    function persistChatThreads() {
-      localStorage.setItem(CHAT_THREADS_KEY, JSON.stringify(chatThreads));
+    function getOrCreateThreadWith(userId) {
+      if (!userId) return null;
+      const pair = normalizeThreadPair(CURRENT_USER_ID, userId);
+      let thread = globalThreads.find(t => t && t.key === pair.key);
+      if (!thread) {
+        thread = {
+          key: pair.key,
+          aId: pair.aId,
+          bId: pair.bId,
+          updatedAt: 0,
+          lastMessage: "",
+          messages: []
+        };
+        globalThreads.push(thread);
+      }
+      return thread;
     }
 
     function upsertChatThread(record) {
       const now = Date.now();
-      let thread = chatThreads.find(t => t.userId === record.userId);
+      const thread = getOrCreateThreadWith(record.userId);
+      if (!thread) return;
 
-      if (!thread) {
-        thread = {
-          userId: record.userId,
-          name: record.name,
-          avatar: record.avatar,
-          lastMessage: "",
-          updatedAt: now,
-          messages: []
-        };
-        chatThreads.push(thread);
-      }
+      if (!thread.messages) thread.messages = [];
 
       thread.messages.push({
         id: `m${now}`,
@@ -1307,8 +1462,7 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
       thread.lastMessage = record.message;
       thread.updatedAt = now;
 
-      chatThreads.sort((a, b) => b.updatedAt - a.updatedAt);
-      persistChatThreads();
+      saveGlobalThreads();
     }
 
     /* FILTERING */
@@ -1462,7 +1616,7 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
       }
     }
 
-    function renderConnectionsSection() {
+      function renderConnectionsSection() {
       if (!connectionsGrid || !connectionsEmptyEl) return;
       const ids = Array.from(connections).filter(id => id && id !== CURRENT_USER_ID);
 
@@ -1471,6 +1625,89 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
           ? `${ids.length} connection${ids.length === 1 ? "" : "s"}`
           : "No connections yet";
       }
+
+      /* PENDING REQUESTS PANEL */
+
+      const requestsPanel = document.getElementById("requestsPanel");
+      const requestsListEl = document.getElementById("requestsList");
+      const requestsCountEl = document.getElementById("requestsCount");
+
+      function renderRequestsSection() {
+        if (!requestsPanel || !requestsListEl) return;
+        const ids = Array.from(pendingRequests).filter(id => id && id !== CURRENT_USER_ID);
+
+        if (!ids.length) {
+          requestsPanel.style.display = "none";
+          return;
+        }
+
+        requestsPanel.style.display = "block";
+        if (requestsCountEl) {
+          requestsCountEl.textContent = `${ids.length} pending`;
+        }
+
+        requestsListEl.innerHTML = "";
+
+        ids.forEach(userId => {
+          const data = getProfileData(userId);
+          if (!data) return;
+
+          const item = document.createElement("div");
+          item.className = "request-item";
+
+          const avatar = document.createElement("div");
+          avatar.className = "connection-avatar";
+          avatar.textContent = data.avatar || (data.name ? data.name.charAt(0) : "?");
+
+          const info = document.createElement("div");
+          info.className = "connection-info";
+          const nameEl = document.createElement("p");
+          nameEl.className = "connection-name";
+          nameEl.textContent = data.name || userId;
+          const metaEl = document.createElement("p");
+          metaEl.className = "connection-meta";
+          metaEl.textContent =
+            data.bio || [data.major, data.school].filter(Boolean).join(" · ");
+          info.appendChild(nameEl);
+          info.appendChild(metaEl);
+
+          const actions = document.createElement("div");
+          actions.className = "request-actions";
+
+          const acceptBtn = document.createElement("button");
+          acceptBtn.className = "request-accept-btn";
+          acceptBtn.textContent = "Accept";
+          acceptBtn.addEventListener("click", () => {
+            addConnection(userId);
+            renderRequestsSection();
+            renderConnectionsSection();
+            const card = document.querySelector(`.user-card[data-user-id="${userId}"]`);
+            if (card) updateCardActions(card);
+            // After accepting, immediately open a message composer
+            startMessageForUser(userId);
+          });
+
+          const declineBtn = document.createElement("button");
+          declineBtn.className = "request-decline-btn";
+          declineBtn.textContent = "Ignore";
+          declineBtn.addEventListener("click", () => {
+            clearIncomingRequest(userId);
+            renderRequestsSection();
+          });
+
+          actions.appendChild(acceptBtn);
+          actions.appendChild(declineBtn);
+
+          item.appendChild(avatar);
+          item.appendChild(info);
+          item.appendChild(actions);
+
+          requestsListEl.appendChild(item);
+        });
+      }
+
+      // Always refresh friend requests whenever connections section renders
+      renderRequestsSection();
 
       connectionsGrid.innerHTML = "";
 
@@ -1551,8 +1788,7 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
     confirmDisconnect.addEventListener("click", () => {
       if (!pendingUndoUserId) return;
 
-      connections.delete(pendingUndoUserId);
-      saveConnections(connections);
+      removeConnection(pendingUndoUserId);
 
       const card = document.querySelector(`[data-user-id="${pendingUndoUserId}"]`);
       if (card) updateCardActions(card);
@@ -1565,24 +1801,36 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
     function updateCardActions(card) {
       const userId = card.dataset.userId;
       const connected = connections.has(userId);
+      const incoming = pendingRequests.has(userId);
+      const outgoing = outgoingRequests.has(userId);
 
       const connectBtn = card.querySelector(".connect-btn");
       const messageBtn = card.querySelector(".message-btn");
 
       // Update connect button
       if (connectBtn) {
+        connectBtn.disabled = false;
+        connectBtn.classList.remove("connected");
+
         if (connected) {
-          connectBtn.textContent = "Connected ✓";
+          connectBtn.textContent = "Connected";
+          connectBtn.classList.add("connected");
+        } else if (incoming) {
+          connectBtn.textContent = "Accept request";
+        } else if (outgoing) {
+          connectBtn.textContent = "Request sent";
+          connectBtn.disabled = true;
           connectBtn.classList.add("connected");
         } else {
           connectBtn.textContent = "Connect";
-          connectBtn.classList.remove("connected");
         }
       }
 
-      // Highlight message button if connected
+      // Highlight / enable message button only when connected
       if (messageBtn) {
-        messageBtn.classList.toggle("highlight", connected);
+        const canMessage = connected;
+        messageBtn.classList.toggle("highlight", canMessage);
+        messageBtn.disabled = !canMessage;
       }
     }
 
@@ -1597,13 +1845,30 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
           const userId = card.dataset.userId;
 
           if (connections.has(userId)) {
+            // Already connected - offer disconnect
             pendingUndoUserId = userId;
             confirmPopup.classList.remove("hidden");
             return;
           }
 
-          connections.add(userId);
-          saveConnections(connections);
+          // If they have already sent us a request, this acts as accept
+          if (pendingRequests.has(userId)) {
+            addConnection(userId);
+            renderConnectionsSection();
+            updateCardActions(card);
+            if (typeof showToast === "function") {
+              showToast("Connection accepted. You can now message each other.", "success");
+            }
+            return;
+          }
+
+          // Avoid re-sending a request we've already sent
+          if (outgoingRequests.has(userId)) {
+            return;
+          }
+
+          // Otherwise send a new friend request
+          sendFriendRequest(userId);
           updateCardActions(card);
           renderConnectionsSection();
 
@@ -1612,14 +1877,23 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
         });
       });
     }
-
     /* MESSAGE BUTTONS */
 
     function initMessageButtons() {
       document.querySelectorAll(".message-btn").forEach(btn => {
         btn.addEventListener("click", () => {
           const card = btn.closest(".user-card");
-          if (card) openMessageComposer(card);
+          if (!card) return;
+
+          const userId = card.dataset.userId;
+          if (!connections.has(userId)) {
+            if (typeof showToast === "function") {
+              showToast("Connect with this user before messaging.", "info");
+            }
+            return;
+          }
+
+          openMessageComposer(card);
         });
       });
     }
@@ -1648,3 +1922,6 @@ if (chatThreads.length === 0 && shouldSeedMentors) {
 
 </body>
 </html>
+
+
+
