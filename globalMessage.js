@@ -28,25 +28,83 @@ function getCurrentUserId(profile) {
 
 const miniProfile = getCurrentUserProfile();
 const MINI_USER_ID = getCurrentUserId(miniProfile);
-const MINI_CHAT_KEY = `tc_conversations_${MINI_USER_ID}`;
+const GLOBAL_CONNECTIONS_KEY = "tc_globalConnections_v1";
+const GLOBAL_THREADS_KEY = "tc_globalThreads_v1";
 
-// Load chat threads
-function loadChatThreads() {
+// Basic connection guard: only allow messaging with connected users
+function loadMiniConnections() {
   try {
-    return JSON.parse(localStorage.getItem(MINI_CHAT_KEY)) || [];
+    const raw = localStorage.getItem(GLOBAL_CONNECTIONS_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+
+    const result = new Set();
+    parsed.forEach((conn) => {
+      if (!conn || !conn.aId || !conn.bId) return;
+      if (conn.aId === MINI_USER_ID) result.add(conn.bId);
+      else if (conn.bId === MINI_USER_ID) result.add(conn.aId);
+    });
+    return result;
+  } catch {
+    return new Set();
+  }
+}
+
+const miniConnections = loadMiniConnections();
+
+// Shared global conversation threads (symmetric between users)
+function loadGlobalThreads() {
+  try {
+    const raw = localStorage.getItem(GLOBAL_THREADS_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
 
-let chatThreads = loadChatThreads();
+function saveGlobalThreads() {
+  try {
+    localStorage.setItem(GLOBAL_THREADS_KEY, JSON.stringify(globalThreads));
+  } catch {
+    // ignore storage errors in this demo
+  }
+}
 
-function saveChatThreads() {
-  localStorage.setItem(MINI_CHAT_KEY, JSON.stringify(chatThreads));
+function normalizePair(aId, bId) {
+  const pair = [aId, bId].sort();
+  return { aId: pair[0], bId: pair[1], key: `${pair[0]}::${pair[1]}` };
+}
+
+let globalThreads = loadGlobalThreads();
+
+function getThreadBetween(userA, userB, createIfMissing) {
+  if (!userA || !userB) return null;
+  const pair = normalizePair(userA, userB);
+  let thread = globalThreads.find((t) => t && t.key === pair.key);
+  if (!thread && createIfMissing) {
+    thread = {
+      key: pair.key,
+      aId: pair.aId,
+      bId: pair.bId,
+      updatedAt: 0,
+      lastMessage: "",
+      messages: []
+    };
+    globalThreads.push(thread);
+  }
+  return thread || null;
 }
 
 // OPEN modal
 function openMessageComposer(userId) {
+  if (!miniConnections.has(userId)) {
+    if (typeof showToast === "function") {
+      showToast("Connect with this user before messaging.", "info");
+    }
+    return;
+  }
   const user = users[userId];
 
   activeMsgUserId = userId;
@@ -64,6 +122,12 @@ function openMessageComposer(userId) {
 
 // MINI MAP MESSAGE MODAL 
 function openMiniMessage(userId) {
+  if (!miniConnections.has(userId)) {
+    if (typeof showToast === "function") {
+      showToast("Connect with this user before messaging.", "info");
+    }
+    return;
+  }
   const user = users[userId];
   activeMsgUserId = userId;
 
@@ -97,10 +161,10 @@ msgInput.addEventListener("input", () => {
 function loadExistingMessages() {
   msgThread.innerHTML = "";
 
-  const thread = chatThreads.find(t => t.userId === activeMsgUserId);
+  const thread = getThreadBetween(MINI_USER_ID, activeMsgUserId, false);
   if (!thread) return;
 
-  thread.messages.forEach(m => renderMsgBubble(m));
+  (thread.messages || []).forEach((m) => renderMsgBubble(m));
 
   msgThread.scrollTop = msgThread.scrollHeight;
 }
@@ -148,18 +212,11 @@ function sendMessage() {
   const text = msgInput.value.trim();
   if (!text) return;
 
-  const id = "m" + Date.now();
   const now = Date.now();
+  const id = "m" + now;
 
-  let thread = chatThreads.find(t => t.userId === activeMsgUserId);
-  if (!thread) {
-    thread = {
-      userId: activeMsgUserId,
-      messages: []
-    };
-    chatThreads.push(thread);
-  }
-
+  const thread = getThreadBetween(MINI_USER_ID, activeMsgUserId, true);
+  if (!thread.messages) thread.messages = [];
   thread.messages.push({
     id,
     text,
@@ -167,7 +224,9 @@ function sendMessage() {
     senderId: MINI_USER_ID
   });
 
-  saveChatThreads();
+  thread.lastMessage = text;
+  thread.updatedAt = now;
+  saveGlobalThreads();
 
   renderMsgBubble({ id, text, ts: now, senderId: MINI_USER_ID });
   msgInput.value = "";
@@ -176,16 +235,6 @@ function sendMessage() {
 }
 
 msgSendBtn.addEventListener("click", sendMessage);
-
-// Delete message from storage
-function deleteMessage(msgId, userId) {
-  const t = chatThreads.find(t => t.userId === userId);
-  if (!t) return;
-
-  t.messages = t.messages.filter(m => m.id !== msgId);
-
-  saveChatThreads();
-}
 
 // MAKE FUNCTION GLOBAL
 window.openMessageComposer = openMessageComposer;

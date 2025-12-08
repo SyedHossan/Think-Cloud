@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Think Cloud – Login</title>
+  <title>Think Cloud — Login</title>
   <link rel="stylesheet" href="styles.css?v=1">
 </head>
 <body class="login-page">
@@ -17,27 +17,41 @@
     </div>
 
     <h1>Think Cloud</h1>
-    <p class="subtitle">Share your thoughts with those around you.</p>
+    <p class="subtitle">Sign in to explore thought clouds around you.</p>
 
-    <!-- Email (HARD-CODED) -->
+    <!-- Email -->
     <div class="field-group">
       <label for="loginEmail">Email</label>
       <input 
         id="loginEmail" 
         type="email"
-        placeholder="Email"
-        value="anya.patel9364@gmail.com"
-        readonly
+        placeholder="you@example.edu"
+        autocomplete="email"
+        required
       />
     </div>
 
     <!-- Password -->
     <div class="field-group">
       <label for="loginPassword">Password</label>
-      <input id="loginPassword" type="password" placeholder="Password" required />
+      <input 
+        id="loginPassword" 
+        type="password" 
+        placeholder="Enter your password" 
+        autocomplete="current-password"
+        required 
+      />
     </div>
 
+    <p id="loginError" class="form-error" aria-live="polite"></p>
+
     <button id="loginBtn" class="primary-btn" type="button">Log In</button>
+
+    <!-- Demo accounts for user testing -->
+    <div class="demo-section">
+      <p class="demo-title">Or try a demo account:</p>
+      <div id="demoUserList" class="demo-user-list"></div>
+    </div>
 
     <p class="signup-text">
       New here?
@@ -46,26 +60,13 @@
 
   </div>
 
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
   <script>
-    // When clicking Log In → automatically loads Anya's profile
-    document.getElementById("loginBtn").addEventListener("click", () => {
-
-      // store hardcoded user profile
-    const profile = {
-      firstName: "Anya",
-      lastName: "Patel",
-      school: "UTD — The University of Texas at Dallas",
-      major: "Computer Science",
-      status: "Incoming",
-      country: "India",
-      bio: "Incoming UTD CS freshman from India 🌿",
-      email: "anya.patel9364@gmail.com",
-      userId: "anya-patel"
-    };
-
-      localStorage.setItem("tc_currentUser", JSON.stringify(profile));
-
-      window.location.href = "map.html";
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.Auth && typeof Auth.initLoginPage === "function") {
+        Auth.initLoginPage();
+      }
     });
   </script>
 

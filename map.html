@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Think Cloud – Map</title>
+  <title>Think Cloud — Map</title>
 
   <!-- Leaflet CSS -->
   <link
@@ -26,29 +26,38 @@
       width: 100%;
       position: relative;
       z-index: 1;
-
     }
   </style>
 </head>
 <body>
 
+  <a href="explore.html" class="back-to-map-btn back-on-map">← Back</a>
+
   <div id="map"></div>
 
+  <!-- Simple loading overlay while we center on the user -->
+  <div id="mapLoading" class="map-loading">
+    <div class="map-loading-card">
+      <div class="map-loading-spinner"></div>
+      <p>Finding your location…</p>
+    </div>
+  </div>
+
   <!-- Status Filter Button -->
-<button id="filterBtn" class="filter-btn">Filters ⚙️</button>
+  <button id="filterBtn" class="filter-btn">Filters</button>
 
-<!-- Filter Panel -->
-<div id="filterPanel" class="filter-panel">
-  <h3>Show Clouds</h3>
+  <!-- Filter Panel -->
+  <button id="recenterBtn" class="recenter-btn">Recenter</button>
+  <div id="filterPanel" class="filter-panel">
+    <h3>Show Clouds</h3>
 
-  <label><input type="checkbox" class="status-filter" value="current" checked> Current</label>
-  <label><input type="checkbox" class="status-filter" value="incoming" checked> Incoming</label>
-  <label><input type="checkbox" class="status-filter" value="alumni" checked> Alumni</label>
-  <label><input type="checkbox" class="status-filter" value="prospective" checked> Prospective</label>
+    <label><input type="checkbox" class="status-filter" value="current" checked> Current</label>
+    <label><input type="checkbox" class="status-filter" value="incoming" checked> Incoming</label>
+    <label><input type="checkbox" class="status-filter" value="alumni" checked> Alumni</label>
+    <label><input type="checkbox" class="status-filter" value="prospective" checked> Prospective</label>
 
-  <button id="closeFilterBtn" class="close-filter-btn">Done</button>
-</div>
-
+    <button id="closeFilterBtn" class="close-filter-btn">Done</button>
+  </div>
 
   <!-- Comments popup overlay -->
   <div id="overlay" class="overlay-backdrop">
@@ -64,64 +73,60 @@
       </div>
       <div id="commentsList" class="comments-body"></div>
 
-    <div class="comments-footer">
-      <input id="newCommentInput" placeholder="Add a thought..." />
-      <button id="postCommentBtn">Post</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add Pin Panel (slide-up form) -->
-<div id="addPinPanel" class="add-pin-panel">
-  <div class="add-pin-title">Create Thought Cloud</div>
-
-  <div id="addPinHint" class="add-pin-hint">
-    Tap anywhere on the map to drop a pin.
-  </div>
-
-  <div id="addPinCoords" class="add-pin-coords">
-    No location selected yet.
-  </div>
-
-  <textarea id="addPinText" placeholder="What's on your mind?"></textarea>
-
-  <div class="add-pin-buttons">
-    <button id="cancelAddPinBtn" class="cancel-btn">Cancel</button>
-    <button id="savePinBtn" class="save-btn" disabled>Post</button>
-  </div>
-</div>
-
-      <!-- Profile mini-card -->
-<div id="profileCard" class="profile-card">
-
-  <div id="profileAvatar" class="profile-avatar">🌿</div>
-
-  <div class="profile-main">
-    <div id="profileName" class="profile-name">Name</div>
-    <div id="profileBio" class="profile-bio">Bio text...</div>
-    <div id="profileYear" class="profile-year"></div>
-
-    <!-- ACTION BUTTONS -->
-    <div class="profile-actions">
-      <button id="profileConnectBtn" class="connect-btn">Connect</button>
-      <button id="profileMessageBtn" class="message-btn">Message</button>
+      <div class="comments-footer">
+        <input id="newCommentInput" placeholder="Add a thought..." />
+        <button id="postCommentBtn">Post</button>
+      </div>
     </div>
   </div>
 
-  <!-- CLOSE BUTTON -->
-  <button class="profile-close" onclick="hideProfile()">Close</button>
+  <!-- Add Pin Panel (slide-up form) -->
+  <div id="addPinPanel" class="add-pin-panel">
+    <div class="add-pin-title">Create Thought Cloud</div>
 
-</div>
+    <div id="addPinHint" class="add-pin-hint">
+      Tap anywhere on the map to drop a pin.
+    </div>
 
+    <div id="addPinCoords" class="add-pin-coords">
+      No location selected yet.
+    </div>
+
+    <textarea id="addPinText" placeholder="What's on your mind?"></textarea>
+
+    <div class="add-pin-buttons">
+      <button id="cancelAddPinBtn" class="cancel-btn">Cancel</button>
+      <button id="savePinBtn" class="save-btn" disabled>Post</button>
+    </div>
+  </div>
+
+  <!-- Profile mini-card -->
+  <div id="profileCard" class="profile-card">
+    <div id="profileAvatar" class="profile-avatar">AP</div>
+
+    <div class="profile-main">
+      <div id="profileName" class="profile-name">Name</div>
+      <div id="profileBio" class="profile-bio">Bio text...</div>
+      <div id="profileYear" class="profile-year"></div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="profile-actions">
+        <button id="profileConnectBtn" class="connect-btn">Connect</button>
+        <button id="profileMessageBtn" class="message-btn">Message</button>
+      </div>
+    </div>
+
+    <!-- CLOSE BUTTON -->
+    <button class="profile-close" onclick="hideProfile()">Close</button>
+  </div>
 
   <!-- Add Pin Button (floating + button) -->
-<button id="addPinBtn" class="add-pin-btn">Drop a Thought</button>
-
+  <button id="addPinBtn" class="add-pin-btn" title="Drop a thought cloud near where you are">Drop a Thought</button>
 
   <!-- Bottom nav bar -->
   <nav class="bottom-nav">
     <a href="explore.html">
-      <span class="icon">🧭</span>
+      <span class="icon">🔍</span>
       Explore
     </a>
 
@@ -146,37 +151,48 @@
     </a>
   </nav>
 
+  <!-- Status legend -->
+  <div class="status-legend">
+    <div class="legend-row">
+      <span class="legend-dot legend-dot-you"></span> You
+      <span class="legend-dot legend-dot-current"></span> Current
+      <span class="legend-dot legend-dot-incoming"></span> Incoming
+      <span class="legend-dot legend-dot-alumni"></span> Alumni
+      <span class="legend-dot legend-dot-prospective"></span> Prospective
+    </div>
+  </div>
+
   <!-- UNIVERSAL MESSAGE MODAL (SMALL MAP VERSION) -->
-<div id="globalMessageModal" class="mini-chat-modal">
+  <div id="globalMessageModal" class="mini-chat-modal">
 
-  <!-- Header -->
-  <div class="mini-chat-header">
-    <div id="msgAvatar" class="mini-chat-avatar">💬</div>
+    <!-- Header -->
+    <div class="mini-chat-header">
+      <div id="msgAvatar" class="mini-chat-avatar">💬</div>
 
-    <div class="mini-chat-header-text">
-      <div id="msgRecipient" class="mini-chat-name">User</div>
-      <div id="msgMeta" class="mini-chat-meta">Last active recently</div>
+      <div class="mini-chat-header-text">
+        <div id="msgRecipient" class="mini-chat-name">User</div>
+        <div id="msgMeta" class="mini-chat-meta">Last active recently</div>
+      </div>
+
+      <button id="msgCloseBtn" class="mini-chat-close">✕</button>
     </div>
 
-    <button id="msgCloseBtn" class="mini-chat-close">✕</button>
+    <!-- Scrollable Thread -->
+    <div id="msgThread" class="mini-chat-thread"></div>
+
+    <!-- Input -->
+    <div class="mini-chat-input-row">
+      <input id="msgInput" class="mini-chat-input" placeholder="Send a message…" />
+      <button id="msgSendBtn" class="mini-chat-send-btn" disabled>Send</button>
+    </div>
+
   </div>
-
-  <!-- Scrollable Thread -->
-  <div id="msgThread" class="mini-chat-thread"></div>
-
-  <!-- Input -->
-  <div class="mini-chat-input-row">
-    <input id="msgInput" class="mini-chat-input" placeholder="Send a message…" />
-    <button id="msgSendBtn" class="mini-chat-send-btn" disabled>Send</button>
-  </div>
-
-</div>
-
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="ui.js"></script>
 
-  <!-- Global messag -->
+  <!-- Global message logic -->
   <script src="globalMessage.js"></script>
 
   <!-- Map logic -->

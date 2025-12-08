@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title>Think Cloud – Sign up</title>
-  <link rel="stylesheet" href="map.css">
-
+  <title>Think Cloud — Sign up</title>
+  <link rel="stylesheet" href="styles.css?v=1">
 </head>
-<body>
+<body class="login-page">
 
   <div class="login-container">
     <!-- Cloud logo -->
@@ -33,27 +32,53 @@
         <input id="lastName" class="text-input" type="text" required />
       </div>
 
+      <!-- Email -->
+      <div class="field-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          class="text-input"
+          type="email"
+          placeholder="you@example.edu"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          class="text-input"
+          type="password"
+          placeholder="Create a password"
+          autocomplete="new-password"
+          required
+        />
+      </div>
+
       <!-- School with autocomplete -->
       <div class="field-group">
         <label for="school">School</label>
         <input id="school" class="text-input" list="schoolList"
                placeholder="Start typing your school..." />
         <datalist id="schoolList">
-          <option value="UTD – The University of Texas at Dallas">
-          <option value="UNT – University of North Texas">
-          <option value="UT Austin – The University of Texas at Austin">
-          <option value="SMU – Southern Methodist University">
-          <option value="TAMU – Texas A&amp;M University">
-          <option value="UH – University of Houston">
-          <option value="UCLA – University of California, Los Angeles">
-          <option value="UCSD – University of California, San Diego">
-          <option value="MIT – Massachusetts Institute of Technology">
+          <option value="UTD — The University of Texas at Dallas">
+          <option value="UNT — University of North Texas">
+          <option value="UT Austin — The University of Texas at Austin">
+          <option value="SMU — Southern Methodist University">
+          <option value="TAMU — Texas A&amp;M University">
+          <option value="UH — University of Houston">
+          <option value="UCLA — University of California, Los Angeles">
+          <option value="UCSD — University of California, San Diego">
+          <option value="MIT — Massachusetts Institute of Technology">
           <option value="Harvard University">
           <option value="Stanford University">
-          <option value="NYU – New York University">
-          <option value="CMU – Carnegie Mellon University">
-          <option value="Georgia Tech – Georgia Institute of Technology">
-          <option value="UIUC – University of Illinois Urbana-Champaign">
+          <option value="NYU — New York University">
+          <option value="CMU — Carnegie Mellon University">
+          <option value="Georgia Tech — Georgia Institute of Technology">
+          <option value="UIUC — University of Illinois Urbana-Champaign">
         </datalist>
       </div>
 
@@ -132,11 +157,13 @@
                   placeholder="Tell others a bit about you (e.g., CS student who loves coffee walks)."></textarea>
       </div>
 
-      <!-- Profile picture -->
+      <!-- Profile picture (front-end only, not saved) -->
       <div class="field-group">
         <label for="avatar">Profile picture (optional)</label>
         <input id="avatar" type="file" accept="image/*" />
       </div>
+
+      <p id="signupError" class="form-error" aria-live="polite"></p>
 
       <button type="submit" class="primary-btn">Create account</button>
     </form>
@@ -147,51 +174,15 @@
     </p>
   </div>
 
-  
-
-<script>
-  // Auto-fill all fields immediately when the page loads
-  document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("firstName").value = "Anya";
-    document.getElementById("lastName").value = "Patel";
-    document.getElementById("school").value = "UTD – The University of Texas at Dallas";
-    document.getElementById("major").value = "Computer Science";
-    document.getElementById("status").value = "Incoming";
-    document.getElementById("country").value = "India";
-    document.getElementById("bio").value = "Incoming UTD CS freshman from India 🌿";
-  });
-
-  // When the tester clicks Create Account, auto-save the hardcoded profile
-  document.getElementById("signupForm").addEventListener("submit", function (e) {
-    e.preventDefault();
-
-    const profile = {
-      firstName: document.getElementById("firstName").value.trim(),
-      lastName: document.getElementById("lastName").value.trim(),
-      school: document.getElementById("school").value.trim(),
-      major: document.getElementById("major").value.trim(),
-      status: document.getElementById("status").value,
-      country: document.getElementById("country").value.trim(),
-      bio: document.getElementById("bio").value.trim()
-    };
-
-    profile.userId = generateUserId(profile.firstName, profile.lastName);
-
-    localStorage.setItem("tc_currentUser", JSON.stringify(profile));
-
-    window.location.href = "map.html";
-  });
-
-  function generateUserId(firstName, lastName) {
-    const slug = [firstName, lastName]
-      .filter(Boolean)
-      .join("-")
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "cloud-user";
-    return `${slug}-${Date.now().toString(36)}`;
-  }
-</script>
+  <script src="ui.js"></script>
+  <script src="auth.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      if (window.Auth && typeof Auth.initSignupPage === "function") {
+        Auth.initSignupPage();
+      }
+    });
+  </script>
 
 </body>
 </html>
