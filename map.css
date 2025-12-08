@@ -7,6 +7,51 @@ html, body {
     height: 100vh;
     width: 100%;
   }
+
+  /* Map loading overlay */
+  .map-loading {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1200;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  .map-loading.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+
+  .map-loading-card {
+    background: #ffffff;
+    padding: 16px 20px;
+    border-radius: 16px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.45);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    color: #111827;
+  }
+
+  .map-loading-spinner {
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    border: 3px solid #bfdbfe;
+    border-top-color: #2563eb;
+    animation: map-spin 0.8s linear infinite;
+  }
+
+  @keyframes map-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   
   /* Overlay backdrop */
   .overlay-backdrop {
@@ -270,10 +315,16 @@ html, body {
   
   /* Leaflet popup text tweaks */
   .pin-title {
-    font-weight: 600;
-    color: #111827;
-    font-size: 0.9rem;
-  }
+      font-weight: 600;
+      color: #111827;
+      font-size: 0.9rem;
+    }
+
+    .pin-location {
+      font-size: 0.78rem;
+      color: #4b5563;
+      margin-top: 2px;
+    }
   
   .pin-meta-line {
     font-size: 0.78rem;
@@ -380,11 +431,15 @@ html, body {
   margin-bottom: 4px;
 }
 
-.add-pin-coords {
-  font-size: 12px;
-  color: #444;
-  margin: 6px 0 12px;
-}
+  .add-pin-coords {
+    font-size: 12px;
+    color: #444;
+    margin: 6px 0 12px;
+  }
+
+  .add-pin-coords.coords-error {
+    color: #b91c1c;
+  }
 
 
 /* Textarea (clean, single definition) */
@@ -479,9 +534,28 @@ html, body {
   z-index: 9999;
 }
 
-.filter-btn:hover {
-  background: #1742b5;
-}
+  .filter-btn:hover {
+    background: #1742b5;
+  }
+
+  .recenter-btn {
+    position: fixed;
+    top: 16px;
+    right: 120px;
+    background: #ffffff;
+    color: #1d4ed8;
+    padding: 8px 12px;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    z-index: 9999;
+  }
+
+  .recenter-btn:hover {
+    background: #eff6ff;
+  }
 
 /* -----------------------------
    Filter Panel Popup
@@ -500,9 +574,9 @@ html, body {
   font-family: system-ui;
 }
 
-.filter-panel h3 {
-  margin: 0 0 10px;
-  font-size: 15px;
+  .filter-panel h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
 }
 
 .filter-panel label {
@@ -526,6 +600,52 @@ html, body {
 
 .close-filter-btn:hover {
   background: #1742b5;
+}
+
+/* Status legend */
+.status-legend {
+  position: fixed;
+  bottom: 86px;
+  left: 16px;
+  background: #ffffff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+  font-size: 11px;
+  color: #374151;
+  z-index: 9999;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.legend-dot-you {
+  background: #406fddff;
+}
+
+.legend-dot-current {
+  background: #5acd2dff;
+}
+
+.legend-dot-incoming {
+  background: #b861dbff;
+}
+
+.legend-dot-alumni {
+  background: #db571eff;
+}
+
+.legend-dot-prospective {
+  background: #f0de39ff;
 }
 
 /* -----------------------------
@@ -687,6 +807,11 @@ html, body {
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
   z-index: 9999;
+}
+
+.back-to-map-btn.back-on-map {
+  top: 16px;
+  left: 76px;   /* shifted right so it doesn't cover Leaflet zoom controls */
 }
 
 .back-to-map-btn:hover {

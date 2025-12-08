@@ -114,6 +114,49 @@ h1 {
   color: #374151;
 }
 
+/* Inline form errors */
+.form-error {
+  max-width: 360px;
+  margin: 0 auto 4px;
+  font-size: 0.85rem;
+  color: #dc2626;
+  text-align: left;
+  min-height: 1.1em;
+}
+
+/* Demo account list on login */
+.demo-section {
+  margin: 18px auto 0;
+  max-width: 360px;
+  text-align: left;
+}
+
+.demo-title {
+  margin: 0 0 8px;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.demo-user-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.demo-user-btn {
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.demo-user-btn:hover {
+  background: #e5edff;
+  border-color: #4f46e5;
+}
+
 /* =====================================
    FIXED BOTTOM NAV
 ===================================== */
@@ -419,6 +462,48 @@ h1 {
   background: #e5e5e5;
 }
 
+/* Toasts */
+.tc-toast-container {
+  position: fixed;
+  left: 50%;
+  bottom: 80px;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10000;
+}
+
+.tc-toast {
+  min-width: 220px;
+  max-width: 340px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  background: #111827;
+  color: #f9fafb;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.35);
+  opacity: 0.96;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.tc-toast--success {
+  background: #16a34a;
+}
+
+.tc-toast--info {
+  background: #2563eb;
+}
+
+.tc-toast--error {
+  background: #dc2626;
+}
+
+.tc-toast--hide {
+  opacity: 0;
+  transform: translateY(4px);
+}
+
 /* === FIX BUTTON ALIGNMENT FOR EXPLORE CARDS === */
 
 .user-card {
@@ -447,6 +532,10 @@ h1 {
   text-decoration: none;
   box-shadow: 0 4px 14px rgba(0,0,0,0.15);
   z-index: 9999;
+}
+
+.back-to-map-btn.back-on-map {
+  top: 100px;
 }
 
 .back-to-map-btn:hover {
