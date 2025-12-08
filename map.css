@@ -602,6 +602,29 @@ html, body {
   background: #1742b5;
 }
 
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Colors matching your markers */
+.dot-you { background: #406fddff; }
+.dot-current { background: #5acd2dff; }
+.dot-incoming { background: #b861dbff; }
+.dot-alumni { background: #db571eff; }
+.dot-prospective { background: #f0de39ff; }
+
+
 /* Status legend */
 .status-legend {
   position: fixed;
@@ -817,3 +840,27 @@ html, body {
 .back-to-map-btn:hover {
   background: #f3f3f3;
 }
+
+/* Filter item layout */
+.filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #111;
+}
+
+/* Colored dots */
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-you { background: #406fddff; }
+.dot-current { background: #5acd2dff; }
+.dot-incoming { background: #b861dbff; }
+.dot-alumni { background: #db571eff; }
+.dot-prospective { background: #f0de39ff; }

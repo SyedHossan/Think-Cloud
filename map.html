@@ -47,15 +47,41 @@
   <button id="filterBtn" class="filter-btn">Filters</button>
 
   <!-- Filter Panel -->
-  <button id="recenterBtn" class="recenter-btn">Recenter</button>
-  <div id="filterPanel" class="filter-panel">
-    <h3>Show Clouds</h3>
+<button id="recenterBtn" class="recenter-btn">Recenter</button>
 
-    <label><input type="checkbox" class="status-filter" value="current" checked> Current</label>
-    <label><input type="checkbox" class="status-filter" value="incoming" checked> Incoming</label>
-    <label><input type="checkbox" class="status-filter" value="alumni" checked> Alumni</label>
-    <label><input type="checkbox" class="status-filter" value="prospective" checked> Prospective</label>
+<div id="filterPanel" class="filter-panel">
+  <h3>Show Clouds</h3>
 
+  <label class="filter-item">
+    <input type="checkbox" class="status-filter" value="you" checked>
+    <span class="color-dot dot-you"></span> You
+  </label>
+
+  <label class="filter-item">
+    <input type="checkbox" class="status-filter" value="current" checked>
+    <span class="color-dot dot-current"></span> Current
+  </label>
+
+  <label class="filter-item">
+    <input type="checkbox" class="status-filter" value="incoming" checked>
+    <span class="color-dot dot-incoming"></span> Incoming
+  </label>
+
+  <label class="filter-item">
+    <input type="checkbox" class="status-filter" value="alumni" checked>
+    <span class="color-dot dot-alumni"></span> Alumni
+  </label>
+
+  <label class="filter-item">
+    <input type="checkbox" class="status-filter" value="prospective" checked>
+    <span class="color-dot dot-prospective"></span> Prospective
+  </label>
+
+  <button id="closeFilterBtn" class="close-filter-btn">Done</button>
+</div>
+
+
+   
     <button id="closeFilterBtn" class="close-filter-btn">Done</button>
   </div>
 
@@ -151,16 +177,7 @@
     </a>
   </nav>
 
-  <!-- Status legend -->
-  <div class="status-legend">
-    <div class="legend-row">
-      <span class="legend-dot legend-dot-you"></span> You
-      <span class="legend-dot legend-dot-current"></span> Current
-      <span class="legend-dot legend-dot-incoming"></span> Incoming
-      <span class="legend-dot legend-dot-alumni"></span> Alumni
-      <span class="legend-dot legend-dot-prospective"></span> Prospective
-    </div>
-  </div>
+  
 
   <!-- UNIVERSAL MESSAGE MODAL (SMALL MAP VERSION) -->
   <div id="globalMessageModal" class="mini-chat-modal">
