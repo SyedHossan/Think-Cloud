@@ -681,6 +681,7 @@ let pins = [
       }
     ]
   },
+  /*
   {
     id: "india1",
     lat: 12.9716,
@@ -691,6 +692,7 @@ let pins = [
     liked: false,
     comments: []
   },
+  */
   {
     id: "india2",
     lat: 19.0760,
