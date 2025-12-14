@@ -31,8 +31,7 @@
 </head>
 <body>
 
-  <a href="explore.html" class="back-to-map-btn back-on-map">← Back</a>
-
+ 
   <div id="map"></div>
 
   <!-- Simple loading overlay while we center on the user -->
@@ -43,11 +42,12 @@
     </div>
   </div>
 
-  <!-- Status Filter Button -->
-  <button id="filterBtn" class="filter-btn">Filters</button>
+  <!-- Map Controls (Top Right) -->
+<div class="map-controls">
+  <button id="filterBtn" class="filter-btn">Cloud Filters</button>
+  <button id="recenterBtn" class="recenter-btn">Recenter</button>
+</div>
 
-  <!-- Filter Panel -->
-<button id="recenterBtn" class="recenter-btn">Recenter</button>
 
 <div id="filterPanel" class="filter-panel">
   <h3>Show Clouds</h3>
@@ -81,9 +81,6 @@
 </div>
 
 
-   
-    <button id="closeFilterBtn" class="close-filter-btn">Done</button>
-  </div>
 
   <!-- Comments popup overlay -->
   <div id="overlay" class="overlay-backdrop">
