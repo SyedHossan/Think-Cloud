@@ -53,6 +53,10 @@
       <div id="demoUserList" class="demo-user-list"></div>
     </div>
 
+    <button id="resetDemoBtn" class="reset-btn" type="button">
+      Reset demo data
+    </button>
+
     <p class="signup-text">
       New here?
       <a href="signup.html" class="signup-link">Create an account</a>
@@ -66,6 +70,30 @@
     document.addEventListener("DOMContentLoaded", function () {
       if (window.Auth && typeof Auth.initLoginPage === "function") {
         Auth.initLoginPage();
+      }
+
+      const resetBtn = document.getElementById("resetDemoBtn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          const keysToClear = [
+            "tc_currentUser",
+            "tc_globalConnections_v1",
+            "tc_globalFriendRequests_v1",
+            "tc_globalThreads_v1",
+            "tc_exploreUsers",
+            "tc_mapState",
+            "tc_mapPins",
+            "tc_notifications"
+          ];
+
+          keysToClear.forEach((key) => localStorage.removeItem(key));
+          // Also clear any other tc_ keys left over from previous runs
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith("tc_"))
+            .forEach((k) => localStorage.removeItem(k));
+
+          location.reload();
+        });
       }
     });
   </script>

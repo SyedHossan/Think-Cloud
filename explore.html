@@ -1260,6 +1260,17 @@
       const pendingRequests = new Set();   // incoming friend requests (others -> me)
       const outgoingRequests = new Set();  // requests I have sent (me -> others)
 
+      const DEFAULT_REQUEST_SENDERS = [
+        "manya-prakash",
+        "rhea-sharma",
+        "oliver-king",
+        "li-wei",
+        "taylor-nguyen",
+        "emma-cole",
+        "sofia-ramirez",
+        "sam-foster"
+      ];
+
       function rebuildConnectionSets() {
         connections.clear();
         pendingRequests.clear();
@@ -1289,16 +1300,83 @@
         saveArrayToStorage(GLOBAL_REQUESTS_KEY, globalRequests);
       }
 
-      // Seed a couple of incoming friend requests globally (first run for demo)
-      if (globalRequests.length === 0 && CURRENT_USER_ID === "anya-patel") {
-        globalRequests.push(
-          { fromId: "manya-prakash", toId: "anya-patel", createdAt: Date.now() - 60000 },
-          { fromId: "rhea-sharma", toId: "anya-patel", createdAt: Date.now() - 120000 }
-        );
-        persistGlobalRequests();
+      function hasConnection(aId, bId) {
+        const pair = normalizePair(aId, bId);
+        return globalConnections.some((c) => c && c.aId === pair.aId && c.bId === pair.bId);
       }
 
-      rebuildConnectionSets();
+      function ensureConnection(aId, bId, ts = Date.now()) {
+        if (!aId || !bId || aId === bId) return;
+        const pair = normalizePair(aId, bId);
+        if (hasConnection(aId, bId)) return;
+        globalConnections.push({ aId: pair.aId, bId: pair.bId, createdAt: ts });
+      }
+
+      function ensureIncomingRequestsFor(targetId, minCount = 2) {
+        if (!targetId) return;
+
+        const currentIncoming = globalRequests
+          .filter((r) => r && r.toId === targetId)
+          .map((r) => r.fromId);
+
+        if (currentIncoming.length >= minCount) return;
+
+        const candidates = DEFAULT_REQUEST_SENDERS.filter(
+          (id) => id && id !== targetId && !hasConnection(id, targetId) && !currentIncoming.includes(id)
+        );
+
+        let added = 0;
+        candidates.slice(0, minCount - currentIncoming.length).forEach((fromId, idx) => {
+          globalRequests.push({
+            fromId,
+            toId: targetId,
+            createdAt: Date.now() - (idx + 1) * 45000
+          });
+          added++;
+        });
+
+        if (added > 0) persistGlobalRequests();
+      }
+
+      function ensureBaselineConnectionsFor(targetId) {
+        if (!targetId) return;
+        const anchors = ["manya-prakash", "rhea-sharma", "oliver-king"];
+        const existingCount = globalConnections.filter(
+          (c) => c && (c.aId === targetId || c.bId === targetId)
+        ).length;
+
+        if (existingCount >= 2) return;
+
+        anchors.forEach((anchor, idx) => {
+          if (anchor === targetId) return;
+          ensureConnection(targetId, anchor, Date.now() - (idx + 1) * 60000);
+        });
+        persistGlobalConnections();
+      }
+
+      function seedSocialGraphForAll() {
+        const demoIds = Array.from(document.querySelectorAll(".user-card"))
+          .map((card) => card.dataset.userId)
+          .filter((id) => id && id !== "you");
+
+        const targets = new Set(demoIds);
+        targets.add(CURRENT_USER_ID);
+
+        targets.forEach((id) => {
+          ensureBaselineConnectionsFor(id);
+          ensureIncomingRequestsFor(id, 2);
+        });
+
+        rebuildConnectionSets();
+      }
+
+      seedSocialGraphForAll();
+
+      // Safety: if this user somehow still has zero connections, add anchors again.
+      if (connections.size === 0) {
+        ensureBaselineConnectionsFor(CURRENT_USER_ID);
+        rebuildConnectionSets();
+      }
 
       function addConnection(otherUserId) {
         if (!otherUserId || otherUserId === CURRENT_USER_ID) return;
@@ -1922,6 +2000,3 @@
 
 </body>
 </html>
-
-
-

@@ -448,73 +448,124 @@
       return { aId: pair[0], bId: pair[1], key: `${pair[0]}::${pair[1]}` };
     }
 
-    function seedChats(){
-      const now=Date.now();
+    let globalThreads = loadGlobalThreads();
+
+    function seedChats() {
+      const now = Date.now();
       return [
-        {userId:"manya-prakash",lastMessage:"Welcome to UTD!!",updatedAt:now-100000,
-          messages:[
-            {id:"m1",text:"Hey Anya, welcome to UTD! If you need CS help just ask :)",senderId:"manya-prakash",ts:now-120000},
-            {id:"m2",text:"Thank you so much! I’m excited and nervous haha",senderId:CURRENT_USER_ID,ts:now-90000},
-            {id:"m11",text:"When will you be landing in Dallas?",senderId:"manya-prakash",ts:now-120000},
-            {id:"m8",text:"I'll be landing next week",senderId:CURRENT_USER_ID,ts:now-90000}
+        {
+          aId: "anya-patel",
+          bId: "manya-prakash",
+          lastMessage: "I'll be landing next week",
+          updatedAt: now - 90000,
+          messages: [
+            { id: "m1", text: "Hey Anya, welcome to UTD! If you need CS help just ask :)", senderId: "manya-prakash", ts: now - 120000 },
+            { id: "m2", text: "Thank you so much! I'm excited and nervous haha", senderId: "anya-patel", ts: now - 90000 },
+            { id: "m11", text: "When will you be landing in Dallas?", senderId: "manya-prakash", ts: now - 70000 },
+            { id: "m8", text: "I'll be landing next week", senderId: "anya-patel", ts: now - 65000 }
           ]
         },
         {
-          otherId: "rhea-sharma",
+          aId: "anya-patel",
+          bId: "rhea-sharma",
           updatedAt: now - 50000,
-          lastMessage: "You got this!",
+          lastMessage: "Hi Rhea! That means a lot, thank you!",
           messages: [
-            {
-              id: "m3",
-              text: "Hi Anya, I''m a CS senior from Mumbai. Always happy to mentor incoming students!",
-              senderId: "rhea-sharma",
-              ts: now - 60000
-            },
-            {
-              id: "m4",
-              text: "Hi Rhea! That means a lot, thank you!",
-              senderId: CURRENT_USER_ID,
-              ts: now - 40000
-            }
+            { id: "m3", text: "Hi Anya, I'm a CS senior from Mumbai. Always happy to mentor incoming students!", senderId: "rhea-sharma", ts: now - 60000 },
+            { id: "m4", text: "Hi Rhea! That means a lot, thank you!", senderId: "anya-patel", ts: now - 50000 }
           ]
         },
         {
-          otherId: "oliver-king",
+          aId: "anya-patel",
+          bId: "oliver-king",
           updatedAt: now - 20000,
-          lastMessage: "See you soon!",
+          lastMessage: "Yes, let's! I would love to meet other international students too.",
           messages: [
-            {
-              id: "m5",
-              text: "Incoming SE major from Sydney here. Let''s connect at orientation!",
-              senderId: "oliver-king",
-              ts: now - 25000
-            },
-            {
-              id: "m6",
-              text: "Yes, let''s! I would love to meet other international students too.",
-              senderId: CURRENT_USER_ID,
-              ts: now - 20000
-            }
+            { id: "m5", text: "Incoming SE major from Sydney here. Let's connect at orientation!", senderId: "oliver-king", ts: now - 25000 },
+            { id: "m6", text: "Yes, let's! I would love to meet other international students too.", senderId: "anya-patel", ts: now - 20000 }
+          ]
+        },
+        {
+          aId: "oliver-king",
+          bId: "li-wei",
+          updatedAt: now - 40000,
+          lastMessage: "I'll share my notes tonight.",
+          messages: [
+            { id: "m7", text: "Want to pair on the robotics lab writeup?", senderId: "li-wei", ts: now - 52000 },
+            { id: "m8", text: "Yes please—I'm polishing the code now.", senderId: "oliver-king", ts: now - 47000 },
+            { id: "m9", text: "I'll share my notes tonight.", senderId: "li-wei", ts: now - 40000 }
+          ]
+        },
+        {
+          aId: "rhea-sharma",
+          bId: "taylor-nguyen",
+          updatedAt: now - 30000,
+          lastMessage: "See you at the meetup!",
+          messages: [
+            { id: "m10", text: "Free photo walk on campus Friday—want to join?", senderId: "taylor-nguyen", ts: now - 36000 },
+            { id: "m11", text: "I'm in! Need a ride?", senderId: "rhea-sharma", ts: now - 33000 },
+            { id: "m12", text: "I'm good, see you at the meetup!", senderId: "taylor-nguyen", ts: now - 30000 }
+          ]
+        },
+        {
+          aId: "sofia-ramirez",
+          bId: "diego-martinez",
+          updatedAt: now - 55000,
+          lastMessage: "Let's go after lab.",
+          messages: [
+            { id: "m13", text: "Taco run after lab?", senderId: "diego-martinez", ts: now - 60000 },
+            { id: "m14", text: "Always. Let's go after lab.", senderId: "sofia-ramirez", ts: now - 55000 }
+          ]
+        },
+        {
+          aId: "emma-cole",
+          bId: "sam-foster",
+          updatedAt: now - 45000,
+          lastMessage: "Will bring coffee!",
+          messages: [
+            { id: "m15", text: "Can you share your practicum prep checklist?", senderId: "emma-cole", ts: now - 52000 },
+            { id: "m16", text: "Sent! Want to review together?", senderId: "sam-foster", ts: now - 48000 },
+            { id: "m17", text: "Yes please. Will bring coffee!", senderId: "emma-cole", ts: now - 45000 }
+          ]
+        },
+        {
+          aId: "li-wei",
+          bId: "lucia-garcia",
+          updatedAt: now - 65000,
+          lastMessage: "Perfect, talk soon.",
+          messages: [
+            { id: "m18", text: "Curious about UTD psych electives—any tips?", senderId: "lucia-garcia", ts: now - 72000 },
+            { id: "m19", text: "I'll send you my notes from last semester.", senderId: "li-wei", ts: now - 67000 },
+            { id: "m20", text: "Perfect, talk soon.", senderId: "lucia-garcia", ts: now - 65000 }
           ]
         }
       ];
+    }
 
-      seeds.forEach(seed => {
-        const pair = normalizeThreadPair(CURRENT_USER_ID, seed.otherId);
+    function seedThreadsIfEmpty() {
+      if (globalThreads.length > 0) return;
+
+      const seeds = seedChats();
+      seeds.forEach((seed) => {
+        if (!seed.aId || !seed.bId) return;
+        const pair = normalizeThreadPair(seed.aId, seed.bId);
+        const exists = globalThreads.some((t) => t && t.key === pair.key);
+        if (exists) return;
+
         globalThreads.push({
           key: pair.key,
           aId: pair.aId,
           bId: pair.bId,
-          updatedAt: seed.updatedAt,
-          lastMessage: seed.lastMessage,
-          messages: seed.messages.slice()
+          updatedAt: seed.updatedAt || 0,
+          lastMessage: seed.lastMessage || "",
+          messages: (seed.messages || []).slice()
         });
       });
 
       saveGlobalThreads();
     }
 
-    seedThreadsForAnyaIfEmpty();
+    seedThreadsIfEmpty();
 
     function getThreadForUser(otherUserId, createIfMissing) {
       if (!otherUserId) return null;
@@ -752,4 +803,3 @@
   </script>
 </body>
 </html>
-

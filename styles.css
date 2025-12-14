@@ -157,6 +157,20 @@ h1 {
   border-color: #4f46e5;
 }
 
+.reset-btn {
+  margin-top: 14px;
+  max-width: 360px;
+  background: #f8fafc;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  box-shadow: none;
+}
+
+.reset-btn:hover {
+  background: #eef2ff;
+  border-color: #4f46e5;
+}
+
 /* =====================================
    FIXED BOTTOM NAV
 ===================================== */
